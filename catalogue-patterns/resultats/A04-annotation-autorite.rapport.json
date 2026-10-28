@@ -1,0 +1,45 @@
+{
+  "decisions": [
+    "Vérifier la recevabilité de la demande"
+  ],
+  "inputs": [],
+  "sources": [
+    "Réglementation FIMEX en vigueur"
+  ],
+  "bkms": [],
+  "arcs": [
+    [
+      "Réglementation FIMEX en vigueur",
+      "Vérifier la recevabilité de la demande",
+      "P6"
+    ]
+  ],
+  "points_experts": [
+    "annotation"
+  ],
+  "ecartes": [],
+  "acyclique": true,
+  "invariants_violes": [],
+  "anomalies_source": [],
+  "diagnostic_vide": "",
+  "resume": {
+    "decisions": 1,
+    "inputs": 0,
+    "sources": 1,
+    "bkm": 0,
+    "IR": 0,
+    "KR": 0,
+    "AR": 1,
+    "a_confirmer": 1,
+    "ecartes": 0
+  },
+  "points": [
+    {
+      "categorie": "annotation",
+      "objet": "Réglementation FIMEX en vigueur",
+      "motif": "proposée comme SOURCE DE CONNAISSANCE (elle gouverne la décision)",
+      "proposition": "KS"
+    }
+  ],
+  "ecartes_detail": []
+}

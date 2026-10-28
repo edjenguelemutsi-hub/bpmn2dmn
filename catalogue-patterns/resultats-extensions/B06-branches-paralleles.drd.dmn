@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
+             xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+             xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             id="Definitions_Branches_parall_les"
+             name="Branches parallèles"
+             namespace="http://bpmn2dmn/genere"
+             exporter="bpmn2dmn" exporterVersion="1.0">
+  <decision id="D1" name="Évaluer la garantie financière">
+    <informationRequirement id="ir1"><requiredInput href="#I1"/></informationRequirement>
+  </decision>
+  <decision id="D2" name="Statuer sur la demande">
+    <informationRequirement id="ir2"><requiredInput href="#I2"/></informationRequirement>
+  </decision>
+  <inputData id="I1" name="Garantie proposée"/>
+  <inputData id="I2" name="Avis financier"/>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DRD_Branches_parall_les">
+      <dmndi:DMNShape id="s_D1" dmnElementRef="D1">
+        <dc:Bounds x="80" y="40" width="194" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_D2" dmnElementRef="D2">
+        <dc:Bounds x="361" y="40" width="180" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I1" dmnElementRef="I1">
+        <dc:Bounds x="110" y="240" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I2" dmnElementRef="I2">
+        <dc:Bounds x="384" y="248" width="135" height="45"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="e_ir1" dmnElementRef="ir1">
+        <di:waypoint x="177" y="240"/><di:waypoint x="177" y="120"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir2" dmnElementRef="ir2">
+        <di:waypoint x="451" y="248"/><di:waypoint x="451" y="120"/>
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

@@ -1,0 +1,44 @@
+{
+  "decisions": [
+    "Contrôler les observations",
+    "Évaluer la demande"
+  ],
+  "inputs": [],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Contrôler les observations",
+      "Évaluer la demande",
+      "P4"
+    ]
+  ],
+  "points_experts": [
+    "circuit"
+  ],
+  "ecartes": [],
+  "acyclique": true,
+  "invariants_violes": [],
+  "anomalies_source": [],
+  "diagnostic_vide": "",
+  "resume": {
+    "decisions": 2,
+    "inputs": 0,
+    "sources": 0,
+    "bkm": 0,
+    "IR": 1,
+    "KR": 0,
+    "AR": 0,
+    "a_confirmer": 1,
+    "ecartes": 0
+  },
+  "points": [
+    {
+      "categorie": "circuit",
+      "objet": "Évaluer la demande ⇄ Contrôler les observations",
+      "motif": "ces deux décisions semblent dépendre l'une de l'autre (chacune produit une donnée que l'autre lit) ; un modèle de décision ne peut pas contenir de boucle — le lien « Évaluer la demande → Contrôler les observations » a été écarté : lequel des deux sens est le bon ?",
+      "proposition": ""
+    }
+  ],
+  "ecartes_detail": []
+}

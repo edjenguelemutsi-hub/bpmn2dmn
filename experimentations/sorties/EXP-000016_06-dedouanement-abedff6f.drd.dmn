@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
+             xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+             xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             id="Definitions_Mainlev_e_d_une_d_claration_en_douane"
+             name="Mainlevée d'une déclaration en douane"
+             namespace="http://bpmn2dmn/genere"
+             exporter="bpmn2dmn" exporterVersion="1.0">
+  <decision id="D1" name="Vérifier les documents joints">
+    <informationRequirement id="ir1"><requiredInput href="#I1"/></informationRequirement>
+    <informationRequirement id="ir2"><requiredInput href="#I2"/></informationRequirement>
+    <authorityRequirement id="ar1"><requiredAuthority href="#K1"/></authorityRequirement>
+  </decision>
+  <decision id="D2" name="Apprécier la valeur en douane">
+    <informationRequirement id="ir3"><requiredInput href="#I3"/></informationRequirement>
+  </decision>
+  <inputData id="I1" name="Déclaration en détail"/>
+  <inputData id="I2" name="Facture commerciale"/>
+  <inputData id="I3" name="Fichier des valeurs"/>
+  <knowledgeSource id="K1" name="Procédure du circuit de visite en vigueur"/>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DRD_Mainlev_e_d_une_d_claration_en_douan">
+      <dmndi:DMNShape id="s_D1" dmnElementRef="D1">
+        <dc:Bounds x="80" y="40" width="192" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_D2" dmnElementRef="D2">
+        <dc:Bounds x="352" y="40" width="192" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I1" dmnElementRef="I1">
+        <dc:Bounds x="108" y="240" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I2" dmnElementRef="I2">
+        <dc:Bounds x="290" y="240" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_K1" dmnElementRef="K1">
+        <dc:Bounds x="470" y="238" width="181" height="63"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I3" dmnElementRef="I3">
+        <dc:Bounds x="698" y="240" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="e_ir1" dmnElementRef="ir1">
+        <di:waypoint x="176" y="240"/><di:waypoint x="170" y="120"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir2" dmnElementRef="ir2">
+        <di:waypoint x="357" y="240"/><di:waypoint x="176" y="120"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ar1" dmnElementRef="ar1">
+        <di:waypoint x="561" y="238"/><di:waypoint x="182" y="120"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir3" dmnElementRef="ir3">
+        <di:waypoint x="765" y="240"/><di:waypoint x="448" y="120"/>
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

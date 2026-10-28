@@ -1,0 +1,19 @@
+{
+  "id": "C08",
+  "titre": "Annotation ambiguë",
+  "pattern": "γ indéterminé : une annotation sans indice n'est pas qualifiée",
+  "elements_bpmn": "textAnnotation, association, userTask, exclusiveGateway",
+  "decisions": [
+    "Vérifier la recevabilité de la demande"
+  ],
+  "inputs": [],
+  "sources": [],
+  "bkms": [],
+  "arcs": [],
+  "points_experts": [
+    "annotation"
+  ],
+  "ecartes": [],
+  "verdict_attendu": "limite",
+  "enseignement": "Le lexique de γ ne reconnaît ni autorité ni règle : la question « donnée ou source de connaissance ? » est posée à l'expert, limite assumée des heuristiques lexicales."
+}

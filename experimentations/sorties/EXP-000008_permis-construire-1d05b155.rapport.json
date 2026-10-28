@@ -1,0 +1,155 @@
+{
+  "nom": "Instruction d'un permis de construire",
+  "resume": {
+    "decisions": 3,
+    "inputs": 3,
+    "sources": 1,
+    "bkm": 1,
+    "IR": 4,
+    "KR": 1,
+    "AR": 1,
+    "a_confirmer": 8,
+    "ecartes": 0
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "nom": "Vérifier la complétude de la demande de permis",
+      "origine": "t3",
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+    },
+    {
+      "id": "D2",
+      "nom": "Examiner la conformité au plan d'urbanisme",
+      "origine": "t5",
+      "motif": "verbe décisionnel dans le libellé"
+    },
+    {
+      "id": "D3",
+      "nom": "Statuer sur la délivrance du permis",
+      "origine": "t6",
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "I1",
+      "nom": "Demande de permis",
+      "pattern": "P2"
+    },
+    {
+      "id": "I2",
+      "nom": "Plans architecturaux",
+      "pattern": "P2"
+    },
+    {
+      "id": "I3",
+      "nom": "Plan d'urbanisme",
+      "pattern": "P2"
+    }
+  ],
+  "sources": [
+    {
+      "id": "K1",
+      "nom": "Réglementation d'urbanisme : servitudes et emprises applicables",
+      "pattern": "P6"
+    }
+  ],
+  "bkms": [
+    {
+      "id": "B1",
+      "nom": "Règle : Barème des redevances de délivrance du permis"
+    }
+  ],
+  "IR": [
+    [
+      "I1",
+      "D1"
+    ],
+    [
+      "I2",
+      "D2"
+    ],
+    [
+      "I3",
+      "D2"
+    ],
+    [
+      "D2",
+      "D3"
+    ]
+  ],
+  "KR": [
+    [
+      "B1",
+      "D3"
+    ]
+  ],
+  "AR": [
+    [
+      "K1",
+      "D2"
+    ]
+  ],
+  "acyclique": true,
+  "invariants_violes": [],
+  "a_confirmer": [
+    {
+      "cle": "t1",
+      "categorie": "candidat",
+      "objet": "Enregistrer la demande de permis",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "t2",
+      "categorie": "candidat",
+      "objet": "Saisir les caractéristiques du projet",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "t4",
+      "categorie": "candidat",
+      "objet": "Consulter les services techniques",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "t8",
+      "categorie": "candidat",
+      "objet": "Archiver le dossier du permis",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "ressource:Agent du guichet urbanisme",
+      "categorie": "ressource",
+      "objet": "Agent du guichet urbanisme",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    },
+    {
+      "cle": "ressource:Commission technique",
+      "categorie": "ressource",
+      "objet": "Commission technique",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    },
+    {
+      "cle": "an1",
+      "categorie": "annotation",
+      "objet": "Réglementation d'urbanisme : servitudes et emprises applicab…",
+      "motif": "proposée comme SOURCE DE CONNAISSANCE (elle gouverne la décision)",
+      "proposition": "KS"
+    },
+    {
+      "cle": "an2",
+      "categorie": "annotation",
+      "objet": "Barème des redevances de délivrance du permis",
+      "motif": "proposée comme MODÈLE DE CONNAISSANCE MÉTIER (règle exécutable)",
+      "proposition": "BKM"
+    }
+  ],
+  "ecartes": []
+}

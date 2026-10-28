@@ -1,0 +1,25 @@
+{
+  "id": "A06",
+  "titre": "Événement de départ à message",
+  "pattern": "Π4 / P3 : événement de départ porteur → donnée d'entrée (IR)",
+  "elements_bpmn": "startEvent + messageEventDefinition, userTask, exclusiveGateway",
+  "decisions": [
+    "Vérifier la recevabilité de la demande"
+  ],
+  "inputs": [
+    "Demande d'agrément reçue"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Demande d'agrément reçue",
+      "Vérifier la recevabilité de la demande",
+      "P3"
+    ]
+  ],
+  "points_experts": [],
+  "ecartes": [],
+  "verdict_attendu": "conforme",
+  "enseignement": "L'événement de départ à message précède immédiatement la décision : sa charge utile devient une donnée d'entrée."
+}

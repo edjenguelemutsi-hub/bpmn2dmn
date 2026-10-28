@@ -1,0 +1,43 @@
+{
+  "nom": "Corroboration par la position",
+  "resume": {
+    "decisions": 1,
+    "inputs": 1,
+    "sources": 0,
+    "bkm": 0,
+    "IR": 1,
+    "KR": 0,
+    "AR": 0,
+    "a_confirmer": 0,
+    "ecartes": 0
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "nom": "Instruire la demande",
+      "origine": "Tache_4",
+      "motif": "précède une passerelle exclusive"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "I1",
+      "nom": "Demande d'agrément",
+      "pattern": "P2"
+    }
+  ],
+  "sources": [],
+  "bkms": [],
+  "IR": [
+    [
+      "I1",
+      "D1"
+    ]
+  ],
+  "KR": [],
+  "AR": [],
+  "acyclique": true,
+  "invariants_violes": [],
+  "a_confirmer": [],
+  "ecartes": []
+}

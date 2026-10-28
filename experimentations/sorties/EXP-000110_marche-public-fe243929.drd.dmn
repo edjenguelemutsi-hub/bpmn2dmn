@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
+             xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+             xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             id="Definitions__valuation_des_offres_d_un_appel_d_offre"
+             name="Évaluation des offres d'un appel d'offres"
+             namespace="http://bpmn2dmn/genere"
+             exporter="bpmn2dmn" exporterVersion="1.0">
+  <decision id="D1" name="Vérifier la conformité administrative des offres">
+    <informationRequirement id="ir1"><requiredInput href="#I1"/></informationRequirement>
+    <informationRequirement id="ir2"><requiredInput href="#I2"/></informationRequirement>
+  </decision>
+  <decision id="D2" name="Coter les offres techniques">
+    <informationRequirement id="ir3"><requiredInput href="#I1"/></informationRequirement>
+    <informationRequirement id="ir4"><requiredInput href="#I3"/></informationRequirement>
+    <knowledgeRequirement id="kr1"><requiredKnowledge href="#B1"/></knowledgeRequirement>
+  </decision>
+  <decision id="D3" name="Statuer sur l'attribution du marché">
+    <informationRequirement id="ir5"><requiredInput href="#I4"/></informationRequirement>
+    <informationRequirement id="ir6"><requiredDecision href="#D2"/></informationRequirement>
+    <authorityRequirement id="ar1"><requiredAuthority href="#K1"/></authorityRequirement>
+  </decision>
+  <decision id="D4" name="Apprécier la recevabilité des recours">
+    <informationRequirement id="ir7"><requiredInput href="#I5"/></informationRequirement>
+  </decision>
+  <businessKnowledgeModel id="B1" name="Règle : Formule de pondération technique et financière des offres">
+  </businessKnowledgeModel>
+  <inputData id="I1" name="Offres techniques"/>
+  <inputData id="I2" name="Registre des prestataires"/>
+  <inputData id="I3" name="Cahier des charges"/>
+  <inputData id="I4" name="Offres financières"/>
+  <inputData id="I5" name="Mémoire de recours"/>
+  <knowledgeSource id="K1" name="Code des marchés publics : règles de passation et de publicité"/>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DRD__valuation_des_offres_d_un_appel_d_o">
+      <dmndi:DMNShape id="s_D1" dmnElementRef="D1">
+        <dc:Bounds x="80" y="230" width="238" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_D2" dmnElementRef="D2">
+        <dc:Bounds x="424" y="230" width="187" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_D3" dmnElementRef="D3">
+        <dc:Bounds x="414" y="40" width="206" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_D4" dmnElementRef="D4">
+        <dc:Bounds x="730" y="230" width="211" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I2" dmnElementRef="I2">
+        <dc:Bounds x="130" y="430" width="137" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I1" dmnElementRef="I1">
+        <dc:Bounds x="314" y="430" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_B1" dmnElementRef="B1">
+        <dc:Bounds x="495" y="422" width="230" height="76"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I3" dmnElementRef="I3">
+        <dc:Bounds x="772" y="430" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I4" dmnElementRef="I4">
+        <dc:Bounds x="952" y="430" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_K1" dmnElementRef="K1">
+        <dc:Bounds x="1134" y="422" width="230" height="76"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I5" dmnElementRef="I5">
+        <dc:Bounds x="1410" y="430" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="e_ir1" dmnElementRef="ir1">
+        <di:waypoint x="381" y="430"/><di:waypoint x="202" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir2" dmnElementRef="ir2">
+        <di:waypoint x="199" y="430"/><di:waypoint x="196" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir3" dmnElementRef="ir3">
+        <di:waypoint x="381" y="430"/><di:waypoint x="511" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir4" dmnElementRef="ir4">
+        <di:waypoint x="839" y="430"/><di:waypoint x="523" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_kr1" dmnElementRef="kr1">
+        <di:waypoint x="610" y="422"/><di:waypoint x="517" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir5" dmnElementRef="ir5">
+        <di:waypoint x="1020" y="430"/><di:waypoint x="1020" y="142"/><di:waypoint x="438" y="142"/><di:waypoint x="438" y="120"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir6" dmnElementRef="ir6">
+        <di:waypoint x="517" y="230"/><di:waypoint x="517" y="120"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ar1" dmnElementRef="ar1">
+        <di:waypoint x="1249" y="422"/><di:waypoint x="1249" y="154"/><di:waypoint x="466" y="154"/><di:waypoint x="466" y="120"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir7" dmnElementRef="ir7">
+        <di:waypoint x="1478" y="430"/><di:waypoint x="1478" y="332"/><di:waypoint x="754" y="332"/><di:waypoint x="754" y="310"/>
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

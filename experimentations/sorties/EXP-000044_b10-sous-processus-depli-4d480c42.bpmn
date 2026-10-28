@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn2dmn/catalogue" exporter="bpmn2dmn" exporterVersion="1.0">
+  <bpmn:collaboration id="Collab_1">
+    <bpmn:participant id="Pool_1" name="Guichet unique du commerce extérieur" processRef="Process_1"/>
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1" name="Sous-processus déplié" isExecutable="false">
+    <bpmn:laneSet id="Lanes_1">
+      <bpmn:lane id="Lane_1" name="Agent instructeur">
+        <bpmn:flowNodeRef>Depart_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Depart_3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Tache_4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Fin_8</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Bord_11</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Passerelle_15</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Fin_16</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Fin_17</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_2" name="Secrétariat">
+        <bpmn:flowNodeRef>Tache_12</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Fin_14</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+      <bpmn:startEvent id="Depart_1" name="Demande déposée"></bpmn:startEvent>
+      <bpmn:dataObjectReference id="Donnee_6" name="Demande d'agrément" dataObjectRef="Donnee_6_o"/>
+      <bpmn:dataObject id="Donnee_6_o"/>
+      <bpmn:subProcess id="SousProcessus_2" name="Instruction du dossier">
+      <bpmn:startEvent id="Depart_3" name=""></bpmn:startEvent>
+      <bpmn:userTask id="Tache_4" name="Vérifier la conformité des pièces"><bpmn:property id="Prop_5" name="__targetRef_placeholder"/>        <bpmn:dataInputAssociation id="Lecture_7"><bpmn:sourceRef>Donnee_6</bpmn:sourceRef><bpmn:targetRef>Prop_5</bpmn:targetRef></bpmn:dataInputAssociation></bpmn:userTask>
+      <bpmn:endEvent id="Fin_8" name=""></bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flux_9" sourceRef="Depart_3" targetRef="Tache_4"/>
+      <bpmn:sequenceFlow id="Flux_10" sourceRef="Tache_4" targetRef="Fin_8"/>
+      </bpmn:subProcess>
+      <bpmn:boundaryEvent id="Bord_11" name="Pièce complémentaire reçue" attachedToRef="SousProcessus_2" cancelActivity="false"><bpmn:messageEventDefinition id="Bord_11_md"/></bpmn:boundaryEvent>
+      <bpmn:task id="Tache_12" name="Verser la pièce au dossier"></bpmn:task>
+      <bpmn:endEvent id="Fin_14" name="Pièce versée"></bpmn:endEvent>
+      <bpmn:exclusiveGateway id="Passerelle_15" name="Pièces conformes ?"/>
+      <bpmn:endEvent id="Fin_16" name="Dossier instruit"></bpmn:endEvent>
+      <bpmn:endEvent id="Fin_17" name="Dossier rejeté"></bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flux_18" sourceRef="Depart_1" targetRef="SousProcessus_2"/>
+      <bpmn:sequenceFlow id="Flux_19" sourceRef="SousProcessus_2" targetRef="Passerelle_15"/>
+      <bpmn:sequenceFlow id="Flux_20" sourceRef="Passerelle_15" targetRef="Fin_16" name="oui"/>
+      <bpmn:sequenceFlow id="Flux_21" sourceRef="Passerelle_15" targetRef="Fin_17" name="non"/>
+      <bpmn:sequenceFlow id="Flux_22" sourceRef="Bord_11" targetRef="Tache_12"/>
+      <bpmn:sequenceFlow id="Flux_23" sourceRef="Tache_12" targetRef="Fin_14"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagramme_1">
+    <bpmndi:BPMNPlane id="Plan_1" bpmnElement="Collab_1">
+      <bpmndi:BPMNShape id="di_Pool_1" bpmnElement="Pool_1" isHorizontal="true"><dc:Bounds x="160" y="80" width="1423" height="600"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Lane_1" bpmnElement="Lane_1" isHorizontal="true"><dc:Bounds x="190" y="80" width="1393" height="300"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Lane_2" bpmnElement="Lane_2" isHorizontal="true"><dc:Bounds x="190" y="380" width="1393" height="300"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Depart_1" bpmnElement="Depart_1"><dc:Bounds x="287" y="237" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Depart_3" bpmnElement="Depart_3"><dc:Bounds x="487" y="267" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Tache_4" bpmnElement="Tache_4"><dc:Bounds x="640" y="245" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Donnee_6" bpmnElement="Donnee_6"><dc:Bounds x="522" y="100" width="36" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="564" y="111" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Fin_8" bpmnElement="Fin_8"><dc:Bounds x="887" y="267" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Bord_11" bpmnElement="Bord_11"><dc:Bounds x="950" y="317" width="36" height="36"/><bpmndi:BPMNLabel><dc:Bounds x="992" y="321" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Tache_12" bpmnElement="Tache_12"><dc:Bounds x="1040" y="480" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Fin_14" bpmnElement="Fin_14"><dc:Bounds x="1287" y="502" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Passerelle_15" bpmnElement="Passerelle_15"><dc:Bounds x="1280" y="230" width="50" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="1230" y="198" width="150" height="26"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Fin_16" bpmnElement="Fin_16"><dc:Bounds x="1487" y="237" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Fin_17" bpmnElement="Fin_17"><dc:Bounds x="1287" y="303" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_SousProcessus_2" bpmnElement="SousProcessus_2" isExpanded="true"><dc:Bounds x="410" y="175" width="590" height="160"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="di_Lecture_7" bpmnElement="Lecture_7"><di:waypoint x="540" y="150"/><di:waypoint x="540" y="227"/><di:waypoint x="675" y="227"/><di:waypoint x="675" y="245"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_Flux_9" bpmnElement="Flux_9"><di:waypoint x="523" y="285"/><di:waypoint x="640" y="285"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_Flux_10" bpmnElement="Flux_10"><di:waypoint x="770" y="285"/><di:waypoint x="887" y="285"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_Flux_18" bpmnElement="Flux_18"><di:waypoint x="323" y="255"/><di:waypoint x="410" y="255"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_Flux_19" bpmnElement="Flux_19"><di:waypoint x="1000" y="255"/><di:waypoint x="1280" y="255"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_Flux_20" bpmnElement="Flux_20"><di:waypoint x="1330" y="255"/><di:waypoint x="1487" y="255"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_Flux_21" bpmnElement="Flux_21"><di:waypoint x="1305" y="280"/><di:waypoint x="1305" y="303"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_Flux_22" bpmnElement="Flux_22"><di:waypoint x="968" y="353"/><di:waypoint x="968" y="520"/><di:waypoint x="1040" y="520"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_Flux_23" bpmnElement="Flux_23"><di:waypoint x="1170" y="520"/><di:waypoint x="1287" y="520"/></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

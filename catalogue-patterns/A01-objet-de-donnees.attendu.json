@@ -1,0 +1,25 @@
+{
+  "id": "A01",
+  "titre": "Objet de données lu par la décision",
+  "pattern": "Π1 / P2 : objet de données → donnée d'entrée (IR)",
+  "elements_bpmn": "dataObjectReference, dataInputAssociation, userTask, exclusiveGateway",
+  "decisions": [
+    "Vérifier la recevabilité de la demande"
+  ],
+  "inputs": [
+    "Demande d'agrément"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Demande d'agrément",
+      "Vérifier la recevabilité de la demande",
+      "P2"
+    ]
+  ],
+  "points_experts": [],
+  "ecartes": [],
+  "verdict_attendu": "conforme",
+  "enseignement": "L'objet de données lu devient une donnée d'entrée reliée par une exigence d'information ; règle fermée, sans intervention."
+}

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
+             xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+             xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             id="Definitions_D_pendance_entre_deux_d_cisions"
+             name="Dépendance entre deux décisions"
+             namespace="http://bpmn2dmn/genere"
+             exporter="bpmn2dmn" exporterVersion="1.0">
+  <decision id="D1" name="Vérifier la complétude du dossier">
+    <informationRequirement id="ir1"><requiredInput href="#I1"/></informationRequirement>
+  </decision>
+  <decision id="D2" name="Statuer sur l'agrément">
+    <informationRequirement id="ir2"><requiredDecision href="#D1"/></informationRequirement>
+  </decision>
+  <inputData id="I1" name="Demande d'agrément"/>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DRD_D_pendance_entre_deux_d_cisions">
+      <dmndi:DMNShape id="s_D1" dmnElementRef="D1">
+        <dc:Bounds x="80" y="230" width="202" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_D2" dmnElementRef="D2">
+        <dc:Bounds x="91" y="40" width="180" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I1" dmnElementRef="I1">
+        <dc:Bounds x="114" y="430" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="e_ir1" dmnElementRef="ir1">
+        <di:waypoint x="181" y="430"/><di:waypoint x="181" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir2" dmnElementRef="ir2">
+        <di:waypoint x="181" y="230"/><di:waypoint x="181" y="120"/>
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

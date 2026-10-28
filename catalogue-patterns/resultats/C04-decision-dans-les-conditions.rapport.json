@@ -1,0 +1,35 @@
+{
+  "decisions": [],
+  "inputs": [],
+  "sources": [],
+  "bkms": [],
+  "arcs": [],
+  "points_experts": [
+    "hors-definition"
+  ],
+  "ecartes": [],
+  "acyclique": true,
+  "invariants_violes": [],
+  "anomalies_source": [],
+  "diagnostic_vide": "Aucune activité candidate : seules les tâches utilisateur, les tâches de règle métier et les sous-processus repliés sont candidats. Ce modèle contient seulement : 1 tâche de service (« Calculer le montant des droits »). « Calculer le montant des droits » précède une passerelle exclusive : si une décision y est prise, retypez cette activité en tâche utilisateur ou en tâche de règle métier dans votre outil de modélisation, puis relancez l'extraction.",
+  "resume": {
+    "decisions": 0,
+    "inputs": 0,
+    "sources": 0,
+    "bkm": 0,
+    "IR": 0,
+    "KR": 0,
+    "AR": 0,
+    "a_confirmer": 1,
+    "ecartes": 0
+  },
+  "points": [
+    {
+      "categorie": "hors-definition",
+      "objet": "Calculer le montant des droits",
+      "motif": "tâche de SERVICE corroborée par un indice de décision : décision de fait, non couverte par la définition de référence",
+      "proposition": ""
+    }
+  ],
+  "ecartes_detail": []
+}

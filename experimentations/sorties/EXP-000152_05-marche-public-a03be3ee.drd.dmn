@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
+             xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+             xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             id="Definitions__valuation_des_offres_d_un_appel_d_offre"
+             name="Évaluation des offres d'un appel d'offres"
+             namespace="http://bpmn2dmn/genere"
+             exporter="bpmn2dmn" exporterVersion="1.0">
+  <decision id="D1" name="Vérifier la conformité administrative">
+    <informationRequirement id="ir1"><requiredInput href="#I1"/></informationRequirement>
+    <authorityRequirement id="ar1"><requiredAuthority href="#K1"/></authorityRequirement>
+  </decision>
+  <decision id="D2" name="Évaluer l'offre technique">
+    <informationRequirement id="ir2"><requiredInput href="#I2"/></informationRequirement>
+    <knowledgeRequirement id="kr1"><requiredKnowledge href="#B1"/></knowledgeRequirement>
+  </decision>
+  <decision id="D3" name="Évaluer l'offre financière">
+    <informationRequirement id="ir3"><requiredInput href="#I3"/></informationRequirement>
+  </decision>
+  <decision id="D4" name="Statuer sur l'attribution du marché">
+    <informationRequirement id="ir4"><requiredDecision href="#D2"/></informationRequirement>
+    <informationRequirement id="ir5"><requiredDecision href="#D3"/></informationRequirement>
+  </decision>
+  <businessKnowledgeModel id="B1" name="Règle : Pondération technique et financière des offres">
+  </businessKnowledgeModel>
+  <inputData id="I1" name="Offre administrative"/>
+  <inputData id="I2" name="Offre technique"/>
+  <inputData id="I3" name="Offre financière"/>
+  <knowledgeSource id="K1" name="Code des marchés publics, articles 45 à 52"/>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DRD__valuation_des_offres_d_un_appel_d_o">
+      <dmndi:DMNShape id="s_D1" dmnElementRef="D1">
+        <dc:Bounds x="80" y="230" width="211" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_D2" dmnElementRef="D2">
+        <dc:Bounds x="386" y="230" width="182" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_D3" dmnElementRef="D3">
+        <dc:Bounds x="675" y="230" width="185" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_D4" dmnElementRef="D4">
+        <dc:Bounds x="519" y="40" width="206" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I1" dmnElementRef="I1">
+        <dc:Bounds x="118" y="430" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_K1" dmnElementRef="K1">
+        <dc:Bounds x="300" y="428" width="183" height="63"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_B1" dmnElementRef="B1">
+        <dc:Bounds x="529" y="430" width="222" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I2" dmnElementRef="I2">
+        <dc:Bounds x="798" y="438" width="135" height="45"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I3" dmnElementRef="I3">
+        <dc:Bounds x="978" y="438" width="135" height="45"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="e_ir1" dmnElementRef="ir1">
+        <di:waypoint x="186" y="430"/><di:waypoint x="182" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ar1" dmnElementRef="ar1">
+        <di:waypoint x="391" y="428"/><di:waypoint x="188" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir2" dmnElementRef="ir2">
+        <di:waypoint x="865" y="438"/><di:waypoint x="480" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_kr1" dmnElementRef="kr1">
+        <di:waypoint x="640" y="430"/><di:waypoint x="474" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir3" dmnElementRef="ir3">
+        <di:waypoint x="1046" y="438"/><di:waypoint x="768" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir4" dmnElementRef="ir4">
+        <di:waypoint x="476" y="230"/><di:waypoint x="619" y="120"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir5" dmnElementRef="ir5">
+        <di:waypoint x="768" y="230"/><di:waypoint x="625" y="120"/>
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

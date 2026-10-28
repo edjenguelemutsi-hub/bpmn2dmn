@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
+             xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+             xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             id="Definitions_Traitement_d_une_d_claration_de_sinistre"
+             name="Traitement d'une déclaration de sinistre"
+             namespace="http://bpmn2dmn/genere"
+             exporter="bpmn2dmn" exporterVersion="1.0">
+  <decision id="D1" name="Vérifier les garanties du contrat">
+    <informationRequirement id="ir1"><requiredInput href="#I1"/></informationRequirement>
+    <informationRequirement id="ir2"><requiredInput href="#I2"/></informationRequirement>
+    <authorityRequirement id="ar1"><requiredAuthority href="#K1"/></authorityRequirement>
+  </decision>
+  <decision id="D2" name="Apprécier la responsabilité de l'assuré">
+    <informationRequirement id="ir3"><requiredInput href="#I3"/></informationRequirement>
+    <informationRequirement id="ir4"><requiredInput href="#I4"/></informationRequirement>
+  </decision>
+  <decision id="D3" name="Décider de l'indemnisation du sinistre">
+    <informationRequirement id="ir5"><requiredDecision href="#D2"/></informationRequirement>
+    <knowledgeRequirement id="kr1"><requiredKnowledge href="#B1"/></knowledgeRequirement>
+  </decision>
+  <businessKnowledgeModel id="B1" name="Règle : Barème d'indemnisation par type de dommage et vétusté du véhicule">
+  </businessKnowledgeModel>
+  <inputData id="I1" name="Déclaration de sinistre"/>
+  <inputData id="I2" name="Base des contrats"/>
+  <inputData id="I3" name="Constat amiable"/>
+  <inputData id="I4" name="Rapport d'expertise"/>
+  <knowledgeSource id="K1" name="Code CIMA des assurances : obligations de l'assureur envers l'assuré"/>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DRD_Traitement_d_une_d_claration_de_sini">
+      <dmndi:DMNShape id="s_D1" dmnElementRef="D1">
+        <dc:Bounds x="87" y="230" width="202" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_D2" dmnElementRef="D2">
+        <dc:Bounds x="376" y="230" width="216" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_D3" dmnElementRef="D3">
+        <dc:Bounds x="377" y="40" width="214" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_B1" dmnElementRef="B1">
+        <dc:Bounds x="87" y="42" width="230" height="76"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I1" dmnElementRef="I1">
+        <dc:Bounds x="120" y="430" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I2" dmnElementRef="I2">
+        <dc:Bounds x="302" y="430" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_K1" dmnElementRef="K1">
+        <dc:Bounds x="483" y="422" width="230" height="76"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I3" dmnElementRef="I3">
+        <dc:Bounds x="760" y="438" width="135" height="45"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I4" dmnElementRef="I4">
+        <dc:Bounds x="940" y="430" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="e_ir1" dmnElementRef="ir1">
+        <di:waypoint x="188" y="430"/><di:waypoint x="182" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir2" dmnElementRef="ir2">
+        <di:waypoint x="369" y="430"/><di:waypoint x="188" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ar1" dmnElementRef="ar1">
+        <di:waypoint x="598" y="422"/><di:waypoint x="194" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir3" dmnElementRef="ir3">
+        <di:waypoint x="827" y="438"/><di:waypoint x="484" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir4" dmnElementRef="ir4">
+        <di:waypoint x="1008" y="430"/><di:waypoint x="1008" y="332"/><di:waypoint x="400" y="332"/><di:waypoint x="400" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir5" dmnElementRef="ir5">
+        <di:waypoint x="484" y="230"/><di:waypoint x="484" y="120"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_kr1" dmnElementRef="kr1">
+        <di:waypoint x="317" y="80"/><di:waypoint x="377" y="80"/>
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

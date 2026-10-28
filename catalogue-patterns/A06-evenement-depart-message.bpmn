@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn2dmn/catalogue" exporter="bpmn2dmn" exporterVersion="1.0">
+  <bpmn:collaboration id="Collab_1">
+    <bpmn:participant id="Pool_1" name="Guichet unique du commerce extérieur" processRef="Process_1"/>
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1" name="Événement de départ à message" isExecutable="false">
+      <bpmn:startEvent id="Depart_1" name="Demande d'agrément reçue"><bpmn:messageEventDefinition id="Depart_1_md"/></bpmn:startEvent>
+      <bpmn:userTask id="Tache_2" name="Vérifier la recevabilité de la demande"></bpmn:userTask>
+      <bpmn:exclusiveGateway id="Passerelle_4" name="Demande recevable ?"/>
+      <bpmn:endEvent id="Fin_5" name="Demande acceptée"></bpmn:endEvent>
+      <bpmn:endEvent id="Fin_6" name="Demande rejetée"></bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flux_7" sourceRef="Depart_1" targetRef="Tache_2"/>
+      <bpmn:sequenceFlow id="Flux_8" sourceRef="Tache_2" targetRef="Passerelle_4"/>
+      <bpmn:sequenceFlow id="Flux_9" sourceRef="Passerelle_4" targetRef="Fin_5" name="oui"/>
+      <bpmn:sequenceFlow id="Flux_10" sourceRef="Passerelle_4" targetRef="Fin_6" name="non"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagramme_1">
+    <bpmndi:BPMNPlane id="Plan_1" bpmnElement="Collab_1">
+      <bpmndi:BPMNShape id="di_Pool_1" bpmnElement="Pool_1" isHorizontal="true"><dc:Bounds x="160" y="80" width="823" height="260"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Depart_1" bpmnElement="Depart_1"><dc:Bounds x="287" y="202" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Tache_2" bpmnElement="Tache_2"><dc:Bounds x="440" y="180" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Passerelle_4" bpmnElement="Passerelle_4"><dc:Bounds x="680" y="195" width="50" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="630" y="163" width="150" height="26"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Fin_5" bpmnElement="Fin_5"><dc:Bounds x="887" y="202" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Fin_6" bpmnElement="Fin_6"><dc:Bounds x="687" y="268" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="di_Flux_7" bpmnElement="Flux_7"><di:waypoint x="323" y="220"/><di:waypoint x="440" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_Flux_8" bpmnElement="Flux_8"><di:waypoint x="570" y="220"/><di:waypoint x="680" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_Flux_9" bpmnElement="Flux_9"><di:waypoint x="730" y="220"/><di:waypoint x="887" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_Flux_10" bpmnElement="Flux_10"><di:waypoint x="705" y="245"/><di:waypoint x="705" y="268"/></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

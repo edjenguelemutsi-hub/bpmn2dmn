@@ -1,0 +1,45 @@
+{
+  "id": "B08",
+  "titre": "Injectivité des correspondances",
+  "pattern": "δ et ι injectives : une donnée lue par deux décisions, une annotation reliée à deux décisions",
+  "elements_bpmn": "deux userTask décisionnelles, dataObjectReference partagé, textAnnotation partagée",
+  "decisions": [
+    "Vérifier la recevabilité de la demande",
+    "Statuer sur l'agrément"
+  ],
+  "inputs": [
+    "Demande d'agrément"
+  ],
+  "sources": [
+    "Réglementation FIMEX en vigueur"
+  ],
+  "bkms": [],
+  "arcs": [
+    [
+      "Demande d'agrément",
+      "Vérifier la recevabilité de la demande",
+      "P2"
+    ],
+    [
+      "Demande d'agrément",
+      "Statuer sur l'agrément",
+      "P2"
+    ],
+    [
+      "Réglementation FIMEX en vigueur",
+      "Vérifier la recevabilité de la demande",
+      "P6"
+    ],
+    [
+      "Réglementation FIMEX en vigueur",
+      "Statuer sur l'agrément",
+      "P6"
+    ]
+  ],
+  "points_experts": [
+    "annotation"
+  ],
+  "ecartes": [],
+  "verdict_attendu": "conforme",
+  "enseignement": "Une source déjà traduite n'est jamais dupliquée : une seule donnée d'entrée et une seule source de connaissance, reliées deux fois."
+}

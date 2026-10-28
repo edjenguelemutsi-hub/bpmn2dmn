@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Processus clinique COPD (diagnostic et traitement de la BPCO), tel que decrit
+  par Bazhenova, Zerbato, Oliboni & Weske, Information Systems 83 (2019), Fig. 1.
+  Modele de reference issu de la litterature : sert de temoin de comparaison.
+  Activites de decision annoncees par les auteurs (Tab. 2) : Evaluate request,
+  Evaluate hospitalization, Make working diagnosis, Plan an examination.
+-->
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  id="defs_copd" targetNamespace="http://example.org/copd">
+  <bpmn:process id="proc_copd" name="Diagnostic et traitement de la BPCO" isExecutable="false">
+
+    <bpmn:laneSet id="lanes_copd">
+      <bpmn:lane id="lane_phys" name="Physician">
+        <bpmn:flowNodeRef>ev_request</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_eval_request</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>gw_staged</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_eval_hosp</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>gw_hosp</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_prescribe</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_plan_exam</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_refresh</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_examine</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_working_diag</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_workup</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ev_end1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ev_end2</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="lane_pulmo" name="Pulmonologist">
+        <bpmn:flowNodeRef>t_treat_exac</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+
+    <bpmn:dataObjectReference id="do_anamnesis" name="Anamnesis report"/>
+    <bpmn:dataStoreReference  id="ds_ehr"       name="EHR"/>
+
+    <bpmn:startEvent id="ev_request" name="Patient request">
+      <bpmn:messageEventDefinition id="med_c1"/>
+      <bpmn:outgoing>c1</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:userTask id="t_eval_request" name="Evaluate request">
+      <bpmn:incoming>c1</bpmn:incoming><bpmn:outgoing>c2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="gw_staged" name="Is the patient already staged?">
+      <bpmn:incoming>c2</bpmn:incoming>
+      <bpmn:outgoing>c3</bpmn:outgoing><bpmn:outgoing>c4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:userTask id="t_eval_hosp" name="Evaluate hospitalization">
+      <bpmn:incoming>c3</bpmn:incoming><bpmn:outgoing>c5</bpmn:outgoing>
+      <bpmn:dataInputAssociation id="dia_c1"><bpmn:sourceRef>ds_ehr</bpmn:sourceRef></bpmn:dataInputAssociation>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="gw_hosp" name="Does patient require hospitalization?">
+      <bpmn:incoming>c5</bpmn:incoming>
+      <bpmn:outgoing>c6</bpmn:outgoing><bpmn:outgoing>c7</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="t_treat_exac" name="Treat exacerbations">
+      <bpmn:incoming>c6</bpmn:incoming><bpmn:outgoing>c8</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="t_prescribe" name="Prescribe therapy">
+      <bpmn:incoming>c7</bpmn:incoming><bpmn:outgoing>c9</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <bpmn:userTask id="t_plan_exam" name="Plan an examination">
+      <bpmn:incoming>c8</bpmn:incoming><bpmn:incoming>c9</bpmn:incoming>
+      <bpmn:outgoing>c10</bpmn:outgoing>
+    </bpmn:userTask>
+    <!-- evenement limite NON INTERRUPTEUR attache a l'activite de decision -->
+    <bpmn:boundaryEvent id="ev_slot" name="Free time slot" attachedToRef="t_plan_exam" cancelActivity="false">
+      <bpmn:messageEventDefinition id="med_c2"/>
+      <bpmn:outgoing>c11</bpmn:outgoing>
+    </bpmn:boundaryEvent>
+    <bpmn:userTask id="t_refresh" name="Refresh calendar">
+      <bpmn:incoming>c11</bpmn:incoming><bpmn:outgoing>c12</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="ev_end1"><bpmn:incoming>c10</bpmn:incoming><bpmn:incoming>c12</bpmn:incoming></bpmn:endEvent>
+
+    <bpmn:userTask id="t_examine" name="Examine and interview patient">
+      <bpmn:incoming>c4</bpmn:incoming><bpmn:outgoing>c13</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="doa_c1"><bpmn:targetRef>do_anamnesis</bpmn:targetRef></bpmn:dataOutputAssociation>
+    </bpmn:userTask>
+    <bpmn:userTask id="t_working_diag" name="Make working diagnosis">
+      <bpmn:incoming>c13</bpmn:incoming><bpmn:outgoing>c14</bpmn:outgoing>
+      <bpmn:dataInputAssociation id="dia_c2"><bpmn:sourceRef>do_anamnesis</bpmn:sourceRef></bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation id="dia_c3"><bpmn:sourceRef>ds_ehr</bpmn:sourceRef></bpmn:dataInputAssociation>
+    </bpmn:userTask>
+    <bpmn:subProcess id="t_workup" name="Conduct diagnostic workup">
+      <bpmn:incoming>c14</bpmn:incoming><bpmn:outgoing>c15</bpmn:outgoing>
+    </bpmn:subProcess>
+    <bpmn:endEvent id="ev_end2"><bpmn:incoming>c15</bpmn:incoming></bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="c1"  sourceRef="ev_request"     targetRef="t_eval_request"/>
+    <bpmn:sequenceFlow id="c2"  sourceRef="t_eval_request" targetRef="gw_staged"/>
+    <bpmn:sequenceFlow id="c3"  name="YES" sourceRef="gw_staged" targetRef="t_eval_hosp"/>
+    <bpmn:sequenceFlow id="c4"  name="NO"  sourceRef="gw_staged" targetRef="t_examine"/>
+    <bpmn:sequenceFlow id="c5"  sourceRef="t_eval_hosp"    targetRef="gw_hosp"/>
+    <bpmn:sequenceFlow id="c6"  name="YES" sourceRef="gw_hosp" targetRef="t_treat_exac"/>
+    <bpmn:sequenceFlow id="c7"  name="NO"  sourceRef="gw_hosp" targetRef="t_prescribe"/>
+    <bpmn:sequenceFlow id="c8"  sourceRef="t_treat_exac"   targetRef="t_plan_exam"/>
+    <bpmn:sequenceFlow id="c9"  sourceRef="t_prescribe"    targetRef="t_plan_exam"/>
+    <bpmn:sequenceFlow id="c10" sourceRef="t_plan_exam"    targetRef="ev_end1"/>
+    <bpmn:sequenceFlow id="c11" sourceRef="ev_slot"        targetRef="t_refresh"/>
+    <bpmn:sequenceFlow id="c12" sourceRef="t_refresh"      targetRef="ev_end1"/>
+    <bpmn:sequenceFlow id="c13" sourceRef="t_examine"      targetRef="t_working_diag"/>
+    <bpmn:sequenceFlow id="c14" sourceRef="t_working_diag" targetRef="t_workup"/>
+    <bpmn:sequenceFlow id="c15" sourceRef="t_workup"       targetRef="ev_end2"/>
+
+    <bpmn:textAnnotation id="an_hosp">
+      <bpmn:text>Hospitalize if: symptoms are acute, sensory disturbances, new cardiac arrhythmia, no response to treatment</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="an_samedoc">
+      <bpmn:text>Must be the same doctor that has evaluated the patient request</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="an_symptoms">
+      <bpmn:text>Consider the following symptoms: chronic cough, phlegm and breath shortage</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="an_stage">
+      <bpmn:text>Consider patient conditions (and COPD stage)</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="as_c1" sourceRef="an_hosp"     targetRef="t_eval_hosp"/>
+    <bpmn:association id="as_c2" sourceRef="an_samedoc"  targetRef="t_eval_hosp"/>
+    <bpmn:association id="as_c3" sourceRef="an_symptoms" targetRef="t_working_diag"/>
+    <bpmn:association id="as_c4" sourceRef="an_stage"    targetRef="t_plan_exam"/>
+
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="diag_auto" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI">
+    <bpmndi:BPMNPlane id="plane_auto" bpmnElement="proc_copd">
+      <bpmndi:BPMNShape id="dis_ev_request" bpmnElement="ev_request"><dc:Bounds x="102" y="222" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t_eval_request" bpmnElement="t_eval_request"><dc:Bounds x="250" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_gw_staged" bpmnElement="gw_staged"><dc:Bounds x="475" y="215" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t_eval_hosp" bpmnElement="t_eval_hosp"><dc:Bounds x="630" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_gw_hosp" bpmnElement="gw_hosp"><dc:Bounds x="855" y="215" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t_treat_exac" bpmnElement="t_treat_exac"><dc:Bounds x="1010" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t_prescribe" bpmnElement="t_prescribe"><dc:Bounds x="1010" y="330" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t_plan_exam" bpmnElement="t_plan_exam"><dc:Bounds x="1200" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_ev_slot" bpmnElement="ev_slot"><dc:Bounds x="102" y="352" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t_refresh" bpmnElement="t_refresh"><dc:Bounds x="250" y="330" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_ev_end1" bpmnElement="ev_end1"><dc:Bounds x="1432" y="222" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t_examine" bpmnElement="t_examine"><dc:Bounds x="630" y="330" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t_working_diag" bpmnElement="t_working_diag"><dc:Bounds x="820" y="330" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t_workup" bpmnElement="t_workup"><dc:Bounds x="1010" y="460" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_ev_end2" bpmnElement="ev_end2"><dc:Bounds x="1242" y="352" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_do_anamnesis" bpmnElement="do_anamnesis"><dc:Bounds x="650" y="60" width="36" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_ds_ehr" bpmnElement="ds_ehr"><dc:Bounds x="710" y="60" width="36" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_an_hosp" bpmnElement="an_hosp"><dc:Bounds x="630" y="460" width="200" height="40"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_an_samedoc" bpmnElement="an_samedoc"><dc:Bounds x="630" y="510" width="200" height="40"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_an_symptoms" bpmnElement="an_symptoms"><dc:Bounds x="820" y="560" width="200" height="40"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_an_stage" bpmnElement="an_stage"><dc:Bounds x="1200" y="460" width="200" height="40"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="die_c1" bpmnElement="c1"><di:waypoint x="120" y="240"/><di:waypoint x="310" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_c2" bpmnElement="c2"><di:waypoint x="310" y="240"/><di:waypoint x="500" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_c3" bpmnElement="c3"><di:waypoint x="500" y="240"/><di:waypoint x="690" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_c4" bpmnElement="c4"><di:waypoint x="500" y="240"/><di:waypoint x="690" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_c5" bpmnElement="c5"><di:waypoint x="690" y="240"/><di:waypoint x="880" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_c6" bpmnElement="c6"><di:waypoint x="880" y="240"/><di:waypoint x="1070" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_c7" bpmnElement="c7"><di:waypoint x="880" y="240"/><di:waypoint x="1070" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_c8" bpmnElement="c8"><di:waypoint x="1070" y="240"/><di:waypoint x="1260" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_c9" bpmnElement="c9"><di:waypoint x="1070" y="370"/><di:waypoint x="1260" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_c10" bpmnElement="c10"><di:waypoint x="1260" y="240"/><di:waypoint x="1450" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_c11" bpmnElement="c11"><di:waypoint x="120" y="370"/><di:waypoint x="310" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_c12" bpmnElement="c12"><di:waypoint x="310" y="370"/><di:waypoint x="1450" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_c13" bpmnElement="c13"><di:waypoint x="690" y="370"/><di:waypoint x="880" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_c14" bpmnElement="c14"><di:waypoint x="880" y="370"/><di:waypoint x="1070" y="500"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_c15" bpmnElement="c15"><di:waypoint x="1070" y="500"/><di:waypoint x="1260" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_as_c1" bpmnElement="as_c1"><di:waypoint x="730" y="480"/><di:waypoint x="690" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_as_c2" bpmnElement="as_c2"><di:waypoint x="730" y="530"/><di:waypoint x="690" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_as_c3" bpmnElement="as_c3"><di:waypoint x="920" y="580"/><di:waypoint x="880" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_as_c4" bpmnElement="as_c4"><di:waypoint x="1300" y="480"/><di:waypoint x="1260" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_dia_c1" bpmnElement="dia_c1"><di:waypoint x="728" y="85"/><di:waypoint x="690" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_doa_c1" bpmnElement="doa_c1"><di:waypoint x="690" y="370"/><di:waypoint x="668" y="85"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_dia_c2" bpmnElement="dia_c2"><di:waypoint x="668" y="85"/><di:waypoint x="880" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_dia_c3" bpmnElement="dia_c3"><di:waypoint x="728" y="85"/><di:waypoint x="880" y="370"/></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

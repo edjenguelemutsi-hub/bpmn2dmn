@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
+             xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+             xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             id="Definitions_Annotation__non_ant_une_r_gle"
+             name="Annotation énonçant une règle"
+             namespace="http://bpmn2dmn/genere"
+             exporter="bpmn2dmn" exporterVersion="1.0">
+  <decision id="D1" name="Coter le dossier de l'opérateur">
+    <knowledgeRequirement id="kr1"><requiredKnowledge href="#B1"/></knowledgeRequirement>
+  </decision>
+  <businessKnowledgeModel id="B1" name="Règle : Barème de cotation par catégorie d'opérateur">
+  </businessKnowledgeModel>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DRD_Annotation__non_ant_une_r_gle">
+      <dmndi:DMNShape id="s_D1" dmnElementRef="D1">
+        <dc:Bounds x="80" y="40" width="197" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_B1" dmnElementRef="B1">
+        <dc:Bounds x="-197" y="50" width="217" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="e_kr1" dmnElementRef="kr1">
+        <di:waypoint x="20" y="80"/><di:waypoint x="80" y="80"/>
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

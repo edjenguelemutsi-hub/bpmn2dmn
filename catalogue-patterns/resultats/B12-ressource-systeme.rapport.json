@@ -1,0 +1,44 @@
+{
+  "decisions": [
+    "Contrôler la cohérence de la déclaration"
+  ],
+  "inputs": [
+    "Déclaration d'importation"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Déclaration d'importation",
+      "Contrôler la cohérence de la déclaration",
+      "P2"
+    ]
+  ],
+  "points_experts": [],
+  "ecartes": [
+    "ressource"
+  ],
+  "acyclique": true,
+  "invariants_violes": [],
+  "anomalies_source": [],
+  "diagnostic_vide": "",
+  "resume": {
+    "decisions": 1,
+    "inputs": 1,
+    "sources": 0,
+    "bkm": 0,
+    "IR": 1,
+    "KR": 0,
+    "AR": 0,
+    "a_confirmer": 0,
+    "ecartes": 1
+  },
+  "points": [],
+  "ecartes_detail": [
+    {
+      "categorie": "ressource",
+      "objet": "Système d'information du guichet",
+      "motif": "un système exécute, il ne gouverne pas"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "id": "B06",
+  "titre": "Branches parallèles",
+  "pattern": "P2 raffiné : donnée produite sur une branche, lue sur l'autre → donnée d'entrée, pas d'arc P4",
+  "elements_bpmn": "parallelGateway, deux couloirs, dataOutputAssociation, dataInputAssociation",
+  "decisions": [
+    "Évaluer la garantie financière",
+    "Statuer sur la demande"
+  ],
+  "inputs": [
+    "Garantie proposée",
+    "Avis financier"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Garantie proposée",
+      "Évaluer la garantie financière",
+      "P2"
+    ],
+    [
+      "Avis financier",
+      "Statuer sur la demande",
+      "P2"
+    ]
+  ],
+  "points_experts": [
+    "ressource",
+    "ressource"
+  ],
+  "ecartes": [],
+  "verdict_attendu": "conforme",
+  "enseignement": "Sans atteignabilité par les flux de séquence entre les deux branches, la donnée lue est traitée comme lue de l'extérieur : donnée d'entrée, et non dépendance entre décisions."
+}

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn2dmn/catalogue" exporter="bpmn2dmn" exporterVersion="1.0">
+  <bpmn:collaboration id="Collab_1">
+    <bpmn:participant id="Pool_1" name="Guichet unique du commerce extérieur" processRef="Process_1"/>
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1" name="Donnée d'entrée déclarée au niveau du processus" isExecutable="false">
+    <bpmn:ioSpecification id="IoSpec_1">
+      <bpmn:dataInput id="EntreeProcessus_1" name="Demande d'agrément"/>
+      <bpmn:inputSet id="InputSet_1"><bpmn:dataInputRefs>EntreeProcessus_1</bpmn:dataInputRefs></bpmn:inputSet>
+      <bpmn:outputSet id="OutputSet_1"/>
+    </bpmn:ioSpecification>
+      <bpmn:startEvent id="Depart_2" name="Demande déposée"></bpmn:startEvent>
+      <bpmn:task id="Tache_3" name="Enregistrer la demande"></bpmn:task>
+      <bpmn:userTask id="Tache_5" name="Vérifier la recevabilité de la demande"><bpmn:property id="Prop_6" name="__targetRef_placeholder"/>        <bpmn:dataInputAssociation id="Lecture_7"><bpmn:sourceRef>EntreeProcessus_1</bpmn:sourceRef><bpmn:targetRef>Prop_6</bpmn:targetRef></bpmn:dataInputAssociation></bpmn:userTask>
+      <bpmn:exclusiveGateway id="Passerelle_8" name="Demande recevable ?"/>
+      <bpmn:endEvent id="Fin_9" name="Demande acceptée"></bpmn:endEvent>
+      <bpmn:endEvent id="Fin_10" name="Demande rejetée"></bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flux_11" sourceRef="Depart_2" targetRef="Tache_3"/>
+      <bpmn:sequenceFlow id="Flux_12" sourceRef="Tache_3" targetRef="Tache_5"/>
+      <bpmn:sequenceFlow id="Flux_13" sourceRef="Tache_5" targetRef="Passerelle_8"/>
+      <bpmn:sequenceFlow id="Flux_14" sourceRef="Passerelle_8" targetRef="Fin_9" name="oui"/>
+      <bpmn:sequenceFlow id="Flux_15" sourceRef="Passerelle_8" targetRef="Fin_10" name="non"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagramme_1">
+    <bpmndi:BPMNPlane id="Plan_1" bpmnElement="Collab_1">
+      <bpmndi:BPMNShape id="di_Pool_1" bpmnElement="Pool_1" isHorizontal="true"><dc:Bounds x="160" y="80" width="1023" height="260"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_EntreeProcessus_1" bpmnElement="EntreeProcessus_1"><dc:Bounds x="687" y="100" width="36" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="729" y="111" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Depart_2" bpmnElement="Depart_2"><dc:Bounds x="287" y="202" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Tache_3" bpmnElement="Tache_3"><dc:Bounds x="440" y="180" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Tache_5" bpmnElement="Tache_5"><dc:Bounds x="640" y="180" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Passerelle_8" bpmnElement="Passerelle_8"><dc:Bounds x="880" y="195" width="50" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="830" y="163" width="150" height="26"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Fin_9" bpmnElement="Fin_9"><dc:Bounds x="1087" y="202" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Fin_10" bpmnElement="Fin_10"><dc:Bounds x="887" y="268" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="di_Lecture_7" bpmnElement="Lecture_7"><di:waypoint x="705" y="150"/><di:waypoint x="705" y="162"/><di:waypoint x="675" y="162"/><di:waypoint x="675" y="180"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_Flux_11" bpmnElement="Flux_11"><di:waypoint x="323" y="220"/><di:waypoint x="440" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_Flux_12" bpmnElement="Flux_12"><di:waypoint x="570" y="220"/><di:waypoint x="640" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_Flux_13" bpmnElement="Flux_13"><di:waypoint x="770" y="220"/><di:waypoint x="880" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_Flux_14" bpmnElement="Flux_14"><di:waypoint x="930" y="220"/><di:waypoint x="1087" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_Flux_15" bpmnElement="Flux_15"><di:waypoint x="905" y="245"/><di:waypoint x="905" y="268"/></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

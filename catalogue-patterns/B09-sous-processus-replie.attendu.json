@@ -1,0 +1,25 @@
+{
+  "id": "B09",
+  "titre": "Sous-processus replié",
+  "pattern": "Définition des candidates : un sous-processus replié est une activité de décision possible",
+  "elements_bpmn": "subProcess (replié), dataObjectReference, exclusiveGateway",
+  "decisions": [
+    "Instruire le dossier d'agrément"
+  ],
+  "inputs": [
+    "Demande d'agrément"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Demande d'agrément",
+      "Instruire le dossier d'agrément",
+      "P2"
+    ]
+  ],
+  "points_experts": [],
+  "ecartes": [],
+  "verdict_attendu": "conforme",
+  "enseignement": "Le sous-processus replié est traité comme une activité candidate ; la passerelle qui le suit le corrobore."
+}

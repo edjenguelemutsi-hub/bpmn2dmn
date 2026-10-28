@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  =====================================================================
+   Evaluation des offres d'un appel d'offres (marche public).
+   Inspiration : procedures de passation des marches publics (codes des
+   marches publics des Etats CEMAC, commissions de passation), cas
+   d'ecole classique de la modelisation des decisions multicriteres.
+   4 decisions attendues (voir marche-public.gold).
+   Particularite : passerelle INCLUSIVE apres la premiere decision.
+  =====================================================================
+-->
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  id="Defs_marche" targetNamespace="http://bpmn2dmn/corpus/marche">
+  <bpmn:process id="proc_marche" name="Évaluation des offres d'un appel d'offres" isExecutable="false">
+
+    <bpmn:laneSet id="ls1">
+      <bpmn:lane id="l1" name="Commission de passation">
+        <bpmn:flowNodeRef>debut</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>g2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t9</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin3</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="l2" name="Sous-commission d'analyse">
+        <bpmn:flowNodeRef>t4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>g1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t8</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="l3" name="Plateforme des marchés publics">
+        <bpmn:flowNodeRef>t10</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+
+    <!-- donnees -->
+    <bpmn:dataObjectReference id="do1" name="Offres techniques" dataObjectRef="do1_o"/>
+    <bpmn:dataObject id="do1_o"/>
+    <bpmn:dataObjectReference id="do2" name="Offres financières" dataObjectRef="do2_o"/>
+    <bpmn:dataObject id="do2_o"/>
+    <bpmn:dataObjectReference id="do3" name="Cahier des charges" dataObjectRef="do3_o"/>
+    <bpmn:dataObject id="do3_o"/>
+    <bpmn:dataObjectReference id="do4" name="Classement technique" dataObjectRef="do4_o"/>
+    <bpmn:dataObject id="do4_o"/>
+    <bpmn:dataObjectReference id="do5" name="Mémoire de recours" dataObjectRef="do5_o"/>
+    <bpmn:dataObject id="do5_o"/>
+    <bpmn:dataStoreReference id="ds1" name="Registre des prestataires"/>
+
+    <!-- annotations -->
+    <bpmn:textAnnotation id="an1"><bpmn:text>Code des marchés publics : règles de passation et de publicité</bpmn:text></bpmn:textAnnotation>
+    <bpmn:textAnnotation id="an2"><bpmn:text>Formule de pondération technique et financière des offres</bpmn:text></bpmn:textAnnotation>
+    <bpmn:association id="as1" sourceRef="an1" targetRef="t6"/>
+    <bpmn:association id="as2" sourceRef="an2" targetRef="t5"/>
+
+    <!-- chaine -->
+    <bpmn:startEvent id="debut" name="Date limite de dépôt atteinte"/>
+
+    <bpmn:userTask id="t1" name="Enregistrer les plis reçus"/>
+    <bpmn:userTask id="t2" name="Ouvrir les plis en séance"/>
+    <bpmn:userTask id="t3" name="Transmettre les offres à la sous-commission"/>
+
+    <bpmn:userTask id="t4" name="Vérifier la conformité administrative des offres">
+      <bpmn:dataInputAssociation id="dia1"><bpmn:sourceRef>do1</bpmn:sourceRef></bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation id="dia2"><bpmn:sourceRef>ds1</bpmn:sourceRef></bpmn:dataInputAssociation>
+    </bpmn:userTask>
+    <bpmn:inclusiveGateway id="g1" name="Offres recevables ?"/>
+    <bpmn:endEvent id="fin1" name="Appel d'offres infructueux"/>
+
+    <bpmn:businessRuleTask id="t5" name="Coter les offres techniques">
+      <bpmn:dataInputAssociation id="dia3"><bpmn:sourceRef>do1</bpmn:sourceRef></bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation id="dia4"><bpmn:sourceRef>do3</bpmn:sourceRef></bpmn:dataInputAssociation>
+      <bpmn:dataOutputAssociation id="doa1"><bpmn:targetRef>do4</bpmn:targetRef></bpmn:dataOutputAssociation>
+    </bpmn:businessRuleTask>
+
+    <bpmn:userTask id="t6" name="Statuer sur l'attribution du marché">
+      <bpmn:dataInputAssociation id="dia5"><bpmn:sourceRef>do2</bpmn:sourceRef></bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation id="dia6"><bpmn:sourceRef>do4</bpmn:sourceRef></bpmn:dataInputAssociation>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="g2" name="Marché attribué ?"/>
+    <bpmn:endEvent id="fin2" name="Procédure relancée"/>
+
+    <bpmn:sendTask id="t7" name="Notifier l'attribution aux soumissionnaires"/>
+
+    <bpmn:userTask id="t8" name="Apprécier la recevabilité des recours">
+      <bpmn:dataInputAssociation id="dia7"><bpmn:sourceRef>do5</bpmn:sourceRef></bpmn:dataInputAssociation>
+    </bpmn:userTask>
+
+    <bpmn:userTask id="t9" name="Archiver le dossier du marché"/>
+    <bpmn:serviceTask id="t10" name="Publier les résultats sur la plateforme"/>
+    <bpmn:endEvent id="fin3" name="Marché conclu"/>
+
+    <bpmn:sequenceFlow id="f1" sourceRef="debut" targetRef="t1"/>
+    <bpmn:sequenceFlow id="f2" sourceRef="t1" targetRef="t2"/>
+    <bpmn:sequenceFlow id="f3" sourceRef="t2" targetRef="t3"/>
+    <bpmn:sequenceFlow id="f4" sourceRef="t3" targetRef="t4"/>
+    <bpmn:sequenceFlow id="f5" sourceRef="t4" targetRef="g1"/>
+    <bpmn:sequenceFlow id="f6" name="aucune recevable" sourceRef="g1" targetRef="fin1"/>
+    <bpmn:sequenceFlow id="f7" name="offres recevables" sourceRef="g1" targetRef="t5"/>
+    <bpmn:sequenceFlow id="f8" sourceRef="t5" targetRef="t6"/>
+    <bpmn:sequenceFlow id="f9" sourceRef="t6" targetRef="g2"/>
+    <bpmn:sequenceFlow id="f10" name="relance" sourceRef="g2" targetRef="fin2"/>
+    <bpmn:sequenceFlow id="f11" name="attribution" sourceRef="g2" targetRef="t7"/>
+    <bpmn:sequenceFlow id="f12" sourceRef="t7" targetRef="t8"/>
+    <bpmn:sequenceFlow id="f13" sourceRef="t8" targetRef="t10"/>
+    <bpmn:sequenceFlow id="f14" sourceRef="t10" targetRef="t9"/>
+    <bpmn:sequenceFlow id="f15" sourceRef="t9" targetRef="fin3"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="diag_auto" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI">
+    <bpmndi:BPMNPlane id="plane_auto" bpmnElement="proc_marche">
+      <bpmndi:BPMNShape id="dis_debut" bpmnElement="debut"><dc:Bounds x="102" y="222" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t1" bpmnElement="t1"><dc:Bounds x="250" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t2" bpmnElement="t2"><dc:Bounds x="440" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t3" bpmnElement="t3"><dc:Bounds x="630" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t4" bpmnElement="t4"><dc:Bounds x="820" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_g1" bpmnElement="g1"><dc:Bounds x="1045" y="215" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_fin1" bpmnElement="fin1"><dc:Bounds x="1242" y="222" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t5" bpmnElement="t5"><dc:Bounds x="1200" y="330" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t6" bpmnElement="t6"><dc:Bounds x="1390" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_g2" bpmnElement="g2"><dc:Bounds x="1615" y="215" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_fin2" bpmnElement="fin2"><dc:Bounds x="1812" y="222" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t7" bpmnElement="t7"><dc:Bounds x="1770" y="330" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t8" bpmnElement="t8"><dc:Bounds x="1960" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t9" bpmnElement="t9"><dc:Bounds x="2340" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t10" bpmnElement="t10"><dc:Bounds x="2150" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_fin3" bpmnElement="fin3"><dc:Bounds x="2572" y="222" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_do1" bpmnElement="do1"><dc:Bounds x="840" y="60" width="36" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_do2" bpmnElement="do2"><dc:Bounds x="1470" y="60" width="36" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_do3" bpmnElement="do3"><dc:Bounds x="1340" y="60" width="36" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_do4" bpmnElement="do4"><dc:Bounds x="1220" y="60" width="36" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_do5" bpmnElement="do5"><dc:Bounds x="2040" y="60" width="36" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_ds1" bpmnElement="ds1"><dc:Bounds x="960" y="60" width="36" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_an1" bpmnElement="an1"><dc:Bounds x="1390" y="460" width="200" height="40"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_an2" bpmnElement="an2"><dc:Bounds x="1200" y="510" width="200" height="40"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="die_f1" bpmnElement="f1"><di:waypoint x="120" y="240"/><di:waypoint x="310" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f2" bpmnElement="f2"><di:waypoint x="310" y="240"/><di:waypoint x="500" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f3" bpmnElement="f3"><di:waypoint x="500" y="240"/><di:waypoint x="690" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f4" bpmnElement="f4"><di:waypoint x="690" y="240"/><di:waypoint x="880" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f5" bpmnElement="f5"><di:waypoint x="880" y="240"/><di:waypoint x="1070" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f6" bpmnElement="f6"><di:waypoint x="1070" y="240"/><di:waypoint x="1260" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f7" bpmnElement="f7"><di:waypoint x="1070" y="240"/><di:waypoint x="1260" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f8" bpmnElement="f8"><di:waypoint x="1260" y="370"/><di:waypoint x="1450" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f9" bpmnElement="f9"><di:waypoint x="1450" y="240"/><di:waypoint x="1640" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f10" bpmnElement="f10"><di:waypoint x="1640" y="240"/><di:waypoint x="1830" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f11" bpmnElement="f11"><di:waypoint x="1640" y="240"/><di:waypoint x="1830" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f12" bpmnElement="f12"><di:waypoint x="1830" y="370"/><di:waypoint x="2020" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f13" bpmnElement="f13"><di:waypoint x="2020" y="240"/><di:waypoint x="2210" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f14" bpmnElement="f14"><di:waypoint x="2210" y="240"/><di:waypoint x="2400" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f15" bpmnElement="f15"><di:waypoint x="2400" y="240"/><di:waypoint x="2590" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_as1" bpmnElement="as1"><di:waypoint x="1490" y="480"/><di:waypoint x="1450" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_as2" bpmnElement="as2"><di:waypoint x="1300" y="530"/><di:waypoint x="1260" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_dia1" bpmnElement="dia1"><di:waypoint x="858" y="85"/><di:waypoint x="880" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_dia2" bpmnElement="dia2"><di:waypoint x="978" y="85"/><di:waypoint x="880" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_dia3" bpmnElement="dia3"><di:waypoint x="858" y="85"/><di:waypoint x="1260" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_dia4" bpmnElement="dia4"><di:waypoint x="1358" y="85"/><di:waypoint x="1260" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_doa1" bpmnElement="doa1"><di:waypoint x="1260" y="370"/><di:waypoint x="1238" y="85"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_dia5" bpmnElement="dia5"><di:waypoint x="1488" y="85"/><di:waypoint x="1450" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_dia6" bpmnElement="dia6"><di:waypoint x="1238" y="85"/><di:waypoint x="1450" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_dia7" bpmnElement="dia7"><di:waypoint x="2058" y="85"/><di:waypoint x="2020" y="240"/></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

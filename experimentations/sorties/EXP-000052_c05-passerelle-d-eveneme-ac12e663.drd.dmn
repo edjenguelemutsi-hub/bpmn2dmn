@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
+             xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+             xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             id="Definitions_Passerelle_d__v_nements_apr_s_une_t_che"
+             name="Passerelle d'événements après une tâche"
+             namespace="http://bpmn2dmn/genere"
+             exporter="bpmn2dmn" exporterVersion="1.0">
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DRD_Passerelle_d__v_nements_apr_s_une_t_">
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

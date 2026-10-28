@@ -1,0 +1,27 @@
+{
+  "id": "A05",
+  "titre": "Annotation énonçant une règle",
+  "pattern": "P6 étendu (γ = BKM) : annotation-règle → modèle de connaissance métier (KR)",
+  "elements_bpmn": "textAnnotation, association, userTask, exclusiveGateway",
+  "decisions": [
+    "Coter le dossier de l'opérateur"
+  ],
+  "inputs": [],
+  "sources": [],
+  "bkms": [
+    "Règle : Barème de cotation par catégorie d'opérateur"
+  ],
+  "arcs": [
+    [
+      "Règle : Barème de cotation par catégorie d'opérateur",
+      "Coter le dossier de l'opérateur",
+      "P6"
+    ]
+  ],
+  "points_experts": [
+    "annotation"
+  ],
+  "ecartes": [],
+  "verdict_attendu": "conforme",
+  "enseignement": "L'extension de la correspondance de référence : une annotation qui énonce une règle (barème, calcul) devient un BKM relié par une exigence de connaissance, à confirmer."
+}

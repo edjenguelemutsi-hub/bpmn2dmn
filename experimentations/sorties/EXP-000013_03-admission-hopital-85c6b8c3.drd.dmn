@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
+             xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+             xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             id="Definitions_Admission_d_un_patient_aux_urgences"
+             name="Admission d'un patient aux urgences"
+             namespace="http://bpmn2dmn/genere"
+             exporter="bpmn2dmn" exporterVersion="1.0">
+  <decision id="D1" name="Coter la gravité du patient">
+    <informationRequirement id="ir1"><requiredInput href="#I1"/></informationRequirement>
+    <knowledgeRequirement id="kr1"><requiredKnowledge href="#B1"/></knowledgeRequirement>
+  </decision>
+  <decision id="D2" name="Examiner le patient">
+    <informationRequirement id="ir2"><requiredInput href="#I2"/></informationRequirement>
+    <informationRequirement id="ir3"><requiredInput href="#I3"/></informationRequirement>
+    <informationRequirement id="ir4"><requiredDecision href="#D1"/></informationRequirement>
+  </decision>
+  <businessKnowledgeModel id="B1" name="Règle : Score de gravité calculé selon l'échelle de tri">
+  </businessKnowledgeModel>
+  <inputData id="I1" name="Fiche de constantes"/>
+  <inputData id="I2" name="Dossier médical"/>
+  <inputData id="I3" name="Lit disponible (optionnel)"/>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DRD_Admission_d_un_patient_aux_urgences">
+      <dmndi:DMNShape id="s_D1" dmnElementRef="D1">
+        <dc:Bounds x="80" y="230" width="187" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_D2" dmnElementRef="D2">
+        <dc:Bounds x="84" y="40" width="180" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_B1" dmnElementRef="B1">
+        <dc:Bounds x="-204" y="240" width="224" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I1" dmnElementRef="I1">
+        <dc:Bounds x="106" y="430" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I2" dmnElementRef="I2">
+        <dc:Bounds x="288" y="438" width="135" height="45"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I3" dmnElementRef="I3">
+        <dc:Bounds x="469" y="430" width="140" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="e_ir1" dmnElementRef="ir1">
+        <di:waypoint x="174" y="430"/><di:waypoint x="174" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_kr1" dmnElementRef="kr1">
+        <di:waypoint x="20" y="270"/><di:waypoint x="80" y="270"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir2" dmnElementRef="ir2">
+        <di:waypoint x="355" y="438"/><di:waypoint x="355" y="142"/><di:waypoint x="108" y="142"/><di:waypoint x="108" y="120"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir3" dmnElementRef="ir3">
+        <di:waypoint x="539" y="430"/><di:waypoint x="176" y="120"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir4" dmnElementRef="ir4">
+        <di:waypoint x="174" y="230"/><di:waypoint x="170" y="120"/>
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

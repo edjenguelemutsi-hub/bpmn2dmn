@@ -1,0 +1,45 @@
+{
+  "decisions": [
+    "Statuer sur la demande d'agrément"
+  ],
+  "inputs": [
+    "Observation de l'opérateur (optionnel)"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Observation de l'opérateur (optionnel)",
+      "Statuer sur la demande d'agrément",
+      "P3"
+    ]
+  ],
+  "points_experts": [
+    "ressource"
+  ],
+  "ecartes": [],
+  "acyclique": true,
+  "invariants_violes": [],
+  "anomalies_source": [],
+  "diagnostic_vide": "",
+  "resume": {
+    "decisions": 1,
+    "inputs": 1,
+    "sources": 0,
+    "bkm": 0,
+    "IR": 1,
+    "KR": 0,
+    "AR": 0,
+    "a_confirmer": 1,
+    "ecartes": 0
+  },
+  "points": [
+    {
+      "categorie": "ressource",
+      "objet": "Chef de service",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    }
+  ],
+  "ecartes_detail": []
+}

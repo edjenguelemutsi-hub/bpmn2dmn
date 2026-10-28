@@ -1,0 +1,17 @@
+{
+  "id": "C02",
+  "titre": "Tâche de service au verbe décisionnel",
+  "pattern": "Hors définition : une tâche de service qui décide de fait",
+  "elements_bpmn": "serviceTask, dataStoreReference, exclusiveGateway",
+  "decisions": [],
+  "inputs": [],
+  "sources": [],
+  "bkms": [],
+  "arcs": [],
+  "points_experts": [
+    "hors-definition"
+  ],
+  "ecartes": [],
+  "verdict_attendu": "limite",
+  "enseignement": "Une tâche de service peut prendre une décision automatisée (contrôle de cohérence) ; elle est signalée mais non retenue : angle mort de la définition de référence."
+}

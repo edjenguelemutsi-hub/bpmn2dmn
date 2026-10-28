@@ -1,0 +1,35 @@
+{
+  "decisions": [],
+  "inputs": [],
+  "sources": [],
+  "bkms": [],
+  "arcs": [],
+  "points_experts": [
+    "candidat"
+  ],
+  "ecartes": [],
+  "acyclique": true,
+  "invariants_violes": [],
+  "anomalies_source": [],
+  "diagnostic_vide": "Aucune décision retenue : « Instruire la demande » attend(ent) votre arbitrage dans les points à confirmer (« est-ce une décision ? »).",
+  "resume": {
+    "decisions": 0,
+    "inputs": 0,
+    "sources": 0,
+    "bkm": 0,
+    "IR": 0,
+    "KR": 0,
+    "AR": 0,
+    "a_confirmer": 1,
+    "ecartes": 0
+  },
+  "points": [
+    {
+      "categorie": "candidat",
+      "objet": "Instruire la demande",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    }
+  ],
+  "ecartes_detail": []
+}

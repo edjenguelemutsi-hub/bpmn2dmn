@@ -1,0 +1,37 @@
+# Citation file read by GitHub ("Cite this repository") and by Zenodo.
+# Repository: https://github.com/edjenguelemutsi-hub/bpmn2dmn
+# After the Zenodo release: remove the "#" in front of doi and date-released and fill them in.
+cff-version: 1.2.0
+message: "If you use this software, please cite it and the associated article."
+title: "bpmn2dmn: extraction of DMN decision requirements diagrams from BPMN process models"
+type: software
+abstract: "Extracts a DMN decision requirements diagram from a BPMN 2.0 process model by a formal graph transformation (six patterns) with hybrid filtering of decision candidates, checks eight invariants on the result and records every question left to the human expert."
+authors:
+  - family-names: Edjenguele
+    given-names: Francis
+    affiliation: "University of Douala; Single Window for Foreign Trade Operations (GUCE)"
+  - family-names: Djeumen
+    given-names: Rodrigue
+    affiliation: "University of Douala"
+version: 1.0.0
+# date-released: "2026-11-01"
+# doi: 10.5281/zenodo.NNNNNNN
+repository-code: "https://github.com/edjenguelemutsi-hub/bpmn2dmn"
+license: MIT
+keywords:
+  - BPMN
+  - DMN
+  - DRD
+  - decision mining
+  - model transformation
+  - business process management
+preferred-citation:
+  type: article
+  title: "Data-driven extraction of DMN decision models from BPMN processes: A formal graph transformation approach with hybrid candidate filtering"
+  authors:
+    - family-names: Djeumen
+      given-names: Rodrigue
+    - family-names: Edjenguele
+      given-names: Francis
+  year: 2026
+  status: submitted

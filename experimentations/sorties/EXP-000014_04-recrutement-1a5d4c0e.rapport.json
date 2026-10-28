@@ -1,0 +1,106 @@
+{
+  "nom": "Instruction d'une candidature",
+  "resume": {
+    "decisions": 2,
+    "inputs": 3,
+    "sources": 0,
+    "bkm": 1,
+    "IR": 3,
+    "KR": 1,
+    "AR": 0,
+    "a_confirmer": 4,
+    "ecartes": 0
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "nom": "Vérifier l'éligibilité de la candidature",
+      "origine": "tache5",
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+    },
+    {
+      "id": "D2",
+      "nom": "Apprécier l'entretien du candidat",
+      "origine": "tache19",
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "I1",
+      "nom": "Dossier de candidature",
+      "pattern": "P2"
+    },
+    {
+      "id": "I2",
+      "nom": "Référentiel des postes",
+      "pattern": "P2"
+    },
+    {
+      "id": "I3",
+      "nom": "Fiche d'entretien",
+      "pattern": "P2"
+    }
+  ],
+  "sources": [],
+  "bkms": [
+    {
+      "id": "B1",
+      "nom": "Règle : Grille de notation des entretiens en vigueur"
+    }
+  ],
+  "IR": [
+    [
+      "I1",
+      "D1"
+    ],
+    [
+      "I2",
+      "D1"
+    ],
+    [
+      "I3",
+      "D2"
+    ]
+  ],
+  "KR": [
+    [
+      "B1",
+      "D2"
+    ]
+  ],
+  "AR": [],
+  "acyclique": true,
+  "invariants_violes": [],
+  "a_confirmer": [
+    {
+      "cle": "tache2",
+      "categorie": "candidat",
+      "objet": "Enregistrer la candidature",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "ressource:Assistant RH",
+      "categorie": "ressource",
+      "objet": "Assistant RH",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    },
+    {
+      "cle": "ressource:Responsable du recrutement",
+      "categorie": "ressource",
+      "objet": "Responsable du recrutement",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    },
+    {
+      "cle": "annot26",
+      "categorie": "annotation",
+      "objet": "Grille de notation des entretiens en vigueur",
+      "motif": "proposée comme MODÈLE DE CONNAISSANCE MÉTIER (règle exécutable)",
+      "proposition": "BKM"
+    }
+  ],
+  "ecartes": []
+}

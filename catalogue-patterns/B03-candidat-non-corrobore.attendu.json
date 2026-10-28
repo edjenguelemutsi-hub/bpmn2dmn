@@ -1,0 +1,17 @@
+{
+  "id": "B03",
+  "titre": "Candidat non corroboré",
+  "pattern": "κ faux : tâche utilisateur neutre, sans passerelle → soumise à l'expert",
+  "elements_bpmn": "userTask, dataObjectReference",
+  "decisions": [],
+  "inputs": [],
+  "sources": [],
+  "bkms": [],
+  "arcs": [],
+  "points_experts": [
+    "candidat"
+  ],
+  "ecartes": [],
+  "verdict_attendu": "point-expert",
+  "enseignement": "Le type d'activité est nécessaire mais non suffisant : sans indice, la candidate n'est ni retenue ni supprimée, le DRD reste vide et le diagnostic l'explique."
+}

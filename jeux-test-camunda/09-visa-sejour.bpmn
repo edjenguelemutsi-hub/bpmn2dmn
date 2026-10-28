@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1" targetNamespace="http://bpmn2dmn/jeux" exporter="bpmn2dmn" exporterVersion="1.0">
+  <bpmn:collaboration id="Collab_1">
+    <bpmn:participant id="Pool_1" name="Consulat général" processRef="Process_1"/>
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1" name="Délivrance d'un visa de séjour" isExecutable="false">
+    <bpmn:laneSet id="Lanes_1">
+      <bpmn:lane id="Lane_1" name="Agent consulaire">
+        <bpmn:flowNodeRef>depart1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>tache2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>tache5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>tache16</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>tache29</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin32</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_2" name="Consul adjoint">
+        <bpmn:flowNodeRef>tache19</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>passerelle25</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin27</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+      <bpmn:startEvent id="depart1" name="Demande de visa déposée"><bpmn:messageEventDefinition id="depart1_md"/></bpmn:startEvent>
+      <bpmn:userTask id="tache2" name="Numériser les pièces du dossier"></bpmn:userTask>
+      <bpmn:sequenceFlow id="flux4" sourceRef="depart1" targetRef="tache2"/>
+      <bpmn:dataObjectReference id="donnee7" name="Passeport" dataObjectRef="donnee7_o"/>
+      <bpmn:dataObject id="donnee7_o"/>
+      <bpmn:dataObjectReference id="donnee9" name="Justificatifs de séjour" dataObjectRef="donnee9_o"/>
+      <bpmn:dataObject id="donnee9_o"/>
+      <bpmn:dataObjectReference id="donnee11" name="Avis documentaire" dataObjectRef="donnee11_o"/>
+      <bpmn:dataObject id="donnee11_o"/>
+      <bpmn:userTask id="tache5" name="Vérifier l'authenticité des documents"><bpmn:property id="prop6" name="__targetRef_placeholder"/>        <bpmn:dataInputAssociation id="lecture8"><bpmn:sourceRef>donnee7</bpmn:sourceRef><bpmn:targetRef>prop6</bpmn:targetRef></bpmn:dataInputAssociation>        <bpmn:dataInputAssociation id="lecture10"><bpmn:sourceRef>donnee9</bpmn:sourceRef><bpmn:targetRef>prop6</bpmn:targetRef></bpmn:dataInputAssociation>        <bpmn:dataOutputAssociation id="ecriture12"><bpmn:targetRef>donnee11</bpmn:targetRef></bpmn:dataOutputAssociation></bpmn:userTask>
+      <bpmn:sequenceFlow id="flux13" sourceRef="tache2" targetRef="tache5"/>
+      <bpmn:sendTask id="tache16" name="Convoquer le demandeur à l'entretien"></bpmn:sendTask>
+      <bpmn:sequenceFlow id="flux18" sourceRef="tache5" targetRef="tache16"/>
+      <bpmn:dataObjectReference id="donnee22" name="Compte rendu d'entretien" dataObjectRef="donnee22_o"/>
+      <bpmn:dataObject id="donnee22_o"/>
+      <bpmn:userTask id="tache19" name="Statuer sur la délivrance du visa"><bpmn:property id="prop20" name="__targetRef_placeholder"/>        <bpmn:dataInputAssociation id="lecture21"><bpmn:sourceRef>donnee11</bpmn:sourceRef><bpmn:targetRef>prop20</bpmn:targetRef></bpmn:dataInputAssociation>        <bpmn:dataInputAssociation id="lecture23"><bpmn:sourceRef>donnee22</bpmn:sourceRef><bpmn:targetRef>prop20</bpmn:targetRef></bpmn:dataInputAssociation></bpmn:userTask>
+      <bpmn:sequenceFlow id="flux24" sourceRef="tache16" targetRef="tache19"/>
+      <bpmn:exclusiveGateway id="passerelle25" name="Visa accordé ?"/>
+      <bpmn:sequenceFlow id="flux26" sourceRef="tache19" targetRef="passerelle25"/>
+      <bpmn:endEvent id="fin27" name="Visa refusé"/>
+      <bpmn:sequenceFlow id="flux28" sourceRef="passerelle25" targetRef="fin27" name="refusé"/>
+      <bpmn:userTask id="tache29" name="Apposer la vignette au passeport"></bpmn:userTask>
+      <bpmn:sequenceFlow id="flux31" sourceRef="passerelle25" targetRef="tache29" name="accordé"/>
+      <bpmn:endEvent id="fin32" name="Visa délivré"/>
+      <bpmn:sequenceFlow id="flux33" sourceRef="tache29" targetRef="fin32"/>
+      <bpmn:textAnnotation id="annot14"><bpmn:text>Convention consulaire et accords bilatéraux</bpmn:text></bpmn:textAnnotation>
+      <bpmn:association id="assocannot15" sourceRef="annot14" targetRef="tache5"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagramme_1">
+    <bpmndi:BPMNPlane id="Plan_1" bpmnElement="Collab_1">
+      <bpmndi:BPMNShape id="di_Pool_1" bpmnElement="Pool_1" isHorizontal="true"><dc:Bounds x="160" y="80" width="1452" height="520"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Lane_1" bpmnElement="Lane_1" isHorizontal="true"><dc:Bounds x="190" y="80" width="1422" height="260"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Lane_2" bpmnElement="Lane_2" isHorizontal="true"><dc:Bounds x="190" y="340" width="1422" height="260"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_depart1" bpmnElement="depart1"><dc:Bounds x="240" y="202" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache2" bpmnElement="tache2"><dc:Bounds x="346" y="180" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache5" bpmnElement="tache5"><dc:Bounds x="546" y="180" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_donnee7" bpmnElement="donnee7"><dc:Bounds x="553" y="100" width="36" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="595" y="111" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_donnee9" bpmnElement="donnee9"><dc:Bounds x="678" y="100" width="36" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="720" y="111" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_donnee11" bpmnElement="donnee11"><dc:Bounds x="868" y="100" width="36" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="910" y="111" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_annot14" bpmnElement="annot14"><dc:Bounds x="511" y="280" width="200" height="48"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache16" bpmnElement="tache16"><dc:Bounds x="746" y="180" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache19" bpmnElement="tache19"><dc:Bounds x="946" y="440" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_donnee22" bpmnElement="donnee22"><dc:Bounds x="1078" y="360" width="36" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="1120" y="371" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_passerelle25" bpmnElement="passerelle25"><dc:Bounds x="1146" y="455" width="50" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="1096" y="423" width="150" height="26"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_fin27" bpmnElement="fin27"><dc:Bounds x="1153" y="528" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache29" bpmnElement="tache29"><dc:Bounds x="1266" y="180" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_fin32" bpmnElement="fin32"><dc:Bounds x="1466" y="202" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="di_flux4" bpmnElement="flux4"><di:waypoint x="276" y="220"/><di:waypoint x="346" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_lecture8" bpmnElement="lecture8"><di:waypoint x="571" y="150"/><di:waypoint x="571" y="162"/><di:waypoint x="581" y="162"/><di:waypoint x="581" y="180"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_lecture10" bpmnElement="lecture10"><di:waypoint x="696" y="150"/><di:waypoint x="696" y="162"/><di:waypoint x="607" y="162"/><di:waypoint x="607" y="180"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_ecriture12" bpmnElement="ecriture12"><di:waypoint x="655" y="180"/><di:waypoint x="655" y="154"/><di:waypoint x="886" y="154"/><di:waypoint x="886" y="150"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux13" bpmnElement="flux13"><di:waypoint x="476" y="220"/><di:waypoint x="546" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_assocannot15" bpmnElement="assocannot15"><di:waypoint x="611" y="280"/><di:waypoint x="611" y="260"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux18" bpmnElement="flux18"><di:waypoint x="676" y="220"/><di:waypoint x="746" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_lecture21" bpmnElement="lecture21"><di:waypoint x="886" y="150"/><di:waypoint x="886" y="422"/><di:waypoint x="981" y="422"/><di:waypoint x="981" y="440"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_lecture23" bpmnElement="lecture23"><di:waypoint x="1096" y="410"/><di:waypoint x="1096" y="422"/><di:waypoint x="1007" y="422"/><di:waypoint x="1007" y="440"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux24" bpmnElement="flux24"><di:waypoint x="876" y="220"/><di:waypoint x="911" y="220"/><di:waypoint x="911" y="480"/><di:waypoint x="946" y="480"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux26" bpmnElement="flux26"><di:waypoint x="1076" y="480"/><di:waypoint x="1146" y="480"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux28" bpmnElement="flux28"><di:waypoint x="1171" y="505"/><di:waypoint x="1171" y="528"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux31" bpmnElement="flux31"><di:waypoint x="1196" y="480"/><di:waypoint x="1231" y="480"/><di:waypoint x="1231" y="220"/><di:waypoint x="1266" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux33" bpmnElement="flux33"><di:waypoint x="1396" y="220"/><di:waypoint x="1466" y="220"/></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

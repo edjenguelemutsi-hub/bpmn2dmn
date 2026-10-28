@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1" targetNamespace="http://bpmn2dmn/jeux" exporter="bpmn2dmn" exporterVersion="1.0">
+  <bpmn:collaboration id="Collab_1">
+    <bpmn:participant id="Pool_1" name="Bureau des douanes" processRef="Process_1"/>
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1" name="Mainlevée d'une déclaration en douane" isExecutable="false">
+    <bpmn:laneSet id="Lanes_1">
+      <bpmn:lane id="Lane_1" name="Inspecteur des douanes">
+        <bpmn:flowNodeRef>tache5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>passerelle14</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin16</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>tache18</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_2" name="Système SYDONIA">
+        <bpmn:flowNodeRef>depart1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>tache2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>tache27</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin30</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+      <bpmn:startEvent id="depart1" name="Déclaration déposée"><bpmn:messageEventDefinition id="depart1_md"/></bpmn:startEvent>
+      <bpmn:serviceTask id="tache2" name="Générer la liquidation automatique"></bpmn:serviceTask>
+      <bpmn:sequenceFlow id="flux4" sourceRef="depart1" targetRef="tache2"/>
+      <bpmn:dataObjectReference id="donnee7" name="Déclaration en détail" dataObjectRef="donnee7_o"/>
+      <bpmn:dataObject id="donnee7_o"/>
+      <bpmn:dataObjectReference id="donnee9" name="Facture commerciale" dataObjectRef="donnee9_o"/>
+      <bpmn:dataObject id="donnee9_o"/>
+      <bpmn:userTask id="tache5" name="Vérifier les documents joints"><bpmn:property id="prop6" name="__targetRef_placeholder"/>        <bpmn:dataInputAssociation id="lecture8"><bpmn:sourceRef>donnee7</bpmn:sourceRef><bpmn:targetRef>prop6</bpmn:targetRef></bpmn:dataInputAssociation>        <bpmn:dataInputAssociation id="lecture10"><bpmn:sourceRef>donnee9</bpmn:sourceRef><bpmn:targetRef>prop6</bpmn:targetRef></bpmn:dataInputAssociation></bpmn:userTask>
+      <bpmn:sequenceFlow id="flux11" sourceRef="tache2" targetRef="tache5"/>
+      <bpmn:exclusiveGateway id="passerelle14" name="Documents conformes ?"/>
+      <bpmn:sequenceFlow id="flux15" sourceRef="tache5" targetRef="passerelle14"/>
+      <bpmn:endEvent id="fin16" name="Déclaration en contentieux"/>
+      <bpmn:sequenceFlow id="flux17" sourceRef="passerelle14" targetRef="fin16" name="litige"/>
+      <bpmn:dataStoreReference id="donnee20" name="Fichier des valeurs"/>
+      <bpmn:dataObjectReference id="donnee22" name="Valeur retenue" dataObjectRef="donnee22_o"/>
+      <bpmn:dataObject id="donnee22_o"/>
+      <bpmn:userTask id="tache18" name="Apprécier la valeur en douane"><bpmn:property id="prop19" name="__targetRef_placeholder"/>        <bpmn:dataInputAssociation id="lecture21"><bpmn:sourceRef>donnee20</bpmn:sourceRef><bpmn:targetRef>prop19</bpmn:targetRef></bpmn:dataInputAssociation>        <bpmn:dataOutputAssociation id="ecriture23"><bpmn:targetRef>donnee22</bpmn:targetRef></bpmn:dataOutputAssociation></bpmn:userTask>
+      <bpmn:sequenceFlow id="flux24" sourceRef="passerelle14" targetRef="tache18" name="conformes"/>
+      <bpmn:serviceTask id="tache27" name="Encaisser les droits et taxes"></bpmn:serviceTask>
+      <bpmn:sequenceFlow id="flux29" sourceRef="tache18" targetRef="tache27"/>
+      <bpmn:endEvent id="fin30" name="Mainlevée accordée"/>
+      <bpmn:sequenceFlow id="flux31" sourceRef="tache27" targetRef="fin30"/>
+      <bpmn:textAnnotation id="annot12"><bpmn:text>Procédure du circuit de visite en vigueur</bpmn:text></bpmn:textAnnotation>
+      <bpmn:association id="assocannot13" sourceRef="annot12" targetRef="tache5"/>
+      <bpmn:textAnnotation id="annot25"><bpmn:text>Apposer le cachet du bureau sur le bon</bpmn:text></bpmn:textAnnotation>
+      <bpmn:association id="assocannot26" sourceRef="annot25" targetRef="tache18"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagramme_1">
+    <bpmndi:BPMNPlane id="Plan_1" bpmnElement="Collab_1">
+      <bpmndi:BPMNShape id="di_Pool_1" bpmnElement="Pool_1" isHorizontal="true"><dc:Bounds x="160" y="80" width="1252" height="520"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Lane_1" bpmnElement="Lane_1" isHorizontal="true"><dc:Bounds x="190" y="80" width="1222" height="260"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Lane_2" bpmnElement="Lane_2" isHorizontal="true"><dc:Bounds x="190" y="340" width="1222" height="260"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_depart1" bpmnElement="depart1"><dc:Bounds x="240" y="462" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache2" bpmnElement="tache2"><dc:Bounds x="346" y="440" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache5" bpmnElement="tache5"><dc:Bounds x="546" y="180" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_donnee7" bpmnElement="donnee7"><dc:Bounds x="553" y="100" width="36" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="595" y="111" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_donnee9" bpmnElement="donnee9"><dc:Bounds x="678" y="100" width="36" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="720" y="111" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_annot12" bpmnElement="annot12"><dc:Bounds x="511" y="280" width="200" height="48"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_passerelle14" bpmnElement="passerelle14"><dc:Bounds x="746" y="195" width="50" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="696" y="163" width="150" height="26"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_fin16" bpmnElement="fin16"><dc:Bounds x="753" y="268" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache18" bpmnElement="tache18"><dc:Bounds x="866" y="180" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_donnee20" bpmnElement="donnee20"><dc:Bounds x="866" y="100" width="50" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="922" y="111" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_donnee22" bpmnElement="donnee22"><dc:Bounds x="1063" y="100" width="36" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="1105" y="111" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_annot25" bpmnElement="annot25"><dc:Bounds x="831" y="280" width="200" height="48"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache27" bpmnElement="tache27"><dc:Bounds x="1066" y="440" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_fin30" bpmnElement="fin30"><dc:Bounds x="1266" y="462" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="di_flux4" bpmnElement="flux4"><di:waypoint x="276" y="480"/><di:waypoint x="346" y="480"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_lecture8" bpmnElement="lecture8"><di:waypoint x="571" y="150"/><di:waypoint x="571" y="162"/><di:waypoint x="581" y="162"/><di:waypoint x="581" y="180"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_lecture10" bpmnElement="lecture10"><di:waypoint x="696" y="150"/><di:waypoint x="696" y="162"/><di:waypoint x="607" y="162"/><di:waypoint x="607" y="180"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux11" bpmnElement="flux11"><di:waypoint x="476" y="480"/><di:waypoint x="511" y="480"/><di:waypoint x="511" y="220"/><di:waypoint x="546" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_assocannot13" bpmnElement="assocannot13"><di:waypoint x="611" y="280"/><di:waypoint x="611" y="260"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux15" bpmnElement="flux15"><di:waypoint x="676" y="220"/><di:waypoint x="746" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux17" bpmnElement="flux17"><di:waypoint x="771" y="245"/><di:waypoint x="771" y="268"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_lecture21" bpmnElement="lecture21"><di:waypoint x="891" y="150"/><di:waypoint x="891" y="162"/><di:waypoint x="901" y="162"/><di:waypoint x="901" y="180"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_ecriture23" bpmnElement="ecriture23"><di:waypoint x="975" y="180"/><di:waypoint x="975" y="154"/><di:waypoint x="1081" y="154"/><di:waypoint x="1081" y="150"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux24" bpmnElement="flux24"><di:waypoint x="796" y="220"/><di:waypoint x="866" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_assocannot26" bpmnElement="assocannot26"><di:waypoint x="931" y="280"/><di:waypoint x="931" y="260"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux29" bpmnElement="flux29"><di:waypoint x="996" y="220"/><di:waypoint x="1031" y="220"/><di:waypoint x="1031" y="480"/><di:waypoint x="1066" y="480"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux31" bpmnElement="flux31"><di:waypoint x="1196" y="480"/><di:waypoint x="1266" y="480"/></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

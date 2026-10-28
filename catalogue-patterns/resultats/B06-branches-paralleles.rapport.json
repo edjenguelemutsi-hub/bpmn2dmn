@@ -1,0 +1,59 @@
+{
+  "decisions": [
+    "Statuer sur la demande",
+    "Évaluer la garantie financière"
+  ],
+  "inputs": [
+    "Avis financier",
+    "Garantie proposée"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Avis financier",
+      "Statuer sur la demande",
+      "P2"
+    ],
+    [
+      "Garantie proposée",
+      "Évaluer la garantie financière",
+      "P2"
+    ]
+  ],
+  "points_experts": [
+    "ressource",
+    "ressource"
+  ],
+  "ecartes": [],
+  "acyclique": true,
+  "invariants_violes": [],
+  "anomalies_source": [],
+  "diagnostic_vide": "",
+  "resume": {
+    "decisions": 2,
+    "inputs": 2,
+    "sources": 0,
+    "bkm": 0,
+    "IR": 2,
+    "KR": 0,
+    "AR": 0,
+    "a_confirmer": 2,
+    "ecartes": 0
+  },
+  "points": [
+    {
+      "categorie": "ressource",
+      "objet": "Service financier",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    },
+    {
+      "categorie": "ressource",
+      "objet": "Service juridique",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    }
+  ],
+  "ecartes_detail": []
+}

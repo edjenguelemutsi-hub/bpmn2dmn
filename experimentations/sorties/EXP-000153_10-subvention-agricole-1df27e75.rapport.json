@@ -1,0 +1,136 @@
+{
+  "nom": "Attribution d'une subvention agricole",
+  "resume": {
+    "decisions": 3,
+    "inputs": 3,
+    "sources": 1,
+    "bkm": 1,
+    "IR": 4,
+    "KR": 1,
+    "AR": 1,
+    "a_confirmer": 5,
+    "ecartes": 0
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "nom": "Vérifier l'éligibilité de l'exploitation",
+      "origine": "tache5",
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+    },
+    {
+      "id": "D2",
+      "nom": "Apprécier le projet agricole",
+      "origine": "tache19",
+      "motif": "verbe décisionnel dans le libellé"
+    },
+    {
+      "id": "D3",
+      "nom": "Statuer sur le montant de la subvention",
+      "origine": "tache28",
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "I1",
+      "nom": "Dossier d'exploitation",
+      "pattern": "P2"
+    },
+    {
+      "id": "I2",
+      "nom": "Registre des exploitants",
+      "pattern": "P2"
+    },
+    {
+      "id": "I3",
+      "nom": "Rapport de visite",
+      "pattern": "P2"
+    }
+  ],
+  "sources": [
+    {
+      "id": "K1",
+      "nom": "Décret fixant les plafonds de subvention",
+      "pattern": "P6"
+    }
+  ],
+  "bkms": [
+    {
+      "id": "B1",
+      "nom": "Règle : Grille de notation des projets agricoles"
+    }
+  ],
+  "IR": [
+    [
+      "I1",
+      "D1"
+    ],
+    [
+      "I2",
+      "D1"
+    ],
+    [
+      "I3",
+      "D2"
+    ],
+    [
+      "D2",
+      "D3"
+    ]
+  ],
+  "KR": [
+    [
+      "B1",
+      "D2"
+    ]
+  ],
+  "AR": [
+    [
+      "K1",
+      "D3"
+    ]
+  ],
+  "acyclique": true,
+  "invariants_violes": [],
+  "a_confirmer": [
+    {
+      "cle": "tache16",
+      "categorie": "candidat",
+      "objet": "Programmer la visite de terrain",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "ressource:Délégation départementale",
+      "categorie": "ressource",
+      "objet": "Délégation départementale",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    },
+    {
+      "cle": "ressource:Comité technique",
+      "categorie": "ressource",
+      "objet": "Comité technique",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    },
+    {
+      "cle": "annot26",
+      "categorie": "annotation",
+      "objet": "Grille de notation des projets agricoles",
+      "motif": "proposée comme MODÈLE DE CONNAISSANCE MÉTIER (règle exécutable)",
+      "proposition": "BKM"
+    },
+    {
+      "cle": "annot32",
+      "categorie": "annotation",
+      "objet": "Décret fixant les plafonds de subvention",
+      "motif": "proposée comme SOURCE DE CONNAISSANCE (elle gouverne la décision)",
+      "proposition": "KS"
+    }
+  ],
+  "ecartes": [],
+  "anomalies_source": [],
+  "diagnostic_vide": ""
+}

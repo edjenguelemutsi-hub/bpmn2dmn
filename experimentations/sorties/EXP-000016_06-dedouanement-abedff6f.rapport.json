@@ -1,0 +1,100 @@
+{
+  "nom": "Mainlevée d'une déclaration en douane",
+  "resume": {
+    "decisions": 2,
+    "inputs": 3,
+    "sources": 1,
+    "bkm": 0,
+    "IR": 3,
+    "KR": 0,
+    "AR": 1,
+    "a_confirmer": 2,
+    "ecartes": 1
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "nom": "Vérifier les documents joints",
+      "origine": "tache5",
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+    },
+    {
+      "id": "D2",
+      "nom": "Apprécier la valeur en douane",
+      "origine": "tache18",
+      "motif": "verbe décisionnel dans le libellé"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "I1",
+      "nom": "Déclaration en détail",
+      "pattern": "P2"
+    },
+    {
+      "id": "I2",
+      "nom": "Facture commerciale",
+      "pattern": "P2"
+    },
+    {
+      "id": "I3",
+      "nom": "Fichier des valeurs",
+      "pattern": "P2"
+    }
+  ],
+  "sources": [
+    {
+      "id": "K1",
+      "nom": "Procédure du circuit de visite en vigueur",
+      "pattern": "P6"
+    }
+  ],
+  "bkms": [],
+  "IR": [
+    [
+      "I1",
+      "D1"
+    ],
+    [
+      "I2",
+      "D1"
+    ],
+    [
+      "I3",
+      "D2"
+    ]
+  ],
+  "KR": [],
+  "AR": [
+    [
+      "K1",
+      "D1"
+    ]
+  ],
+  "acyclique": true,
+  "invariants_violes": [],
+  "a_confirmer": [
+    {
+      "cle": "ressource:Inspecteur des douanes",
+      "categorie": "ressource",
+      "objet": "Inspecteur des douanes",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    },
+    {
+      "cle": "annot12",
+      "categorie": "annotation",
+      "objet": "Procédure du circuit de visite en vigueur",
+      "motif": "proposée comme SOURCE DE CONNAISSANCE (elle gouverne la décision)",
+      "proposition": "KS"
+    }
+  ],
+  "ecartes": [
+    {
+      "cle": "annot25",
+      "categorie": "annotation",
+      "objet": "Apposer le cachet du bureau sur le bon",
+      "motif": "aucune valeur décisionnelle"
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
+             xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+             xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             id="Definitions_Admission_d_un_patient_aux_urgences"
+             name="Admission d'un patient aux urgences"
+             namespace="http://bpmn2dmn/genere"
+             exporter="bpmn2dmn" exporterVersion="1.0">
+  <decision id="D1" name="Évaluer l'état du patient à l'arrivée">
+    <informationRequirement id="ir1"><requiredInput href="#I1"/></informationRequirement>
+    <informationRequirement id="ir2"><requiredInput href="#I2"/></informationRequirement>
+    <informationRequirement id="ir3"><requiredInput href="#I3"/></informationRequirement>
+    <knowledgeRequirement id="kr1"><requiredKnowledge href="#B1"/></knowledgeRequirement>
+  </decision>
+  <decision id="D2" name="Examiner les antécédents médicaux">
+    <informationRequirement id="ir4"><requiredInput href="#I4"/></informationRequirement>
+  </decision>
+  <decision id="D3" name="Décider de l'orientation du patient">
+    <informationRequirement id="ir5"><requiredDecision href="#D1"/></informationRequirement>
+    <authorityRequirement id="ar1"><requiredAuthority href="#K1"/></authorityRequirement>
+  </decision>
+  <businessKnowledgeModel id="B1" name="Règle : Score de gravité : calcul selon les constantes relevées">
+  </businessKnowledgeModel>
+  <inputData id="I1" name="Fiche d'admission"/>
+  <inputData id="I2" name="Constantes vitales"/>
+  <inputData id="I3" name="Résultats du laboratoire (optionnel)"/>
+  <inputData id="I4" name="Dossier médical partagé"/>
+  <knowledgeSource id="K1" name="Protocole national de tri des urgences : niveaux de gravité"/>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DRD_Admission_d_un_patient_aux_urgences">
+      <dmndi:DMNShape id="s_D1" dmnElementRef="D1">
+        <dc:Bounds x="80" y="230" width="211" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_D2" dmnElementRef="D2">
+        <dc:Bounds x="376" y="230" width="202" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_D3" dmnElementRef="D3">
+        <dc:Bounds x="82" y="40" width="206" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_B1" dmnElementRef="B1">
+        <dc:Bounds x="-210" y="232" width="230" height="76"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I1" dmnElementRef="I1">
+        <dc:Bounds x="118" y="430" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I2" dmnElementRef="I2">
+        <dc:Bounds x="300" y="430" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I3" dmnElementRef="I3">
+        <dc:Bounds x="481" y="430" width="164" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_K1" dmnElementRef="K1">
+        <dc:Bounds x="691" y="428" width="224" height="63"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I4" dmnElementRef="I4">
+        <dc:Bounds x="962" y="430" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="e_ir1" dmnElementRef="ir1">
+        <di:waypoint x="186" y="430"/><di:waypoint x="180" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir2" dmnElementRef="ir2">
+        <di:waypoint x="367" y="430"/><di:waypoint x="186" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir3" dmnElementRef="ir3">
+        <di:waypoint x="563" y="430"/><di:waypoint x="192" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_kr1" dmnElementRef="kr1">
+        <di:waypoint x="20" y="270"/><di:waypoint x="80" y="270"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir4" dmnElementRef="ir4">
+        <di:waypoint x="1029" y="430"/><di:waypoint x="1029" y="332"/><di:waypoint x="400" y="332"/><di:waypoint x="400" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir5" dmnElementRef="ir5">
+        <di:waypoint x="186" y="230"/><di:waypoint x="186" y="120"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ar1" dmnElementRef="ar1">
+        <di:waypoint x="803" y="428"/><di:waypoint x="803" y="142"/><di:waypoint x="106" y="142"/><di:waypoint x="106" y="120"/>
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

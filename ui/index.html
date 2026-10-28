@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Extraction de modèle DMN à partir de modèle BPMN</title>
+<script>
+/* Garde-fou de compatibilité, écrit en JavaScript ES5 (compris par tous
+   les navigateurs, même anciens) : si le navigateur ne parvient pas à
+   exécuter l'application — version de Safari trop ancienne, bibliothèque
+   non chargée, serveur local arrêté — la cause est affichée en clair dans
+   un bandeau, au lieu d'une page muette où aucun bouton ne répond. */
+(function(){
+  var detail = "";
+  /* compléments pour Safari 11 : Array.flat / flatMap, dont les
+     visionneuses se servent au rendu des diagrammes */
+  if (!Array.prototype.flat){
+    Array.prototype.flat = function(profondeur){
+      var p = profondeur === undefined ? 1 : profondeur, r = [];
+      for (var i = 0; i < this.length; i++){
+        if (Array.isArray(this[i]) && p > 0)
+          r = r.concat(this[i].flat(p - 1));
+        else r.push(this[i]);
+      }
+      return r;
+    };
+  }
+  if (!Array.prototype.flatMap){
+    Array.prototype.flatMap = function(f, ctx){
+      return Array.prototype.map.call(this, f, ctx).flat(1);
+    };
+  }
+  function proteger(s){
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;");
+  }
+  function bandeau(html){
+    var b = document.getElementById("alerteNavigateur");
+    if (!b) return;
+    b.innerHTML = html;
+    b.style.display = "block";
+  }
+  function conseil(){
+    var adresse = String(location.href).split("?")[0].split("#")[0];
+    return " Navigateurs pris en charge : Safari 12 ou plus récent " +
+      "(macOS 10.13 High Sierra ou plus, mis à jour), Google Chrome, " +
+      "Microsoft Edge, Firefox.<br>Sous macOS : mettez Safari à jour (Réglages Système " +
+      "&gt; Général &gt; Mise à jour de logiciels) ou ouvrez cette même " +
+      "adresse dans Google Chrome ou Firefox : <b>" + proteger(adresse) +
+      "</b><br><span class=\"note\">Navigateur détecté : " +
+      proteger(navigator.userAgent) + "</span>";
+  }
+  window.addEventListener("error", function(ev){
+    var ou = "";
+    if (ev && ev.filename && /[^\/]$/.test(ev.filename)){
+      ou = " [" + String(ev.filename).replace(/^.*\//, "") +
+           (ev.lineno ? ":" + ev.lineno : "") + "]";
+    } else if (ev && ev.lineno){
+      ou = " (page, ligne " + ev.lineno + ")";
+    }
+    detail = ((ev && ev.message) || "erreur inconnue") + ou;
+    bandeau("<b>Le navigateur n'a pas pu charger un composant de " +
+            "l'application.</b> Détail technique : " + proteger(detail) +
+            "." + conseil());
+  });
+  window.addEventListener("load", function(){
+    if (!window.__applicationPrete){
+      bandeau("<b>Le navigateur n'a pas pu exécuter l'application.</b>" +
+              (detail ? " Détail technique : " + proteger(detail) + "." : "") +
+              conseil());
+    } else if (detail || typeof window.BpmnJS !== "function" ||
+               typeof window.DmnJS !== "function"){
+      bandeau("<b>Un composant d'affichage n'a pas pu être chargé</b> " +
+              "(détail technique : " + proteger(detail || "bibliothèque " +
+              "de rendu absente") + "). " +
+              "L'extraction, les rapports et les téléchargements " +
+              "fonctionnent, mais les diagrammes ne seront pas dessinés." +
+              conseil());
+    }
+    if (!/^https?:/.test(location.protocol)){
+      bandeau("<b>Cette page doit être ouverte par le lanceur de " +
+              "l'application</b> (adresse http://127.0.0.1:8765), pas " +
+              "directement depuis le fichier index.html.");
+      return;
+    }
+    try {                        /* le serveur local répond-il ? */
+      var x = new XMLHttpRequest();
+      x.open("GET", "/api/sante", true);
+      x.onreadystatechange = function(){
+        if (x.readyState !== 4) return;
+        if (x.status !== 200){
+          bandeau("<b>Le serveur local de l'application ne répond pas</b> " +
+                  "(réponse " + x.status + "). La fenêtre du Terminal ou " +
+                  "de l'invite de commandes qui a lancé l'application doit " +
+                  "rester ouverte : relancez le lanceur, puis rechargez " +
+                  "cette page.");
+        }
+      };
+      x.send(null);
+    } catch (e) {}
+  });
+})();
+</script>
+<link rel="stylesheet" href="/lib/diagram-js.css">
+<link rel="stylesheet" href="/lib/dmn-js-shared.css">
+<link rel="stylesheet" href="/lib/dmn-js-drd.css">
+<style>
+  :root{
+    --bleu:#1c4587; --bleu-clair:#e8eef7; --encre:#1c2733; --gris:#5c6b7a;
+    --fond:#f5f7fa; --blanc:#ffffff; --ok:#1d7a3e; --attention:#a05a00;
+    --rouge:#b3261e; --bord:#d5dce4;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:14px/1.5 "Segoe UI",system-ui,sans-serif;
+       color:var(--encre);background:var(--fond)}
+  header{background:var(--bleu);color:#fff;padding:14px 24px;
+         display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+         justify-content:space-between}
+  header h1{margin:0;font-size:19px;font-weight:600}
+  .bt-accueil{background:rgba(255,255,255,.14);color:#fff;
+              border:1px solid rgba(255,255,255,.55);border-radius:6px;
+              padding:8px 18px;font:inherit;font-weight:600;cursor:pointer}
+  .bt-accueil:hover{background:rgba(255,255,255,.28)}
+  header .sous{opacity:.85;font-size:12.5px}
+  nav{display:flex;gap:0;background:var(--blanc);border-bottom:1px solid var(--bord);
+      padding:0 24px}
+  nav button{border:0;background:none;padding:12px 18px;font:inherit;
+             font-weight:600;color:var(--gris);cursor:pointer;
+             border-bottom:3px solid transparent}
+  nav button.actif{color:var(--bleu);border-bottom-color:var(--bleu)}
+  main{padding:18px 24px;max-width:1700px;margin:0 auto}
+  .panneau{display:none}
+  .panneau.actif{display:block}
+  .grille{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media (max-width:1100px){.grille{grid-template-columns:1fr}}
+  .carte{background:var(--blanc);border:1px solid var(--bord);border-radius:8px;
+         overflow:hidden;display:flex;flex-direction:column}
+  .carte h2{margin:0;padding:10px 14px;font-size:13.5px;font-weight:600;
+            background:var(--bleu-clair);color:var(--bleu);
+            border-bottom:1px solid var(--bord);display:flex;
+            justify-content:space-between;align-items:center;gap:8px}
+  .diagramme{height:420px;position:relative;background:
+             repeating-conic-gradient(#fbfcfe 0 25%,#fff 0 50%) 0 0/28px 28px}
+  .diagramme .vide{position:absolute;inset:0;display:flex;align-items:center;
+                   justify-content:center;color:var(--gris);text-align:center;
+                   padding:20px;pointer-events:none}
+  .actions{padding:10px 14px;display:flex;gap:8px;flex-wrap:wrap;
+           border-top:1px solid var(--bord);background:#fbfcfd}
+  button.principal{background:var(--bleu);color:#fff;border:0;border-radius:6px;
+                   padding:9px 18px;font:inherit;font-weight:600;cursor:pointer}
+  button.principal:hover{filter:brightness(1.12)}
+  button.principal:disabled{background:#9db0c9;cursor:default}
+  button.secondaire{background:#fff;color:var(--bleu);border:1px solid var(--bleu);
+                    border-radius:6px;padding:8px 14px;font:inherit;cursor:pointer}
+  button.secondaire:hover{background:var(--bleu-clair)}
+  a.secondaire{background:#fff;color:var(--bleu);border:1px solid var(--bleu);
+               border-radius:6px;padding:8px 14px;font:inherit;cursor:pointer;
+               text-decoration:none;display:inline-block}
+  a.secondaire:hover{background:var(--bleu-clair)}
+  .registre-etat{font-weight:400;color:var(--gris);font-size:12.5px}
+  details.extensions{margin:0 14px 10px;border:1px solid var(--bord);
+                     border-radius:6px;background:#fbfcfd;font-size:12.5px}
+  details.extensions summary{cursor:pointer;padding:7px 12px;font-weight:600;
+                             color:var(--bleu)}
+  details.extensions .liste{padding:2px 12px 8px}
+  details.extensions label{display:block;padding:3px 0;color:var(--encre)}
+  details.extensions label span{color:var(--gris)}
+  details.extensions input{margin-right:6px}
+  .suggestion{color:var(--gris);font-size:12px;display:block}
+  .suggestion button{font:inherit;font-size:11.5px;padding:1px 7px;margin-left:4px;
+                     background:#fff;color:var(--bleu);border:1px solid var(--bleu);
+                     border-radius:4px;cursor:pointer}
+  .zone-depot{border:2px dashed var(--bord);border-radius:8px;margin:14px;
+              padding:22px;text-align:center;color:var(--gris);cursor:pointer}
+  .zone-depot.survol{border-color:var(--bleu);background:var(--bleu-clair)}
+  .rapport{padding:14px;overflow:auto}
+  .compteurs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .compteur{background:var(--bleu-clair);border-radius:6px;padding:8px 14px;
+            text-align:center;min-width:86px}
+  .compteur b{display:block;font-size:20px;color:var(--bleu)}
+  .compteur span{font-size:11.5px;color:var(--gris)}
+  .etat{display:inline-block;border-radius:12px;padding:2px 10px;
+        font-size:12px;font-weight:600}
+  .etat.ok{background:#e2f3e8;color:var(--ok)}
+  .etat.non{background:#fdecea;color:var(--rouge)}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:8px 0}
+  th,td{border:1px solid var(--bord);padding:6px 9px;text-align:left;
+        vertical-align:top}
+  th{background:#f0f3f7;font-weight:600}
+  .pastille{display:inline-block;background:var(--bleu);color:#fff;
+            border-radius:4px;font-size:11px;padding:1px 6px;font-weight:600}
+  h3{font-size:13.5px;margin:16px 0 6px;color:var(--bleu)}
+  select,input[type=text]{font:inherit;padding:5px 8px;border:1px solid var(--bord);
+        border-radius:5px;background:#fff;max-width:100%}
+  .note{color:var(--gris);font-size:12.5px}
+  .avertissement{background:#fff6e8;border:1px solid #eBc890;border-radius:6px;
+                 padding:8px 12px;margin:8px 0;font-size:13px}
+  .legende{margin:0 14px 4px;padding:8px 12px;background:#f0f3f7;
+           border:1px solid var(--bord);border-radius:6px;font-size:12.5px;
+           color:var(--gris);line-height:1.7}
+  .legende b{color:var(--bleu)}
+  .alerte-navigateur{display:none;background:#fdecea;color:#7a1a14;
+        border-bottom:2px solid var(--rouge);padding:12px 24px;
+        font-size:13.5px;line-height:1.55}
+  noscript .alerte-navigateur{display:block}
+  #journal{position:fixed;right:18px;bottom:18px;max-width:420px;z-index:50}
+  .message{background:var(--encre);color:#fff;border-radius:8px;padding:10px 16px;
+           margin-top:8px;box-shadow:0 4px 16px rgba(0,0,0,.25);font-size:13px}
+  .message.erreur{background:var(--rouge)}
+  a.lien-fichier{color:var(--bleu)}
+  footer{padding:14px 24px 26px;color:var(--gris);font-size:12px}
+  .dmn-drd-container,.djs-container{background:transparent!important}
+  /* le cartouche nom/id de dmn-js recouvre le haut du DRD : masqué */
+  .dmn-definitions{display:none!important}
+  /* logo des visionneuses masqué (à rétablir pour une diffusion
+     publique : la licence des bibliothèques le demande) */
+  .bjs-powered-by{display:none!important}
+</style>
+</head>
+<body>
+<div id="alerteNavigateur" class="alerte-navigateur"></div>
+<noscript><div class="alerte-navigateur"><b>JavaScript est désactivé dans
+ce navigateur.</b> L'application en a besoin : activez-le, ou ouvrez cette
+adresse dans Google Chrome ou Firefox.</div></noscript>
+<header>
+  <h1>Extraction de modèle DMN à partir de modèle BPMN</h1>
+  <button id="btAccueil" class="bt-accueil" title="Revenir à l'accueil :
+tout est réinitialisé, prêt pour un nouveau diagramme">Accueil</button>
+</header>
+<nav>
+  <button id="ongletAvant" class="actif">BPMN DMN (extraction du DRD)</button>
+  <button id="ongletRetour">DMN BPMN (chemin inverse)</button>
+</nav>
+
+<main>
+<!-- sens direct : BPMN vers DMN -->
+<section id="panneauAvant" class="panneau actif">
+  <div class="grille">
+    <div class="carte">
+      <h2>1 · Processus BPMN (entrée)
+        <span id="nomFichierBpmn" class="note"></span></h2>
+      <div id="depotBpmn" class="zone-depot">
+        Déposez ici un fichier <b>.bpmn</b> ou <b>.xml</b> (bpmn.xml) —
+        ou cliquez pour choisir un fichier.<br>
+        <span class="note">Formats : BPMN 2.0, quel que soit l'outil
+        (Camunda Modeler, bpmn.io, Signavio…) et quelle que soit
+        l'extension du fichier</span>
+      </div>
+      <div id="vueBpmn" class="diagramme" style="display:none"></div>
+      <div class="actions">
+        <input type="file" id="fichierBpmn"
+               accept=".bpmn,.xml,text/xml,application/xml" hidden>
+        <button class="principal" id="btTransformer" disabled>Extraire DRD</button>
+        <button class="secondaire" id="btExemple">Charger l'exemple FIMEX</button>
+        <button class="secondaire" id="btEffacer">Effacer</button>
+      </div>
+      <details class="extensions" id="blocExtensions">
+        <summary>Extensions de l'algorithme (désactivées par défaut)</summary>
+        <div class="liste" id="listeExtensions">
+          <span class="note">Chargement de la liste…</span>
+        </div>
+      </details>
+    </div>
+    <div class="carte">
+      <h2>2 · Diagramme d'exigences de décision (DRD extrait)
+        <span id="etatDrd"></span></h2>
+      <div id="vueDmn" class="diagramme">
+        <div class="vide">Le DRD apparaîtra ici, rendu par dmn-js —
+          le moteur de Camunda Modeler.</div>
+      </div>
+      <div class="actions">
+        <button class="secondaire" id="btTelechargerDmn" disabled>Télécharger le .dmn</button>
+        <button class="secondaire" id="btRapportPdf" disabled>Rapport (PDF)</button>
+        <button class="secondaire" id="btTelechargerArbitrages" disabled
+          title="Fichier de reprise des verdicts : c'est lui qu'on redonne à
+l'algorithme (« Réappliquer » ou cli.py -a) pour rejouer vos arbitrages">Arbitrages (fichier de reprise)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="carte" style="margin-top:16px">
+    <h2>3 · Rapport de transformation et arbitrage de l'expert</h2>
+    <div class="legende" style="margin-top:12px">
+      <b>Légende</b> —
+      <b>DRD</b> : diagramme d'exigences de décision &nbsp;·&nbsp;
+      <b>IR</b> : exigence d'information (une donnée d'entrée ou une décision
+      alimente une décision — trait plein) &nbsp;·&nbsp;
+      <b>KR</b> : exigence de connaissance (un BKM fournit sa règle à une
+      décision — trait tireté, pointe ouverte) &nbsp;·&nbsp;
+      <b>AR</b> : exigence d'autorité (une source de connaissance gouverne
+      une décision — trait tireté terminé par un disque) &nbsp;·&nbsp;
+      <b>BKM</b> : modèle de connaissance métier (règle exécutable
+      réutilisable — rectangle à coins coupés) &nbsp;·&nbsp;
+      <b>KS</b> : source de connaissance (autorité : règlement, norme,
+      expert — rectangle à bord ondulé) &nbsp;·&nbsp;
+      <b>P₁…P₆</b> : patterns de la transformation &nbsp;·&nbsp;
+      <b>κ</b> : indices retenant une décision (position / lexique).
+    </div>
+    <div id="rapport" class="rapport">
+      <p class="note">Transformez un modèle pour voir le rapport : décisions
+      retenues (avec leurs indices de corroboration), exigences dérivées,
+      éléments écartés, et surtout les <b>points que l'algorithme ne tranche
+      pas seul</b> — c'est vous, l'expert métier, qui arbitrez, puis
+      « Réappliquer ». L'algorithme propose, motive et trace ; il ne devine
+      jamais.</p>
+    </div>
+    <div class="actions" id="actionsArbitrage" style="display:none">
+      <button class="principal" id="btReappliquer">Appliquer avec mes arbitrages</button>
+      <button class="secondaire" id="btAccueilBas">Retour à l'accueil</button>
+    </div>
+  </div>
+
+  <div class="carte" style="margin-top:16px" id="carteRegistre">
+    <h2>4 · Registre des expérimentations
+      <span id="etatRegistre" class="registre-etat"></span></h2>
+    <div id="registre" class="rapport">
+      <p class="note">Chaque extraction est consignée automatiquement, une
+      ligne par expérimentation : code de référence du modèle, composition
+      du modèle source, décisions et exigences extraites, points soumis à
+      l'expert, vérifications, durées. Le registre est un fichier CSV et un
+      classeur Excel du dossier <code>experimentations/</code> ; il résume
+      toutes les expérimentations et se prête aux analyses.</p>
+    </div>
+    <div class="actions">
+      <button class="secondaire" id="btVoirRegistre">Voir les dernières expérimentations</button>
+      <a class="secondaire" href="/registre/registre.csv" download="registre.csv">Télécharger le registre (CSV)</a>
+      <a class="secondaire" href="/registre/registre.xlsx" download="registre.xlsx">Télécharger le registre (Excel)</a>
+    </div>
+  </div>
+</section>
+
+<!-- sens inverse : DMN vers BPMN -->
+<section id="panneauRetour" class="panneau">
+  <div class="grille">
+    <div class="carte">
+      <h2>1 · Modèle de décision DMN (entrée)
+        <span id="nomFichierDmn" class="note"></span></h2>
+      <div id="depotDmn" class="zone-depot">
+        Déposez ici un fichier <b>.dmn</b> ou <b>.xml</b> (dmn.xml) —
+        ou cliquez pour choisir un fichier.<br>
+        <span class="note">DMN 1.1 à 1.5 — seul le niveau DRD est utilisé.</span>
+      </div>
+      <div id="vueDmnEntree" class="diagramme" style="display:none"></div>
+      <div class="actions">
+        <input type="file" id="fichierDmn"
+               accept=".dmn,.xml,text/xml,application/xml" hidden>
+        <button class="principal" id="btInverser" disabled>Inverser BPMN</button>
+        <button class="secondaire" id="btEffacerInv">Effacer</button>
+      </div>
+    </div>
+    <div class="carte">
+      <h2>2 · Squelette de processus BPMN reconstruit
+        <span id="etatInverse"></span></h2>
+      <div id="vueBpmnSortie" class="diagramme">
+        <div class="vide">Le squelette BPMN apparaîtra ici. Chaque décision
+        redevient une tâche suivie d'une passerelle exclusive ; les exigences
+        redeviennent données, annotations et objets partagés.</div>
+      </div>
+      <div class="actions">
+        <button class="secondaire" id="btTelechargerBpmnInv" disabled>Télécharger le .bpmn</button>
+        <button class="secondaire" id="btRapportInvPdf" disabled>Rapport (PDF)</button>
+        <button class="secondaire" id="btTelechargerArbInv" disabled>Arbitrages d'aller-retour</button>
+      </div>
+    </div>
+  </div>
+  <div class="carte" style="margin-top:16px">
+    <h2>3 · Rapport d'inversion et vérification de l'aller-retour</h2>
+    <div id="rapportInverse" class="rapport">
+      <p class="note">Après l'inversion, l'application ré-exécute
+      automatiquement la transformation directe sur le BPMN produit
+      (avec les arbitrages générés) et vérifie que
+      <b>T(T⁻¹(M)) = M</b> : mêmes sommets, mêmes types, mêmes exigences.
+      Le rapport détaille alors chaque correspondance : décision → tâche et
+      passerelle de verdict, donnée d'entrée → objet de données, lien
+      décision→décision → objet « Résultat », source/BKM → annotation.</p>
+    </div>
+    <div class="actions" id="actionsInverse" style="display:none">
+      <button class="secondaire" id="btAccueilBasInv">Retour à l'accueil</button>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>bpmn2dmn — F. Edjenguele et R. Djeumen, Université de Douala. Si cet outil vous est utile, merci de citer l’article associé (voir le fichier CITATION.cff du dépôt).<br>If this tool helps your work, please cite the associated article (see CITATION.cff).</footer>
+
+<div id="journal"></div>
+
+<script src="/lib/bpmn-navigated-viewer.min.js"></script>
+<script src="/lib/dmn-navigated-viewer.min.js"></script>
+<script>
+"use strict";
+// petits utilitaires
+const $ = id => document.getElementById(id);
+function message(texte, erreur){
+  const m = document.createElement("div");
+  m.className = "message" + (erreur ? " erreur" : "");
+  m.textContent = texte;
+  $("journal").appendChild(m);
+  setTimeout(() => m.remove(), erreur ? 8000 : 4000);
+}
+function telecharger(nom, contenu, type){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([contenu], {type: type || "text/xml"}));
+  a.download = nom;
+  document.body.appendChild(a);   // Safari ignore le clic d'un lien hors page
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 5000);
+}
+async function api(chemin, corps){
+  const r = await fetch(chemin, {method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify(corps || {})});
+  const d = await r.json();
+  if (!d.ok) throw new Error(d.erreur || ("erreur " + r.status));
+  return d;
+}
+async function apiLecture(chemin){
+  const r = await fetch(chemin, {cache: "no-store"});
+  const d = await r.json();
+  if (!d.ok) throw new Error(d.erreur || ("erreur " + r.status));
+  return d;
+}
+function echapper(s){
+  return String(s == null ? "" : s).replace(/[&<>"]/g,
+    c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+}
+
+// onglets
+function activer(onglet){
+  const avant = onglet === "avant";
+  $("ongletAvant").classList.toggle("actif", avant);
+  $("ongletRetour").classList.toggle("actif", !avant);
+  $("panneauAvant").classList.toggle("actif", avant);
+  $("panneauRetour").classList.toggle("actif", !avant);
+}
+$("ongletAvant").onclick = () => activer("avant");
+$("ongletRetour").onclick = () => activer("retour");
+
+// visionneuses bpmn-js / dmn-js. Si une bibliothèque n'a pas pu être
+// chargée (navigateur trop ancien), la visionneuse vaut null : le reste
+// de l'application continue de fonctionner, sans dessin du diagramme.
+function creerVue(nomClasse, conteneur){
+  const Classe = window[nomClasse];
+  if (typeof Classe !== "function") return null;
+  try { return new Classe({container: "#" + conteneur}); }
+  catch (e) { return null; }
+}
+let vueBpmn = creerVue("BpmnJS", "vueBpmn");
+let vueBpmnSortie = creerVue("BpmnJS", "vueBpmnSortie");
+let vueDmn = creerVue("DmnJS", "vueDmn");
+let vueDmnEntree = creerVue("DmnJS", "vueDmnEntree");
+const SANS_VUE = '<div class="vide">Aperçu indisponible dans ce navigateur ' +
+  '(bibliothèque de rendu non chargée). Le traitement a bien eu lieu : ' +
+  'téléchargez le fichier produit, ou ouvrez cette adresse dans Chrome ' +
+  'ou Firefox pour voir le diagramme.</div>';
+
+const VIDE_DRD = '<div class="vide">Le DRD apparaîtra ici, rendu par ' +
+  'dmn-js — le moteur de Camunda Modeler.</div>';
+const VIDE_BPMN_SORTIE = '<div class="vide">Le squelette BPMN apparaîtra ' +
+  'ici. Chaque décision redevient une tâche suivie d’une passerelle ' +
+  'exclusive ; les exigences redeviennent données, annotations et objets ' +
+  'partagés.</div>';
+const RAPPORT_INITIAL = '<p class="note">Transformez un modèle pour voir ' +
+  'le rapport : décisions retenues (avec leurs indices de corroboration), ' +
+  'exigences dérivées, éléments écartés, et surtout les <b>points que ' +
+  'l’algorithme ne tranche pas seul</b> — c’est vous, l’expert métier, ' +
+  'qui arbitrez, puis « Réappliquer ». L’algorithme propose, motive et ' +
+  'trace ; il ne devine jamais.</p>';
+const RAPPORT_INV_INITIAL = '<p class="note">Après l’inversion, ' +
+  'l’application ré-exécute automatiquement la transformation directe ' +
+  'sur le BPMN produit (avec les arbitrages générés) et vérifie que ' +
+  '<b>T(T⁻¹(M)) = M</b> : mêmes sommets, mêmes types, mêmes exigences.</p>';
+
+function recreer(vue, nomClasse, conteneur, contenu){
+  try { if (vue) vue.destroy(); } catch (e) {}
+  $(conteneur).innerHTML = contenu || "";
+  return creerVue(nomClasse, conteneur);
+}
+
+function effacerAvant(silencieux){
+  vueBpmn = recreer(vueBpmn, "BpmnJS", "vueBpmn", "");
+  vueDmn = recreer(vueDmn, "DmnJS", "vueDmn", VIDE_DRD);
+  bpmnCourant = null; dmnProduit = null; rapportCourant = null;
+  arbitrages = {candidats:{}, ressources:{}, annotations:{}, renommages:{}};
+  $("vueBpmn").style.display = "none";
+  $("nomFichierBpmn").textContent = "";
+  $("fichierBpmn").value = "";
+  $("btTransformer").disabled = true;
+  ["btTelechargerDmn","btRapportPdf",
+   "btTelechargerArbitrages"].forEach(b => $(b).disabled = true);
+  $("etatDrd").innerHTML = "";
+  $("actionsArbitrage").style.display = "none";
+  $("rapport").innerHTML = RAPPORT_INITIAL;
+  if (silencieux !== true)
+    message("Espace de travail effacé — déposez un nouveau diagramme.");
+}
+
+function effacerRetour(silencieux){
+  vueDmnEntree = recreer(vueDmnEntree, "DmnJS", "vueDmnEntree", "");
+  vueBpmnSortie = recreer(vueBpmnSortie, "BpmnJS", "vueBpmnSortie",
+                          VIDE_BPMN_SORTIE);
+  dmnEntree = null; bpmnInverse = null; arbitragesInverse = null;
+  rapportInverseCourant = null;
+  $("vueDmnEntree").style.display = "none";
+  $("nomFichierDmn").textContent = "";
+  $("fichierDmn").value = "";
+  $("btInverser").disabled = true;
+  ["btTelechargerBpmnInv","btRapportInvPdf",
+   "btTelechargerArbInv"].forEach(b => $(b).disabled = true);
+  $("etatInverse").innerHTML = "";
+  $("actionsInverse").style.display = "none";
+  $("rapportInverse").innerHTML = RAPPORT_INV_INITIAL;
+  if (silencieux !== true)
+    message("Espace de travail effacé — déposez un nouveau diagramme.");
+}
+$("btEffacer").onclick = () => effacerAvant(false);
+$("btEffacerInv").onclick = () => effacerRetour(false);
+
+// retour à l'accueil : les deux onglets sont réinitialisés sans rechargement
+function retourAccueil(){
+  effacerAvant(true);
+  effacerRetour(true);
+  activer("avant");
+  try { window.scrollTo({top: 0, behavior: "smooth"}); }
+  catch (e) { window.scrollTo(0, 0); }
+  message("Retour à l'accueil : l'application est prête pour un nouveau diagramme.");
+}
+$("btAccueil").onclick = retourAccueil;
+$("btAccueilBas").onclick = retourAccueil;
+
+async function montrerBpmn(vue, conteneur, xml){
+  const vide = $(conteneur).querySelector(".vide");
+  if (vide) vide.remove();
+  $(conteneur).style.display = "block";
+  if (!vue){ $(conteneur).innerHTML = SANS_VUE; return; }
+  await vue.importXML(xml);
+  vue.get("canvas").zoom("fit-viewport", "auto");
+}
+async function montrerDmn(vue, conteneur, xml){
+  const vide = $(conteneur).querySelector(".vide");
+  if (vide) vide.remove();
+  $(conteneur).style.display = "block";
+  if (!vue){ $(conteneur).innerHTML = SANS_VUE; return; }
+  await vue.importXML(xml);
+  const actif = vue.getActiveViewer();
+  if (actif && actif.get) actif.get("canvas").zoom("fit-viewport", "auto");
+}
+
+// état courant
+let bpmnCourant = null, dmnProduit = null, rapportCourant = null;
+let arbitrages = {candidats:{}, ressources:{}, annotations:{}, renommages:{}};
+let dmnEntree = null, bpmnInverse = null, arbitragesInverse = null;
+let rapportInverseCourant = null;
+
+// dépôt de fichiers
+function brancherDepot(zone, entree, rappel){
+  $(zone).onclick = () => $(entree).click();
+  $(entree).onchange = e => {
+    if (e.target.files[0]) lireFichier(e.target.files[0], rappel);
+    e.target.value = "";     // le même fichier pourra être rechoisi
+  };
+  // dragenter ET dragover doivent être neutralisés, et l'effet annoncé :
+  // Safari refuse le dépôt si l'un des deux garde son comportement par défaut
+  const accueillir = e => {
+    e.preventDefault();
+    try { e.dataTransfer.dropEffect = "copy"; } catch (x) {}
+    $(zone).classList.add("survol");
+  };
+  $(zone).ondragenter = accueillir;
+  $(zone).ondragover = accueillir;
+  $(zone).ondragleave = () => $(zone).classList.remove("survol");
+  $(zone).ondrop = e => {
+    e.preventDefault(); $(zone).classList.remove("survol");
+    if (e.dataTransfer.files[0]) lireFichier(e.dataTransfer.files[0], rappel);
+  };
+}
+function lireFichier(fichier, rappel){
+  const lecteur = new FileReader();
+  lecteur.onload = () => rappel(fichier.name, decoderXml(lecteur.result));
+  lecteur.readAsArrayBuffer(fichier);
+}
+// respecte l'encodage annoncé par le fichier (certains outils écrivent
+// leurs modèles en ISO-8859-1 ou en UTF-16) ; UTF-8 sinon
+function decoderXml(octets){
+  const vue = new Uint8Array(octets);
+  if (vue.length >= 2 && vue[0] === 0xFF && vue[1] === 0xFE)
+    return new TextDecoder("utf-16le").decode(octets);
+  if (vue.length >= 2 && vue[0] === 0xFE && vue[1] === 0xFF)
+    return new TextDecoder("utf-16be").decode(octets);
+  const prologue = new TextDecoder("latin1").decode(vue.subarray(0, 200));
+  const declare = prologue.match(/encoding=["']([\w.-]+)["']/i);
+  try {
+    return new TextDecoder(declare ? declare[1] : "utf-8").decode(octets);
+  } catch (e) {
+    return new TextDecoder("utf-8").decode(octets);
+  }
+}
+
+brancherDepot("depotBpmn", "fichierBpmn", async (nom, texte) => {
+  try {
+    if (!texte.includes("BPMNDiagram")){
+      const mp = await api("/api/miseenpage", {bpmn: texte});
+      texte = mp.bpmn;
+      message("Ce modèle n’avait pas de mise en page : une disposition " +
+              "automatique a été ajoutée pour l’affichage.");
+    }
+    await montrerBpmn(vueBpmn, "vueBpmn", texte);
+    bpmnCourant = texte;
+    $("nomFichierBpmn").textContent = nom;
+    $("btTransformer").disabled = false;
+    arbitrages = {candidats:{}, ressources:{}, annotations:{}, renommages:{}};
+    message("Modèle BPMN chargé : " + nom);
+  } catch (e) { message("BPMN illisible : " + e.message, true); }
+});
+brancherDepot("depotDmn", "fichierDmn", async (nom, texte) => {
+  try {
+    await montrerDmn(vueDmnEntree, "vueDmnEntree", texte);
+    dmnEntree = texte;
+    $("nomFichierDmn").textContent = nom;
+    $("btInverser").disabled = false;
+    message("Modèle DMN chargé : " + nom);
+  } catch (e) { message("DMN illisible : " + e.message, true); }
+});
+
+$("btExemple").onclick = async () => {
+  try {
+    const d = await api("/api/exemple");
+    await montrerBpmn(vueBpmn, "vueBpmn", d.bpmn);
+    bpmnCourant = d.bpmn;
+    $("nomFichierBpmn").textContent = "fimex.bpmn (exemple)";
+    $("btTransformer").disabled = false;
+    arbitrages = {candidats:{}, ressources:{}, annotations:{}, renommages:{}};
+  } catch (e) { message(e.message, true); }
+};
+
+// transformation
+async function lancerTransformation(){
+  if (!bpmnCourant) return;
+  $("btTransformer").disabled = true;
+  try {
+    const d = await api("/api/transformer",
+                        {bpmn: bpmnCourant, arbitrages: arbitrages,
+                         nom: $("nomFichierBpmn").textContent,
+                         extensions: extensionsCochees()});
+    dmnProduit = d.dmn; rapportCourant = d.rapport;
+    afficherExperimentation(d.rapport.experimentation);
+    await montrerDmn(vueDmn, "vueDmn", d.dmn);
+    afficherRapport(d.rapport);
+    $("etatDrd").innerHTML = d.rapport.acyclique
+      ? '<span class="etat ok">acyclique · conforme</span>'
+      : '<span class="etat non">cycle détecté !</span>';
+    ["btTelechargerDmn","btRapportPdf",
+     "btTelechargerArbitrages"].forEach(b => $(b).disabled = false);
+    $("actionsArbitrage").style.display = "flex";
+    if (d.rapport.diagnostic_vide)
+      message("Aucune décision extraite : le rapport explique pourquoi " +
+              "et comment adapter le modèle.", true);
+    else
+      message("Transformation réussie : " + d.rapport.resume.decisions +
+              " décision(s), " + (d.rapport.resume.IR + d.rapport.resume.KR +
+              d.rapport.resume.AR) + " exigence(s).");
+  } catch (e) { message(e.message, true); }
+  $("btTransformer").disabled = false;
+}
+$("btTransformer").onclick = lancerTransformation;
+$("btReappliquer").onclick = () => { recolterArbitrages(); lancerTransformation(); };
+
+// extensions de l'algorithme (cases à cocher, toutes décochées au départ)
+function extensionsCochees(){
+  const noms = [];
+  document.querySelectorAll("#listeExtensions input[type=checkbox]").forEach(c => {
+    if (c.checked) noms.push(c.value);
+  });
+  return noms;
+}
+async function chargerExtensions(){
+  try {
+    const d = await apiLecture("/api/extensions");
+    let h = "";
+    d.extensions.forEach(x => {
+      h += '<label><input type="checkbox" value="' + echapper(x.nom) + '"><b>' +
+           echapper(x.nom) + '</b> <span>' + echapper(x.phrase) + '</span></label>';
+    });
+    h += '<p class="note" style="margin:6px 0 0">Sans case cochée, c’est ' +
+         'l’algorithme de référence qui s’applique ; la variante retenue est ' +
+         'consignée dans le registre des expérimentations.</p>';
+    $("listeExtensions").innerHTML = h;
+  } catch (err) { $("listeExtensions").innerHTML =
+    '<span class="note">Liste indisponible (serveur arrêté ?).</span>'; }
+}
+chargerExtensions();
+function utiliserSuggestion(bouton){
+  const champ = document.querySelector('#rapport input[data-renomme="' +
+    bouton.getAttribute("data-cible") + '"]');
+  if (champ){ champ.value = bouton.getAttribute("data-nom"); champ.focus(); }
+}
+
+// registre des expérimentations
+function afficherExperimentation(x){
+  const e = $("etatRegistre");
+  if (!x){ e.textContent = "registre suspendu"; return; }
+  if (x.erreur){ e.textContent = "enregistrement impossible : " + x.erreur; return; }
+  e.textContent = "cette extraction : " + x.experience + " · code du modèle " +
+                  x.code_modele;
+  message("Expérimentation " + x.experience + " consignée dans le registre.");
+  compterRegistre();
+}
+async function compterRegistre(){
+  try {
+    const d = await apiLecture("/api/registre");
+    const e = $("etatRegistre");
+    if (!d.actif){ e.textContent = "registre suspendu"; return; }
+    const debut = e.textContent && e.textContent.indexOf("cette extraction") === 0
+      ? e.textContent + " · " : "";
+    e.textContent = debut + d.nombre + " expérimentation(s) enregistrée(s)";
+  } catch (err) { /* serveur absent : le bandeau de compatibilité le signale */ }
+}
+async function voirRegistre(){
+  try {
+    const d = await apiLecture("/api/registre");
+    if (!d.actif){
+      $("registre").innerHTML = '<p class="note">Le registre est suspendu ' +
+        '(option --sans-registre).</p>';
+      return;
+    }
+    if (!d.nombre){
+      $("registre").innerHTML = '<p class="note">Aucune expérimentation ' +
+        'enregistrée pour l’instant : lancez une extraction.</p>';
+      return;
+    }
+    const s = d.synthese || {}, m = s.moyennes || {};
+    let h = '<div class="compteurs">';
+    [["expérimentations", d.nombre], ["modèles distincts", s.modeles_distincts],
+     ["décisions / expér.", m.decisions], ["exigences / expér.", m.ef_exigences],
+     ["points expert / expér.", m.points_expert],
+     ["questions / décision", m.questions_par_decision]].forEach(([n, v]) =>
+      h += '<div class="compteur"><b>' + (v === "" || v == null ? "–" : v) +
+           '</b><span>' + n + '</span></div>');
+    h += '</div><h3>Dernières expérimentations (les plus récentes en tête)</h3>' +
+      '<div style="overflow:auto"><table><tr><th>Expérience</th><th>Date</th>' +
+      '<th>Fichier</th><th>Code du modèle</th><th>Contexte</th><th>Arb.</th>' +
+      '<th>D</th><th>I</th><th>KS</th><th>BKM</th><th>E_f</th><th>Expert</th>' +
+      '<th>Précision</th><th>Rappel</th><th>Acyclique</th><th>ms</th></tr>';
+    d.dernieres.forEach(l => {
+      h += '<tr>' + ["experience", "horodatage", "fichier", "code_modele",
+        "contexte", "arbitrages", "decisions", "donnees_entree",
+        "sources_connaissance", "bkm", "ef_exigences", "points_expert",
+        "precision", "rappel", "acyclique", "duree_totale_ms"].map(c =>
+          '<td>' + echapper(l[c] === "" || l[c] == null ? "–" :
+            (c === "horodatage" ? String(l[c]).replace("T", " ") : l[c])) +
+          '</td>').join("") + '</tr>';
+    });
+    h += '</table></div><p class="note">Dossier du registre : ' +
+      echapper(d.dossier) + ' (registre.csv, registre.xlsx, dictionnaire des ' +
+      'colonnes, sorties conservées par expérience).</p>';
+    $("registre").innerHTML = h;
+  } catch (err) { message("Registre illisible : " + err.message, true); }
+}
+$("btVoirRegistre").onclick = voirRegistre;
+compterRegistre();
+
+// rapport et arbitrage
+function afficherRapport(r){
+  const res = r.resume;
+  let h = '<div class="compteurs">';
+  [["décisions",res.decisions],["données d’entrée",res.inputs],
+   ["sources",res.sources],["BKM",res.bkm],["IR",res.IR],["KR",res.KR],
+   ["AR",res.AR]].forEach(([n,v]) =>
+     h += '<div class="compteur"><b>'+v+'</b><span>'+n+'</span></div>');
+  h += '</div>';
+
+  if (r.invariants_violes && r.invariants_violes.length)
+    h += '<div class="avertissement">Invariants violés : '
+       + echapper(r.invariants_violes.join(" ; ")) + '</div>';
+  if (r.anomalies_source && r.anomalies_source.length)
+    h += '<div class="avertissement">Anomalies du modèle source : '
+       + echapper(r.anomalies_source.join(" ; ")) + '</div>';
+  if (r.diagnostic_vide)
+    h += '<div class="avertissement"><b>Pourquoi le DRD est vide.</b> '
+       + echapper(r.diagnostic_vide) + '</div>';
+  if (r.extensions && r.extensions.length)
+    h += '<p class="note">Variante : <b>' + echapper(r.variante) + '</b> (extensions '
+       + 'actives : ' + echapper(r.extensions.join(", ")) + ')'
+       + (r.logique ? ' · ' + Object.keys(r.logique).length
+          + ' table(s) de décision squelette(s) dans le DMN produit' : '') + '</p>';
+
+  h += '<h3>Décisions retenues (DA)</h3><table>'
+     + '<tr><th>Décision</th><th>Motif de rétention</th>'
+     + '<th>Renommer</th></tr>';
+  r.decisions.forEach(d => {
+    h += '<tr><td><span class="pastille">P₁</span> ' + echapper(d.nom)
+       + '</td><td>' + echapper(d.motif || "—")
+       + '</td><td><input type="text" data-renomme="' + echapper(d.origine)
+       + '" value="' + echapper(
+           (arbitrages.renommages[d.origine] || ""))
+       + '" placeholder="garder « ' + echapper(d.nom) + ' »">'
+       + ((r.suggestions_noms && r.suggestions_noms[d.origine])
+          ? '<span class="suggestion">suggestion : '
+            + echapper(r.suggestions_noms[d.origine])
+            + '<button type="button" data-cible="' + echapper(d.origine)
+            + '" data-nom="' + echapper(r.suggestions_noms[d.origine])
+            + '" onclick="utiliserSuggestion(this)">utiliser</button></span>'
+          : '')
+       + '</td></tr>';
+  });
+  h += '</table>';
+
+  const lignes = [];
+  r.inputs.forEach(n => lignes.push(["Donnée d’entrée", n.nom, n.pattern]));
+  r.sources.forEach(n => lignes.push(["Source de connaissance", n.nom, n.pattern]));
+  r.bkms.forEach(n => lignes.push(["Modèle de connaissance métier", n.nom, "P₆"]));
+  if (lignes.length){
+    h += '<h3>Autres sommets dérivés</h3><table><tr><th>Type</th><th>Nom</th>'
+       + '<th>Pattern</th></tr>';
+    lignes.forEach(([t,n,p]) => h += '<tr><td>'+t+'</td><td>'+echapper(n)
+       + '</td><td><span class="pastille">'+ (p||"—") +'</span></td></tr>');
+    h += '</table>';
+  }
+
+  if (r.a_confirmer.length){
+    h += '<h3>Points à arbitrer</h3>'
+       + '<table><tr><th>Catégorie</th><th>Élément</th><th>Motif</th>'
+       + '<th>Votre verdict</th></tr>';
+    r.a_confirmer.forEach(p => {
+      h += '<tr><td>' + echapper(p.categorie) + '</td><td>'
+         + echapper(p.objet) + '</td><td>' + echapper(p.motif) + '</td><td>';
+      if (p.categorie === "candidat" || p.categorie === "hors-definition"){
+        h += selection("candidat", p.cle,
+          [["","Laisser à l’étude"], ["oui","C’est une décision"],
+           ["non","Ce n’en est pas une"]],
+          arbitrages.candidats[p.cle] === true ? "oui" :
+          arbitrages.candidats[p.cle] === false ? "non" : "");
+      } else if (p.categorie === "ressource"){
+        const nomR = p.cle.replace(/^ressource:/, "");
+        h += selection("ressource", nomR,
+          [["","Laisser à l’étude"],
+           ["KS","Elle gouverne → source de connaissance"],
+           ["non","Elle applique seulement → écarter"]],
+          arbitrages.ressources[nomR] || "");
+      } else if (p.categorie === "condition"){
+        h += selection("annotation", p.cle,
+          [["","Laisser à l’étude"],
+           ["I","C’est une donnée d’entrée de la décision"],
+           ["non","Variable technique → écarter"]],
+          arbitrages.annotations[p.cle] || "");
+      } else {
+        h += selection("annotation", p.cle,
+          [["","Laisser à l’étude"],
+           ["I","Donnée d’entrée"], ["KS","Source de connaissance"],
+           ["BKM","Modèle de connaissance métier (règle)"],
+           ["non","Décorative → écarter"]],
+          arbitrages.annotations[p.cle] || "");
+      }
+      h += '</td></tr>';
+    });
+    h += '</table>';
+  } else {
+    h += '<p class="etat ok" style="margin-top:14px">Aucun point en attente '
+       + 'd’arbitrage : le périmètre automatisable est entièrement couvert.</p>';
+  }
+
+  if (r.ecartes.length){
+    h += '<h3>Éléments écartés automatiquement ('+ r.ecartes.length +')</h3>'
+       + '<table><tr><th>Catégorie</th><th>Élément</th><th>Motif</th></tr>';
+    r.ecartes.forEach(p => h += '<tr><td>'+echapper(p.categorie)+'</td><td>'
+       + echapper(p.objet)+'</td><td>'+echapper(p.motif)+'</td></tr>');
+    h += '</table>';
+  }
+  $("rapport").innerHTML = h;
+}
+
+function selection(genre, cle, options, valeur){
+  let s = '<select data-genre="'+genre+'" data-cle="'+echapper(cle)+'">';
+  options.forEach(([v,l]) => s += '<option value="'+v+'"'
+     + (valeur === v ? " selected" : "") + '>'+l+'</option>');
+  return s + '</select>';
+}
+
+function recolterArbitrages(){
+  document.querySelectorAll("#rapport select").forEach(sel => {
+    const genre = sel.dataset.genre, cle = sel.dataset.cle, v = sel.value;
+    if (genre === "candidat"){
+      if (v === "oui") arbitrages.candidats[cle] = true;
+      else if (v === "non") arbitrages.candidats[cle] = false;
+      else delete arbitrages.candidats[cle];
+    } else if (genre === "ressource"){
+      if (v) arbitrages.ressources[cle] = v; else delete arbitrages.ressources[cle];
+    } else {
+      if (v) arbitrages.annotations[cle] = v; else delete arbitrages.annotations[cle];
+    }
+  });
+  document.querySelectorAll("#rapport input[data-renomme]").forEach(ch => {
+    const cle = ch.dataset.renomme, v = ch.value.trim();
+    if (v) arbitrages.renommages[cle] = v; else delete arbitrages.renommages[cle];
+  });
+}
+
+// rapports lisibles (texte, imprimés en PDF)
+const LIGNE = "-".repeat(72);
+function rapportAvantEnTexte(r){
+  const noms = {};
+  ["decisions","inputs","sources","bkms"].forEach(k =>
+    (r[k] || []).forEach(n => noms[n.id] = n.nom));
+  const arcs = liste => (liste || []).map(([u, v]) =>
+    "    " + (noms[u] || u) + "  vers  " + (noms[v] || v)).join("\n") || "    (aucune)";
+  const L = [];
+  L.push("RAPPORT D'EXTRACTION  BPMN DMN (DRD)");
+  L.push("Modèle : " + (r.nom || "—"));
+  L.push("Date : " + new Date().toLocaleString("fr-FR"));
+  L.push(LIGNE);
+  L.push("RÉSUMÉ DU DRD EXTRAIT");
+  const res = r.resume || {};
+  L.push("  décisions ..................... " + res.decisions);
+  L.push("  données d'entrée .............. " + res.inputs);
+  L.push("  sources de connaissance ....... " + res.sources);
+  L.push("  modèles de connaissance métier  " + res.bkm);
+  L.push("  exigences d'information (IR) .. " + res.IR);
+  L.push("  exigences de connaissance (KR)  " + res.KR);
+  L.push("  exigences d'autorité (AR) ..... " + res.AR);
+  L.push("  graphe acyclique .............. " + (r.acyclique ? "oui" : "non (cycle)"));
+  if (r.diagnostic_vide){
+    L.push(LIGNE);
+    L.push("POURQUOI LE DRD EST VIDE");
+    L.push("  " + r.diagnostic_vide);
+  }
+  L.push(LIGNE);
+  L.push("DÉCISIONS RETENUES (DA)");
+  (r.decisions || []).forEach(d =>
+    L.push("  • " + d.nom + "\n      motif : " + (d.motif || "—")));
+  L.push("");
+  L.push("AUTRES SOMMETS DÉRIVÉS");
+  (r.inputs || []).forEach(n =>
+    L.push("  • Donnée d'entrée [" + (n.pattern || "—") + "] : " + n.nom));
+  (r.sources || []).forEach(n =>
+    L.push("  • Source de connaissance [" + (n.pattern || "—") + "] : " + n.nom));
+  (r.bkms || []).forEach(n =>
+    L.push("  • Modèle de connaissance métier : " + n.nom));
+  L.push(LIGNE);
+  L.push("EXIGENCES");
+  L.push("  Information (IR) :");  L.push(arcs(r.IR));
+  L.push("  Connaissance (KR) :"); L.push(arcs(r.KR));
+  L.push("  Autorité (AR) :");     L.push(arcs(r.AR));
+  L.push(LIGNE);
+  L.push("POINTS SOUMIS À L'ARBITRAGE DE L'EXPERT (" +
+         (r.a_confirmer || []).length + ")");
+  (r.a_confirmer || []).forEach(p =>
+    L.push("  [?] (" + p.categorie + ") " + p.objet + "\n      " + p.motif));
+  L.push("");
+  L.push("ÉLÉMENTS ÉCARTÉS AUTOMATIQUEMENT (" + (r.ecartes || []).length + ")");
+  (r.ecartes || []).forEach(p =>
+    L.push("  [x] (" + p.categorie + ") " + p.objet + "\n      " + p.motif));
+  return L.join("\n") + "\n";
+}
+
+function rapportInverseEnTexte(r){
+  const L = [];
+  L.push("RAPPORT D'INVERSION  DMN (DRD) BPMN");
+  L.push("Date : " + new Date().toLocaleString("fr-FR"));
+  L.push(LIGNE);
+  const res = r.resume || {};
+  L.push("DRD LU : " + res.decisions + " décision(s), " + res.inputs +
+         " donnée(s), " + res.sources + " source(s), " + res.bkm +
+         " BKM — IR " + res.IR + " / KR " + res.KR + " / AR " + res.AR);
+  L.push("ALLER-RETOUR T(T⁻¹(M)) = M : " +
+         (r.aller_retour ? "vérifié (le BPMN reconstruit redonne le DRD "
+          + "de départ à l'identique)" : "échec — " +
+          (r.ecarts || []).join(" ; ")));
+  L.push(LIGNE);
+  L.push("DÉCISIONS VERS STRUCTURE DE PROCESSUS RECONSTRUITE");
+  (r.decisions || []).forEach(d =>
+    L.push("  • " + d.nom + "\n      tâche : " + d.tache +
+           "\n      passerelle : " + d.passerelle +
+           "  |  branche d'arrêt : " + d.fin_arret));
+  L.push("");
+  L.push("DONNÉES D'ENTRÉE VERS OBJETS DE DONNÉES (P2)");
+  (r.inputs || []).forEach(i =>
+    L.push("  • " + i.nom + "  — lue par : " +
+           (i.lecteurs || []).join(" · ")));
+  L.push("");
+  L.push("LIENS ENTRE DÉCISIONS VERS OBJETS « RÉSULTAT » (P4)");
+  (r.resultats || []).length
+    ? r.resultats.forEach(x => L.push("  • " + x.source + "  vers  [" +
+        x.objet + "]  vers  " + x.cible))
+    : L.push("  (aucun)");
+  L.push("");
+  L.push("SOURCES ET BKM VERS ANNOTATIONS ARBITRÉES (P6)");
+  (r.annotations || []).length
+    ? r.annotations.forEach(a => L.push("  • " + a.nom + "\n      " +
+        a.genre + " — associée à : " + (a.cibles || []).join(" · ")))
+    : L.push("  (aucune)");
+  if (r.arbitrages_generes){
+    L.push(LIGNE);
+    L.push("FICHIER D'ARBITRAGES GÉNÉRÉ : " +
+           r.arbitrages_generes.annotations + " verdict(s) d'annotation, " +
+           r.arbitrages_generes.renommages + " renommage(s), " +
+           r.arbitrages_generes.noms + " libellé(s) restitué(s) — il " +
+           "garantit l'aller-retour.");
+  }
+  return L.join("\n") + "\n";
+}
+
+function imprimerEnPdf(titre, texte){
+  const w = window.open("", "_blank");
+  w.document.write("<!DOCTYPE html><html><head><meta charset='utf-8'>" +
+    "<title>" + echapper(titre) + "</title><style>" +
+    "body{font:12px 'Consolas','Courier New',monospace;margin:28px;" +
+    "color:#111}h1{font:16px 'Segoe UI',sans-serif;color:#1c4587;" +
+    "border-bottom:2px solid #1c4587;padding-bottom:6px}" +
+    "pre{white-space:pre-wrap;word-wrap:break-word}</style></head><body>" +
+    "<h1>" + echapper(titre) + "</h1><pre>" + echapper(texte) +
+    "</pre></body></html>");
+  w.document.close();
+  const lancer = () => { if (!w.__fait){ w.__fait = 1; w.print(); } };
+  w.onload = lancer;
+  setTimeout(() => { try { lancer(); } catch (e) {} }, 400);
+}
+
+// téléchargements
+$("btTelechargerDmn").onclick = () =>
+  dmnProduit && telecharger("modele.drd.dmn", dmnProduit);
+$("btRapportPdf").onclick = () =>
+  rapportCourant && imprimerEnPdf("Rapport d'extraction BPMN DMN",
+    rapportAvantEnTexte(rapportCourant));
+$("btTelechargerArbitrages").onclick = () => {
+  recolterArbitrages();
+  telecharger("arbitrages.json",
+    JSON.stringify(arbitrages, null, 2), "application/json");
+};
+
+// sens inverse
+$("btInverser").onclick = async () => {
+  if (!dmnEntree) return;
+  $("btInverser").disabled = true;
+  try {
+    const d = await api("/api/inverser", {dmn: dmnEntree});
+    bpmnInverse = d.bpmn; arbitragesInverse = d.arbitrages;
+    await montrerBpmn(vueBpmnSortie, "vueBpmnSortie", d.bpmn);
+    $("etatInverse").innerHTML = d.aller_retour
+      ? '<span class="etat ok">T(T⁻¹(M)) = M vérifié</span>'
+      : '<span class="etat non">aller-retour non vérifié</span>';
+    rapportInverseCourant = d.rapport || {resume: d.resume,
+      aller_retour: d.aller_retour, ecarts: d.ecarts};
+    ["btTelechargerBpmnInv","btRapportInvPdf",
+     "btTelechargerArbInv"].forEach(b => $(b).disabled = false);
+    afficherRapportInverse(rapportInverseCourant);
+    $("actionsInverse").style.display = "flex";
+    message("Inversion réussie.");
+  } catch (e) { message(e.message, true); }
+  $("btInverser").disabled = false;
+};
+/* mode démonstration : ?auto=1 charge l'exemple FIMEX et transforme ;
+   ?auto=2 enchaîne démo -> Effacer -> rechargement (test du bouton) ;
+   ?auto=3 enchaîne démo -> Accueil -> contrôle de l'état initial */
+const modeAuto = new URLSearchParams(location.search).get("auto");
+if (modeAuto === "3"){
+  (async () => {
+    await $("btExemple").onclick();
+    await lancerTransformation();
+    retourAccueil();
+    const initial = !bpmnCourant && !dmnProduit && !rapportCourant &&
+      $("btTransformer").disabled && $("btTelechargerDmn").disabled &&
+      $("actionsArbitrage").style.display === "none" &&
+      $("panneauAvant").classList.contains("actif") &&
+      $("rapport").innerHTML.length < 600;
+    document.title = initial ? "ACCUEIL-OK" : "ACCUEIL-ECHEC";
+  })().catch(e => document.title = "ACCUEIL-ECHEC " + e.message);
+}
+if (modeAuto === "4"){
+  /* test de bout en bout de l'inversion dans l'interface : exemple ->
+     transformation -> le DRD produit est inversé -> rapport détaillé */
+  (async () => {
+    await $("btExemple").onclick();
+    await lancerTransformation();
+    dmnEntree = dmnProduit;
+    activer("retour");
+    await montrerDmn(vueDmnEntree, "vueDmnEntree", dmnEntree);
+    $("btInverser").disabled = false;
+    await $("btInverser").onclick();
+    const okRapport = $("rapportInverse").querySelectorAll("table").length >= 2
+      && $("actionsInverse").style.display !== "none";
+    document.title = okRapport ? "INVERSION-OK" : "INVERSION-ECHEC";
+  })().catch(e => document.title = "INVERSION-ECHEC " + e.message);
+}
+if (modeAuto === "1" || modeAuto === "2"){
+  (async () => {
+    await $("btExemple").onclick();
+    await lancerTransformation();
+    if (modeAuto === "2"){
+      effacerAvant();
+      const vide = !bpmnCourant && !dmnProduit &&
+        $("btTransformer").disabled && $("rapport").innerHTML.length < 600;
+      await $("btExemple").onclick();
+      await lancerTransformation();
+      document.title = (vide && rapportCourant ? "EFFACER-OK "
+        : "EFFACER-ECHEC ") + (rapportCourant
+        ? rapportCourant.resume.decisions + " décisions" : "");
+    } else {
+      document.title = "DEMO-OK " + (rapportCourant
+        ? rapportCourant.resume.decisions + " décisions" : "sans rapport");
+    }
+  })().catch(e => document.title = "DEMO-ECHEC " + e.message);
+}
+
+// rapport détaillé de l'inversion, au même niveau que le sens direct
+function afficherRapportInverse(r){
+  const res = r.resume || {};
+  let h = '<div class="compteurs">';
+  [["décisions",res.decisions],["données d’entrée",res.inputs],
+   ["sources",res.sources],["BKM",res.bkm],["IR",res.IR],
+   ["KR",res.KR],["AR",res.AR]].forEach(([n,v]) =>
+    h += '<div class="compteur"><b>'+(v == null ? "–" : v)+'</b><span>'+n+'</span></div>');
+  h += '</div>';
+
+  h += r.aller_retour
+    ? '<p class="etat ok">Aller-retour exact T(T⁻¹(M)) = M : la '
+      + 'transformation directe, appliquée au BPMN reconstruit avec les '
+      + 'arbitrages générés, redonne le DRD de départ à l’identique — '
+      + 'sommets, types et exigences.</p>'
+    : '<div class="avertissement">Écarts d’aller-retour : '
+      + echapper((r.ecarts || []).join(" ; ")) + '</div>';
+
+  if (r.decisions && r.decisions.length){
+    h += '<h3>Décisions du DRD vers structure de processus reconstruite</h3>'
+       + '<table><tr><th>Décision (DMN)</th><th>Tâche créée</th>'
+       + '<th>Passerelle de verdict</th><th>Branche d’arrêt</th></tr>';
+    r.decisions.forEach(d0 => h += '<tr><td>' + echapper(d0.nom)
+       + '</td><td>' + echapper(d0.tache) + '</td><td>'
+       + echapper(d0.passerelle) + '</td><td>'
+       + echapper(d0.fin_arret) + '</td></tr>');
+    h += '</table>';
+  }
+  if (r.inputs && r.inputs.length){
+    h += '<h3>Données d’entrée vers objets de données (pattern P₂)</h3>'
+       + '<table><tr><th>Donnée d’entrée (DMN)</th>'
+       + '<th>Lue par les tâches</th></tr>';
+    r.inputs.forEach(i0 => h += '<tr><td>' + echapper(i0.nom) + '</td><td>'
+       + echapper((i0.lecteurs || []).join(" · ")) + '</td></tr>');
+    h += '</table>';
+  }
+  if (r.resultats && r.resultats.length){
+    h += '<h3>Liens entre décisions vers objets « Résultat » (pattern P₄)</h3>'
+       + '<table><tr><th>Décision amont</th><th>Objet créé</th>'
+       + '<th>Décision aval (lectrice)</th></tr>';
+    r.resultats.forEach(x => h += '<tr><td>' + echapper(x.source)
+       + '</td><td>' + echapper(x.objet) + '</td><td>'
+       + echapper(x.cible) + '</td></tr>');
+    h += '</table>';
+  }
+  if (r.annotations && r.annotations.length){
+    h += '<h3>Sources et BKM vers annotations arbitrées (pattern P₆)</h3>'
+       + '<table><tr><th>Élément du DRD</th><th>Nature</th>'
+       + '<th>Annotation associée aux tâches</th></tr>';
+    r.annotations.forEach(a0 => h += '<tr><td>' + echapper(a0.nom)
+       + '</td><td>' + echapper(a0.genre) + '</td><td>'
+       + echapper((a0.cibles || []).join(" · ")) + '</td></tr>');
+    h += '</table>';
+  }
+  if (r.arbitrages_generes){
+    h += '<p class="note">Fichier d’arbitrages généré : '
+       + r.arbitrages_generes.annotations + ' verdict(s) d’annotation, '
+       + r.arbitrages_generes.renommages + ' renommage(s), '
+       + r.arbitrages_generes.noms + ' libellé(s) exact(s) restitué(s) — '
+       + 'c’est lui qui garantit l’aller-retour ; téléchargez-le avec le '
+       + '.bpmn (bouton ci-dessus).</p>';
+  }
+  $("rapportInverse").innerHTML = h;
+}
+$("btAccueilBasInv").onclick = retourAccueil;
+
+$("btTelechargerBpmnInv").onclick = () =>
+  bpmnInverse && telecharger("modele.inverse.bpmn", bpmnInverse);
+$("btRapportInvPdf").onclick = () =>
+  rapportInverseCourant && imprimerEnPdf("Rapport d'inversion DMN BPMN",
+    rapportInverseEnTexte(rapportInverseCourant));
+$("btTelechargerArbInv").onclick = () =>
+  arbitragesInverse && telecharger("arbitrages.aller-retour.json",
+    JSON.stringify(arbitragesInverse, null, 2), "application/json");
+
+// tout est branché : le garde-fou de l'en-tête n'affichera pas d'alerte
+window.__applicationPrete = true;
+</script>
+</body>
+</html>

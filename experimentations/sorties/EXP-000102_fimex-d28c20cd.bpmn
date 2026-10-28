@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  =====================================================================
+   Procedure FIMEX == Instruction d'une demande d'inscription au
+   Fichier des Importateurs et Exportateurs (MINCOMMERCE / DCE-SOC).
+   Back-office e-GOV  /  portail operateur e-FORCE.
+
+   BPMN 2.0 conforme a la specification OMG formal/2013-12-09.
+   Ouvrir avec CAMUNDA MODELER (Fichier -> Ouvrir un fichier) ou sur
+   https://demo.bpmn.io (glisser-deposer). Rendu noir sur blanc par
+   defaut : c'est le rendu utilise dans la presentation.
+
+   VERSION DU 9 AOUT 2026 == corrections de mise en page :
+    (1) flux « Signer electroniquement l'attestation » -> « Generer et
+        transmettre l'attestation signee » : depart sur le BORD DROIT
+        de l'activite (il repassait auparavant a l'interieur).
+    (2) libelles « Incomplet », « Non conforme », « Conforme » places
+        sur un segment degage (ils recouvraient les activites cibles).
+    (3) flux « Reponse de l'operateur » -> « Consulter le dossier cote » :
+        depart VERTICAL sous l'evenement, trace strictement orthogonal ;
+        ne coupe plus l'evenement « Demande recue ».
+    (4) ajout des OBJETS DE DONNEES et du MAGASIN DE DONNEES, ainsi que
+        de leurs associations : ils portent la « perspective donnees »
+        sur laquelle repose l'inference du DRD.
+  =====================================================================
+-->
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_FIMEX"
+                  targetNamespace="http://guce.cm/fimex"
+                  exporter="Camunda Modeler" exporterVersion="5.x">
+
+  <bpmn:collaboration id="Collaboration_FIMEX">
+    <bpmn:participant id="EFORCE" name="e-FORCE &#8212; Portail opérateur" processRef="Process_EFORCE"/>
+    <bpmn:participant id="PGOV"   name="e-GOV &#8212; Back-office MINCOMMERCE" processRef="Process_FIMEX"/>
+    <bpmn:messageFlow id="m1" name="Demande d'inscription"  sourceRef="EFORCE" targetRef="S"/>
+    <bpmn:messageFlow id="m2" name="Demande de complément"  sourceRef="T6" targetRef="EFORCE"/>
+    <bpmn:messageFlow id="m3" name="Réponse de l'opérateur" sourceRef="EFORCE" targetRef="E1"/>
+    <bpmn:messageFlow id="m4" name="Notification de rejet"  sourceRef="T7" targetRef="EFORCE"/>
+    <bpmn:messageFlow id="m5" name="Attestation signée"     sourceRef="T10" targetRef="EFORCE"/>
+  </bpmn:collaboration>
+
+  <!-- Processus vide du pool e-FORCE : rend le pool "etendu" pour bpmn-js,
+       donc libelle VERTICAL a gauche, comme le pool e-GOV. -->
+  <bpmn:process id="Process_EFORCE" isExecutable="false"/>
+
+  <bpmn:process id="Process_FIMEX" name="Instruction d'une demande FIMEX" isExecutable="false">
+
+    <bpmn:laneSet id="LaneSet_FIMEX">
+      <bpmn:lane id="L1" name="Système e-GOV">
+        <bpmn:flowNodeRef>S</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>E1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>F1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T10</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>F2</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L2" name="Agent de traitement">
+        <bpmn:flowNodeRef>T2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>G1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T8</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L3" name="Agent signataire">
+        <bpmn:flowNodeRef>T12</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T9</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>G2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T11</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+
+    <!-- ================= NOEUDS DE DONNEES (perspective donnees) ========= -->
+    <bpmn:dataObject id="DO_dossier"/>
+    <bpmn:dataObject id="DO_obsreex"/>
+    <bpmn:dataObject id="DO_decision"/>
+    <bpmn:dataObjectReference id="do_dossier"  name="Dossier FIMEX"           dataObjectRef="DO_dossier"/>
+    <bpmn:dataObjectReference id="do_obsreex"  name="Observation de réexamen" dataObjectRef="DO_obsreex"/>
+    <bpmn:dataObjectReference id="do_decision" name="Décision de traitement"  dataObjectRef="DO_decision"/>
+    <bpmn:dataStoreReference  id="ds_agents"   name="Agents actifs et leur charge"/>
+
+    <!-- ========================= COULOIR SYSTEME ========================= -->
+    <bpmn:startEvent id="S" name="Demande reçue">
+      <bpmn:outgoing>f1</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MED_1"/>
+    </bpmn:startEvent>
+
+    <!-- Decision automatisee : TACHE DE REGLE METIER (invoque une regle documentee) -->
+    <bpmn:businessRuleTask id="T1" name="Affecter le dossier à un agent">
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+      <bpmn:property id="Prop_T1" name="__targetRef_placeholder"/>
+      <bpmn:dataInputAssociation id="dia1">
+        <bpmn:sourceRef>ds_agents</bpmn:sourceRef>
+        <bpmn:targetRef>Prop_T1</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:businessRuleTask>
+
+    <bpmn:sendTask id="T6" name="Transmettre la demande de complément">
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+    </bpmn:sendTask>
+
+    <bpmn:intermediateCatchEvent id="E1" name="Réponse reçue">
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MED_2"/>
+    </bpmn:intermediateCatchEvent>
+
+    <bpmn:sendTask id="T7" name="Notifier le rejet à e-FORCE">
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:endEvent id="F1" name="Dossier rejeté">
+      <bpmn:incoming>f9</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:serviceTask id="T10" name="Générer et transmettre l'attestation signée">
+      <bpmn:incoming>f12</bpmn:incoming>
+      <bpmn:outgoing>f13</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="F2" name="Inscription délivrée">
+      <bpmn:incoming>f13</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <!-- ==================== COULOIR AGENT DE TRAITEMENT ================== -->
+    <bpmn:userTask id="T2" name="Consulter le dossier coté">
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:incoming>f14</bpmn:incoming>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <!-- Decision humaine : TACHE UTILISATEUR precedant une passerelle exclusive -->
+    <bpmn:userTask id="T3" name="Vérifier la conformité documentaire">
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+      <bpmn:property id="Prop_T3" name="__targetRef_placeholder"/>
+      <bpmn:dataInputAssociation id="dia2">
+        <bpmn:sourceRef>do_dossier</bpmn:sourceRef>
+        <bpmn:targetRef>Prop_T3</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation id="dia3">
+        <bpmn:sourceRef>do_obsreex</bpmn:sourceRef>
+        <bpmn:targetRef>Prop_T3</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+      <!-- La SORTIE de la decision est explicitement modelisee : c'est elle
+           qui rend derivable l'exigence d'information decision -> decision. -->
+      <bpmn:dataOutputAssociation id="doa2">
+        <bpmn:targetRef>do_decision</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:userTask>
+
+    <bpmn:exclusiveGateway id="G1">
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:outgoing>b_inc</bpmn:outgoing>
+      <bpmn:outgoing>b_non</bpmn:outgoing>
+      <bpmn:outgoing>b_conf</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:userTask id="T4" name="Saisir l'observation de complément">
+      <bpmn:incoming>b_inc</bpmn:incoming>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="T5" name="Saisir le motif de rejet">
+      <bpmn:incoming>b_non</bpmn:incoming>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="T8" name="Valider pour signature">
+      <bpmn:incoming>b_conf</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <!-- ====================== COULOIR AGENT SIGNATAIRE =================== -->
+    <bpmn:userTask id="T12" name="Saisir l'observation de réexamen">
+      <bpmn:incoming>b_re</bpmn:incoming>
+      <bpmn:outgoing>f14</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="doa1">
+        <bpmn:targetRef>do_obsreex</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:userTask>
+
+    <!-- Decision humaine : TACHE UTILISATEUR precedant une passerelle exclusive -->
+    <bpmn:userTask id="T9" name="Consulter la demande et la décision">
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+      <bpmn:property id="Prop_T9" name="__targetRef_placeholder"/>
+      <bpmn:dataInputAssociation id="dia4">
+        <bpmn:sourceRef>do_decision</bpmn:sourceRef>
+        <bpmn:targetRef>Prop_T9</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:userTask>
+
+    <bpmn:exclusiveGateway id="G2">
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:outgoing>b_ok</bpmn:outgoing>
+      <bpmn:outgoing>b_re</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:userTask id="T11" name="Signer électroniquement l'attestation">
+      <bpmn:incoming>b_ok</bpmn:incoming>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <!-- ========================= ANNOTATIONS ============================= -->
+    <bpmn:textAnnotation id="A1">
+      <bpmn:text>Cotation automatique, aléatoire et équitable entre les agents actifs</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="A2">
+      <bpmn:text>Réglementation FIMEX : pièces exigées, critères de recevabilité</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="A3">
+      <bpmn:text>L'attestation signée porte le QR code, le nom du signataire et son cachet</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="as1" sourceRef="A1" targetRef="T1"/>
+    <bpmn:association id="as2" sourceRef="A2" targetRef="T3"/>
+    <bpmn:association id="as3" sourceRef="A3" targetRef="T10"/>
+
+    <!-- ======================= FLUX DE SEQUENCE ========================== -->
+    <bpmn:sequenceFlow id="f1"     sourceRef="S"   targetRef="T1"/>
+    <bpmn:sequenceFlow id="f2"     sourceRef="T1"  targetRef="T2"/>
+    <bpmn:sequenceFlow id="f3"     sourceRef="T2"  targetRef="T3"/>
+    <bpmn:sequenceFlow id="f4"     sourceRef="T3"  targetRef="G1"/>
+    <bpmn:sequenceFlow id="b_inc"  name="Incomplet"    sourceRef="G1" targetRef="T4"/>
+    <bpmn:sequenceFlow id="b_non"  name="Non conforme" sourceRef="G1" targetRef="T5"/>
+    <bpmn:sequenceFlow id="b_conf" name="Conforme"     sourceRef="G1" targetRef="T8"/>
+    <bpmn:sequenceFlow id="f5"     sourceRef="T4"  targetRef="T6"/>
+    <bpmn:sequenceFlow id="f6"     sourceRef="T6"  targetRef="E1"/>
+    <bpmn:sequenceFlow id="f7"     name="dossier complété" sourceRef="E1" targetRef="T2"/>
+    <bpmn:sequenceFlow id="f8"     sourceRef="T5"  targetRef="T7"/>
+    <bpmn:sequenceFlow id="f9"     sourceRef="T7"  targetRef="F1"/>
+    <bpmn:sequenceFlow id="f10"    sourceRef="T8"  targetRef="T9"/>
+    <bpmn:sequenceFlow id="f11"    sourceRef="T9" targetRef="G2"/>
+    <bpmn:sequenceFlow id="b_ok"   name="Signature accordée"   sourceRef="G2" targetRef="T11"/>
+    <bpmn:sequenceFlow id="b_re"   name="Retour pour réexamen" sourceRef="G2" targetRef="T12"/>
+    <bpmn:sequenceFlow id="f12"    sourceRef="T11" targetRef="T10"/>
+    <bpmn:sequenceFlow id="f13"    sourceRef="T10" targetRef="F2"/>
+    <bpmn:sequenceFlow id="f14"    sourceRef="T12" targetRef="T2"/>
+
+  </bpmn:process>
+
+  <!-- =================================================================== -->
+  <!--  DIAGRAM INTERCHANGE : mise en page corrigee (9 aout 2026)          -->
+  <!--  Les coordonnees ci-dessous sont EXACTEMENT celles de la figure     -->
+  <!--  utilisee dans la presentation (sources-figures/bpmn-fimex.tex).    -->
+  <!-- =================================================================== -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_FIMEX">
+    <bpmndi:BPMNPlane id="BPMNPlane_FIMEX" bpmnElement="Collaboration_FIMEX">
+
+      <bpmndi:BPMNShape id="EFORCE_di" bpmnElement="EFORCE" isHorizontal="true">
+        <dc:Bounds x="60" y="30" width="1910" height="110"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="PGOV_di" bpmnElement="PGOV" isHorizontal="true">
+        <dc:Bounds x="60" y="175" width="1910" height="915"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L1_di" bpmnElement="L1" isHorizontal="true">
+        <dc:Bounds x="90" y="175" width="1880" height="280"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L2_di" bpmnElement="L2" isHorizontal="true">
+        <dc:Bounds x="90" y="455" width="1880" height="335"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L3_di" bpmnElement="L3" isHorizontal="true">
+        <dc:Bounds x="90" y="790" width="1880" height="300"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="S_di" bpmnElement="S">
+        <dc:Bounds x="162" y="352" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="120" y="396" width="120" height="20"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T1_di" bpmnElement="T1">
+        <dc:Bounds x="240" y="330" width="225" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ds_agents_di" bpmnElement="ds_agents">
+        <dc:Bounds x="320" y="215" width="50" height="50"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="290" y="270" width="110" height="40"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A1_di" bpmnElement="A1">
+        <dc:Bounds x="490" y="318" width="230" height="40"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T6_di" bpmnElement="T6">
+        <dc:Bounds x="790" y="322" width="210" height="96"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="E1_di" bpmnElement="E1">
+        <dc:Bounds x="1042" y="352" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1068" y="414" width="80" height="14"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T7_di" bpmnElement="T7">
+        <dc:Bounds x="1130" y="330" width="190" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="F1_di" bpmnElement="F1">
+        <dc:Bounds x="1362" y="352" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1320" y="396" width="120" height="20"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T10_di" bpmnElement="T10">
+        <dc:Bounds x="1440" y="322" width="225" height="96"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="F2_di" bpmnElement="F2">
+        <dc:Bounds x="1707" y="352" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1680" y="396" width="90" height="36"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A3_di" bpmnElement="A3">
+        <dc:Bounds x="1700" y="208" width="230" height="40"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="T2_di" bpmnElement="T2">
+        <dc:Bounds x="240" y="590" width="225" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T3_di" bpmnElement="T3">
+        <dc:Bounds x="500" y="590" width="190" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="G1_di" bpmnElement="G1" isMarkerVisible="true">
+        <dc:Bounds x="735" y="605" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="do_dossier_di" bpmnElement="do_dossier">
+        <dc:Bounds x="582" y="495" width="36" height="50"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="626" y="510" width="90" height="20"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="do_obsreex_di" bpmnElement="do_obsreex">
+        <dc:Bounds x="560" y="880" width="36" height="50"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A2_di" bpmnElement="A2">
+        <dc:Bounds x="550" y="700" width="190" height="40"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T4_di" bpmnElement="T4">
+        <dc:Bounds x="890" y="470" width="220" height="75"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T5_di" bpmnElement="T5">
+        <dc:Bounds x="890" y="592" width="220" height="75"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T8_di" bpmnElement="T8">
+        <dc:Bounds x="890" y="705" width="220" height="75"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="T12_di" bpmnElement="T12">
+        <dc:Bounds x="240" y="930" width="225" height="75"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="do_decision_di" bpmnElement="do_decision">
+        <dc:Bounds x="922" y="800" width="36" height="50"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T9_di" bpmnElement="T9">
+        <dc:Bounds x="870" y="930" width="220" height="75"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="G2_di" bpmnElement="G2" isMarkerVisible="true">
+        <dc:Bounds x="1125" y="943" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T11_di" bpmnElement="T11">
+        <dc:Bounds x="1330" y="930" width="250" height="75"/>
+      </bpmndi:BPMNShape>
+
+      <!-- ========================= flux de sequence ======================== -->
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="198" y="370"/><di:waypoint x="240" y="370"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="352" y="410"/><di:waypoint x="352" y="590"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="465" y="630"/><di:waypoint x="500" y="630"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="690" y="630"/><di:waypoint x="735" y="630"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- CORRECTION (2) : le libelle est place sur le segment degage -->
+      <bpmndi:BPMNEdge id="b_inc_di" bpmnElement="b_inc">
+        <di:waypoint x="760" y="605"/><di:waypoint x="760" y="508"/>
+        <di:waypoint x="890" y="508"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="768" y="482" width="80" height="20"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="b_non_di" bpmnElement="b_non">
+        <di:waypoint x="785" y="630"/><di:waypoint x="890" y="630"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="789" y="604" width="98" height="20"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="b_conf_di" bpmnElement="b_conf">
+        <di:waypoint x="760" y="655"/><di:waypoint x="760" y="742"/>
+        <di:waypoint x="890" y="742"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="768" y="716" width="80" height="20"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="945" y="470"/><di:waypoint x="945" y="418"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="1000" y="370"/><di:waypoint x="1042" y="370"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- CORRECTION (3) : depart VERTICAL sous l'evenement, trace orthogonal,
+           couloir degage a y=440 ; ne coupe plus l'evenement de debut -->
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="1060" y="388"/><di:waypoint x="1060" y="440"/>
+        <di:waypoint x="165"  y="440"/><di:waypoint x="165"  y="630"/>
+        <di:waypoint x="240"  y="630"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="558" y="414" width="124" height="20"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="1110" y="630"/><di:waypoint x="1230" y="630"/>
+        <di:waypoint x="1230" y="410"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="1320" y="370"/><di:waypoint x="1362" y="370"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1060" y="780"/><di:waypoint x="1060" y="930"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="1090" y="968"/><di:waypoint x="1125" y="968"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="b_ok_di" bpmnElement="b_ok">
+        <di:waypoint x="1175" y="968"/><di:waypoint x="1330" y="968"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1187" y="942" width="132" height="20"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+
+      <!-- CORRECTION (1) : depart sur le BORD DROIT de T11, arrivee sur le
+           BORD INFERIEUR de T10 ; le trace ne repasse plus dans l'activite -->
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="1580" y="968"/><di:waypoint x="1620" y="968"/>
+        <di:waypoint x="1620" y="418"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="f13_di" bpmnElement="f13">
+        <di:waypoint x="1665" y="370"/><di:waypoint x="1707" y="370"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="b_re_di" bpmnElement="b_re">
+        <di:waypoint x="1150" y="993"/><di:waypoint x="1150" y="1045"/>
+        <di:waypoint x="352"  y="1045"/><di:waypoint x="352"  y="1005"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="686" y="1019" width="148" height="20"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f14_di" bpmnElement="f14">
+        <di:waypoint x="240" y="968"/><di:waypoint x="200" y="968"/>
+        <di:waypoint x="200" y="655"/><di:waypoint x="240" y="655"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- ========================= flux de messages ======================== -->
+      <bpmndi:BPMNEdge id="m1_di" bpmnElement="m1">
+        <di:waypoint x="180" y="140"/><di:waypoint x="180" y="352"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="196" y="144" width="140" height="34"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="m2_di" bpmnElement="m2">
+        <di:waypoint x="895" y="322"/><di:waypoint x="895" y="140"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="748" y="144" width="140" height="34"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="m3_di" bpmnElement="m3">
+        <di:waypoint x="1060" y="140"/><di:waypoint x="1060" y="352"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="912" y="144" width="140" height="34"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="m4_di" bpmnElement="m4">
+        <di:waypoint x="1180" y="330"/><di:waypoint x="1180" y="140"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1196" y="144" width="136" height="34"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="m5_di" bpmnElement="m5">
+        <di:waypoint x="1490" y="322"/><di:waypoint x="1490" y="140"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1506" y="144" width="124" height="34"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+
+      <!-- =================== associations de donnees ======================= -->
+      <bpmndi:BPMNEdge id="dia1_di" bpmnElement="dia1">
+        <di:waypoint x="370" y="240"/><di:waypoint x="420" y="240"/>
+        <di:waypoint x="420" y="330"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="dia2_di" bpmnElement="dia2">
+        <di:waypoint x="600" y="545"/><di:waypoint x="600" y="590"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="dia3_di" bpmnElement="dia3">
+        <di:waypoint x="578" y="880"/><di:waypoint x="578" y="860"/>
+        <di:waypoint x="478" y="860"/><di:waypoint x="478" y="655"/>
+        <di:waypoint x="500" y="655"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="doa2_di" bpmnElement="doa2">
+        <di:waypoint x="530" y="670"/><di:waypoint x="530" y="825"/>
+        <di:waypoint x="922" y="825"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="dia4_di" bpmnElement="dia4">
+        <di:waypoint x="958" y="825"/><di:waypoint x="1010" y="825"/>
+        <di:waypoint x="1010" y="930"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="doa1_di" bpmnElement="doa1">
+        <di:waypoint x="465" y="968"/><di:waypoint x="520" y="968"/>
+        <di:waypoint x="520" y="905"/><di:waypoint x="560" y="905"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- =============== associations d'annotations ======================== -->
+      <bpmndi:BPMNEdge id="as1_di" bpmnElement="as1">
+        <di:waypoint x="490" y="340"/><di:waypoint x="465" y="340"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="as2_di" bpmnElement="as2">
+        <di:waypoint x="550" y="720"/><di:waypoint x="510" y="720"/>
+        <di:waypoint x="510" y="670"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="as3_di" bpmnElement="as3">
+        <di:waypoint x="1700" y="228"/><di:waypoint x="1560" y="228"/>
+        <di:waypoint x="1560" y="322"/>
+      </bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

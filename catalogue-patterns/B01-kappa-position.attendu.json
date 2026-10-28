@@ -1,0 +1,25 @@
+{
+  "id": "B01",
+  "titre": "Corroboration par la position",
+  "pattern": "κ (position) : tâche au libellé neutre suivie d'une passerelle exclusive",
+  "elements_bpmn": "userTask, exclusiveGateway, dataObjectReference",
+  "decisions": [
+    "Instruire la demande"
+  ],
+  "inputs": [
+    "Demande d'agrément"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Demande d'agrément",
+      "Instruire la demande",
+      "P2"
+    ]
+  ],
+  "points_experts": [],
+  "ecartes": [],
+  "verdict_attendu": "conforme",
+  "enseignement": "« Instruire » n'est pas un verbe de décision, mais la passerelle de choix qui suit corrobore la candidate : indice de position."
+}

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn2dmn/catalogue" exporter="bpmn2dmn" exporterVersion="1.0">
+  <bpmn:collaboration id="Collab_1">
+    <bpmn:participant id="Pool_1" name="Guichet unique du commerce extérieur" processRef="Process_1"/>
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1" name="Corroboration par le lexique" isExecutable="false">
+      <bpmn:startEvent id="Depart_1" name="Demande déposée"></bpmn:startEvent>
+      <bpmn:dataObjectReference id="Donnee_4" name="Dossier de l'opérateur" dataObjectRef="Donnee_4_o"/>
+      <bpmn:dataObject id="Donnee_4_o"/>
+      <bpmn:dataStoreReference id="Donnee_6" name="Historique des contrôles"/>
+      <bpmn:dataObjectReference id="Donnee_8" name="Niveau de risque" dataObjectRef="Donnee_8_o"/>
+      <bpmn:dataObject id="Donnee_8_o"/>
+      <bpmn:businessRuleTask id="Tache_2" name="Évaluer le niveau de risque de l'opérateur"><bpmn:property id="Prop_3" name="__targetRef_placeholder"/>        <bpmn:dataInputAssociation id="Lecture_5"><bpmn:sourceRef>Donnee_4</bpmn:sourceRef><bpmn:targetRef>Prop_3</bpmn:targetRef></bpmn:dataInputAssociation>        <bpmn:dataInputAssociation id="Lecture_7"><bpmn:sourceRef>Donnee_6</bpmn:sourceRef><bpmn:targetRef>Prop_3</bpmn:targetRef></bpmn:dataInputAssociation>        <bpmn:dataOutputAssociation id="Ecriture_9"><bpmn:targetRef>Donnee_8</bpmn:targetRef></bpmn:dataOutputAssociation></bpmn:businessRuleTask>
+      <bpmn:sendTask id="Tache_10" name="Notifier le résultat"></bpmn:sendTask>
+      <bpmn:endEvent id="Fin_12" name="Demande traitée"></bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flux_13" sourceRef="Depart_1" targetRef="Tache_2"/>
+      <bpmn:sequenceFlow id="Flux_14" sourceRef="Tache_2" targetRef="Tache_10"/>
+      <bpmn:sequenceFlow id="Flux_15" sourceRef="Tache_10" targetRef="Fin_12"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagramme_1">
+    <bpmndi:BPMNPlane id="Plan_1" bpmnElement="Collab_1">
+      <bpmndi:BPMNShape id="di_Pool_1" bpmnElement="Pool_1" isHorizontal="true"><dc:Bounds x="160" y="80" width="823" height="260"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Depart_1" bpmnElement="Depart_1"><dc:Bounds x="287" y="202" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Tache_2" bpmnElement="Tache_2"><dc:Bounds x="440" y="180" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Donnee_4" bpmnElement="Donnee_4"><dc:Bounds x="447" y="100" width="36" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="489" y="111" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Donnee_6" bpmnElement="Donnee_6"><dc:Bounds x="690" y="100" width="50" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="746" y="111" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Donnee_8" bpmnElement="Donnee_8"><dc:Bounds x="887" y="100" width="36" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="929" y="111" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Tache_10" bpmnElement="Tache_10"><dc:Bounds x="640" y="180" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Fin_12" bpmnElement="Fin_12"><dc:Bounds x="887" y="202" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="di_Lecture_5" bpmnElement="Lecture_5"><di:waypoint x="465" y="150"/><di:waypoint x="465" y="162"/><di:waypoint x="475" y="162"/><di:waypoint x="475" y="180"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_Lecture_7" bpmnElement="Lecture_7"><di:waypoint x="715" y="150"/><di:waypoint x="715" y="162"/><di:waypoint x="501" y="162"/><di:waypoint x="501" y="180"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_Ecriture_9" bpmnElement="Ecriture_9"><di:waypoint x="549" y="180"/><di:waypoint x="549" y="154"/><di:waypoint x="905" y="154"/><di:waypoint x="905" y="150"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_Flux_13" bpmnElement="Flux_13"><di:waypoint x="323" y="220"/><di:waypoint x="440" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_Flux_14" bpmnElement="Flux_14"><di:waypoint x="570" y="220"/><di:waypoint x="640" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_Flux_15" bpmnElement="Flux_15"><di:waypoint x="770" y="220"/><di:waypoint x="887" y="220"/></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

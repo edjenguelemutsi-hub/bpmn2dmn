@@ -1,0 +1,17 @@
+{
+  "id": "C10",
+  "titre": "Donnée d'entrée déclarée au niveau du processus",
+  "pattern": "Non couvert : ioSpecification / dataInput du processus ignorés par le parseur",
+  "elements_bpmn": "ioSpecification, dataInput, dataInputAssociation, userTask, exclusiveGateway",
+  "decisions": [
+    "Vérifier la recevabilité de la demande"
+  ],
+  "inputs": [],
+  "sources": [],
+  "bkms": [],
+  "arcs": [],
+  "points_experts": [],
+  "ecartes": [],
+  "verdict_attendu": "limite",
+  "enseignement": "La donnée d'entrée déclarée par l'ioSpecification du processus n'est ni un objet ni un magasin : l'association qui la lit vise un identifiant inconnu (anomalie signalée) et la décision reste sans exigence."
+}

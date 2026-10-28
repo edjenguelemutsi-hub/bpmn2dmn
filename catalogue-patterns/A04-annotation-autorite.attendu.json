@@ -1,0 +1,27 @@
+{
+  "id": "A04",
+  "titre": "Annotation d'autorité",
+  "pattern": "Π2 / P6 (γ = KS) : annotation réglementaire → source de connaissance (AR)",
+  "elements_bpmn": "textAnnotation, association, userTask, exclusiveGateway",
+  "decisions": [
+    "Vérifier la recevabilité de la demande"
+  ],
+  "inputs": [],
+  "sources": [
+    "Réglementation FIMEX en vigueur"
+  ],
+  "bkms": [],
+  "arcs": [
+    [
+      "Réglementation FIMEX en vigueur",
+      "Vérifier la recevabilité de la demande",
+      "P6"
+    ]
+  ],
+  "points_experts": [
+    "annotation"
+  ],
+  "ecartes": [],
+  "verdict_attendu": "conforme",
+  "enseignement": "L'indice « réglementation » fait proposer une source de connaissance reliée par une exigence d'autorité ; le verdict reste à confirmer par l'expert."
+}

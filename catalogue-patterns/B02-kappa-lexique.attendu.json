@@ -1,0 +1,31 @@
+{
+  "id": "B02",
+  "titre": "Corroboration par le lexique",
+  "pattern": "κ (lexique) : tâche de règle métier au verbe décisionnel, sans passerelle",
+  "elements_bpmn": "businessRuleTask, dataObjectReference, dataStoreReference",
+  "decisions": [
+    "Évaluer le niveau de risque de l'opérateur"
+  ],
+  "inputs": [
+    "Dossier de l'opérateur",
+    "Historique des contrôles"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Dossier de l'opérateur",
+      "Évaluer le niveau de risque de l'opérateur",
+      "P2"
+    ],
+    [
+      "Historique des contrôles",
+      "Évaluer le niveau de risque de l'opérateur",
+      "P2"
+    ]
+  ],
+  "points_experts": [],
+  "ecartes": [],
+  "verdict_attendu": "conforme",
+  "enseignement": "Aucune passerelle ne suit la tâche : c'est le verbe « évaluer » du lexique Λ qui la corrobore ; la sortie « Niveau de risque » n'entre pas dans le DRD."
+}

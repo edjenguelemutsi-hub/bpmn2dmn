@@ -1,0 +1,27 @@
+{
+  "id": "C06",
+  "titre": "Frontière de minuterie",
+  "pattern": "Non porteur : une frontière de minuterie n'apporte aucune donnée",
+  "elements_bpmn": "boundaryEvent + timerEventDefinition, userTask, exclusiveGateway",
+  "decisions": [
+    "Vérifier la recevabilité de la demande"
+  ],
+  "inputs": [
+    "Demande d'agrément"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Demande d'agrément",
+      "Vérifier la recevabilité de la demande",
+      "P2"
+    ]
+  ],
+  "points_experts": [
+    "ressource"
+  ],
+  "ecartes": [],
+  "verdict_attendu": "conforme",
+  "enseignement": "Seuls les événements à message ou à signal portent une charge utile ; le délai d'instruction n'est pas une donnée d'entrée, même s'il conditionne le résultat."
+}

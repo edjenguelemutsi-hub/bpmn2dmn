@@ -1,0 +1,25 @@
+{
+  "id": "B13",
+  "titre": "Collaboration et flux de message",
+  "pattern": "Π4 / P3 : le flux de message inter-pools rend l'événement récepteur porteur",
+  "elements_bpmn": "deux participants, messageFlow, startEvent sans définition, sendTask",
+  "decisions": [
+    "Vérifier la recevabilité de la demande"
+  ],
+  "inputs": [
+    "Demande de l'opérateur"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Demande de l'opérateur",
+      "Vérifier la recevabilité de la demande",
+      "P3"
+    ]
+  ],
+  "points_experts": [],
+  "ecartes": [],
+  "verdict_attendu": "conforme",
+  "enseignement": "Sans définition de message, l'événement de départ n'est porteur que parce qu'un flux de message venu de l'autre pool l'atteint : la charge utile vient du partenaire."
+}

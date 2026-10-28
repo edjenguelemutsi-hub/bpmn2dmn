@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
+             xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+             xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             id="Definitions_Instruction_d_une_candidature"
+             name="Instruction d'une candidature"
+             namespace="http://bpmn2dmn/genere"
+             exporter="bpmn2dmn" exporterVersion="1.0">
+  <decision id="D1" name="Vérifier l'éligibilité de la candidature">
+    <informationRequirement id="ir1"><requiredInput href="#I1"/></informationRequirement>
+    <informationRequirement id="ir2"><requiredInput href="#I2"/></informationRequirement>
+  </decision>
+  <decision id="D2" name="Apprécier l'entretien du candidat">
+    <informationRequirement id="ir3"><requiredInput href="#I3"/></informationRequirement>
+    <knowledgeRequirement id="kr1"><requiredKnowledge href="#B1"/></knowledgeRequirement>
+  </decision>
+  <businessKnowledgeModel id="B1" name="Règle : Grille de notation des entretiens en vigueur">
+  </businessKnowledgeModel>
+  <inputData id="I1" name="Dossier de candidature"/>
+  <inputData id="I2" name="Référentiel des postes"/>
+  <inputData id="I3" name="Fiche d'entretien"/>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DRD_Instruction_d_une_candidature">
+      <dmndi:DMNShape id="s_D1" dmnElementRef="D1">
+        <dc:Bounds x="80" y="40" width="218" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_D2" dmnElementRef="D2">
+        <dc:Bounds x="386" y="40" width="202" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I1" dmnElementRef="I1">
+        <dc:Bounds x="122" y="240" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I2" dmnElementRef="I2">
+        <dc:Bounds x="302" y="240" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_B1" dmnElementRef="B1">
+        <dc:Bounds x="484" y="240" width="217" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I3" dmnElementRef="I3">
+        <dc:Bounds x="746" y="240" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="e_ir1" dmnElementRef="ir1">
+        <di:waypoint x="189" y="240"/><di:waypoint x="186" y="120"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir2" dmnElementRef="ir2">
+        <di:waypoint x="370" y="240"/><di:waypoint x="192" y="120"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir3" dmnElementRef="ir3">
+        <di:waypoint x="814" y="240"/><di:waypoint x="490" y="120"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_kr1" dmnElementRef="kr1">
+        <di:waypoint x="592" y="240"/><di:waypoint x="484" y="120"/>
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

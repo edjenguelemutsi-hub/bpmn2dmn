@@ -1,0 +1,17 @@
+{
+  "id": "C05",
+  "titre": "Passerelle d'événements après une tâche",
+  "pattern": "Non couvert : la passerelle d'événements n'est pas un indice de position",
+  "elements_bpmn": "userTask, eventBasedGateway, intermediateCatchEvent (message, minuterie)",
+  "decisions": [],
+  "inputs": [],
+  "sources": [],
+  "bkms": [],
+  "arcs": [],
+  "points_experts": [
+    "candidat"
+  ],
+  "ecartes": [],
+  "verdict_attendu": "limite",
+  "enseignement": "La passerelle d'événements attend un événement au lieu d'appliquer un verdict : elle ne corrobore pas la tâche qui la précède, qui reste soumise à l'expert."
+}

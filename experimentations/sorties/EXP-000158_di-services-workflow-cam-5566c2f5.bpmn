@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_DI_Services" targetNamespace="http://e-guce.cm/bpmn/di-services" exporter="Camunda Modeler" exporterVersion="5.50.1" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.21.0">
+  <bpmn:collaboration id="Collaboration_DI_Services">
+    <bpmn:participant id="Participant_DI" name="e-GUCE 3G – Procédure DI Services" processRef="Process_DI_Services" />
+    <bpmn:participant id="Participant_Douane" name="Système de la Douane" />
+    <bpmn:participant id="Participant_Domiciliation" name="Module Domiciliation e-GUCE 3G (existant)" />
+    <bpmn:messageFlow id="M1" name="demande de domiciliation de services + DI validée" sourceRef="S5" targetRef="Participant_Domiciliation" />
+    <bpmn:messageFlow id="M2" name="DI validée (service soumis au contrôle douanier)" sourceRef="S6" targetRef="Participant_Douane" />
+    <bpmn:textAnnotation id="Note_Dom">
+      <bpmn:text>Domiciliation automatique si la valeur FOB atteint 5 000 000 FCFA et qu'aucune domiciliation n'est ouverte pour la facture</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="As1" sourceRef="Note_Dom" targetRef="G_Dom" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_DI_Services" name="e-GUCE 3G – Procédure DI Services" isExecutable="false">
+    <bpmn:laneSet id="Process_DI_Services_lanes">
+      <bpmn:lane id="L_ANA" name="Banque – Analyste commerce extérieur (e-Business)">
+        <bpmn:flowNodeRef>A1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>G_Dec</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End_Rejet</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>A2</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_SYS" name="Système e-GUCE 3G">
+        <bpmn:flowNodeRef>S1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>G_Par</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>G_Dom</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End_Dom</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End_Sous</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>G_Dou</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End_Dou</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End_NoDou</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_OPE" name="Opérateur importateur / CDA (eFORCE)">
+        <bpmn:flowNodeRef>Start_DI</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T5</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start_DI" name="Nouvelle DI de services">
+      <bpmn:outgoing>F1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="T1" name="Renseigner le formulaire et joindre les pièces">
+      <bpmn:incoming>F1</bpmn:incoming>
+      <bpmn:outgoing>F2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="T2" name="Choisir la banque de traitement et soumettre">
+      <bpmn:incoming>F2</bpmn:incoming>
+      <bpmn:outgoing>F3</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="T5" name="Répondre au complément d&#39;information">
+      <bpmn:incoming>F7</bpmn:incoming>
+      <bpmn:outgoing>F8</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="S1" name="Contrôler la soumission, attribuer le numéro de DI">
+      <bpmn:incoming>F3</bpmn:incoming>
+      <bpmn:incoming>F8</bpmn:incoming>
+      <bpmn:outgoing>F4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="S2" name="Coter la DI à un analyste de la banque choisie (le même après complément)">
+      <bpmn:incoming>F4</bpmn:incoming>
+      <bpmn:outgoing>F5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="S3" name="Générer la DI validée (PDF, cachet, code QR), ajouté au répertoire des DI de services">
+      <bpmn:incoming>F11</bpmn:incoming>
+      <bpmn:outgoing>F12</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sendTask id="S4" name="Notifier l&#39;opérateur : DI validée disponible dans eFORCE">
+      <bpmn:incoming>F12</bpmn:incoming>
+      <bpmn:outgoing>F13</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:parallelGateway id="G_Par" name="Suites de la validation">
+      <bpmn:incoming>F13</bpmn:incoming>
+      <bpmn:outgoing>F14</bpmn:outgoing>
+      <bpmn:outgoing>F18</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:exclusiveGateway id="G_Dom" name="Domiciliation automatique ?">
+      <bpmn:incoming>F14</bpmn:incoming>
+      <bpmn:outgoing>F15</bpmn:outgoing>
+      <bpmn:outgoing>F17</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="S5" name="Déclencher la domiciliation de services (DI validée jointe)">
+      <bpmn:incoming>F15</bpmn:incoming>
+      <bpmn:outgoing>F16</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End_Dom" name="Domiciliation déclenchée">
+      <bpmn:incoming>F16</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="End_Sous" name="DI validée délivrée, sans déclenchement automatique">
+      <bpmn:incoming>F17</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="G_Dou" name="Soumise au contrôle douanier ?">
+      <bpmn:incoming>F18</bpmn:incoming>
+      <bpmn:outgoing>F19</bpmn:outgoing>
+      <bpmn:outgoing>F21</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sendTask id="S6" name="Transmettre la DI validée au système de la Douane">
+      <bpmn:incoming>F19</bpmn:incoming>
+      <bpmn:outgoing>F20</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:endEvent id="End_Dou" name="DI validée transmise à la Douane">
+      <bpmn:incoming>F20</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="End_NoDou" name="DI validée non transmise à la Douane">
+      <bpmn:incoming>F21</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="A1" name="Traiter la DI (pièces, régularité de l&#39;opération)">
+      <bpmn:incoming>F5</bpmn:incoming>
+      <bpmn:outgoing>F6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="G_Dec" name="Décision ?">
+      <bpmn:incoming>F6</bpmn:incoming>
+      <bpmn:outgoing>F7</bpmn:outgoing>
+      <bpmn:outgoing>F9</bpmn:outgoing>
+      <bpmn:outgoing>F10</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="End_Rejet" name="DI rejetée (motif notifié)">
+      <bpmn:incoming>F9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="A2" name="Valider et signer électroniquement la DI">
+      <bpmn:incoming>F10</bpmn:incoming>
+      <bpmn:outgoing>F11</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="F1" sourceRef="Start_DI" targetRef="T1" />
+    <bpmn:sequenceFlow id="F2" sourceRef="T1" targetRef="T2" />
+    <bpmn:sequenceFlow id="F3" sourceRef="T2" targetRef="S1" />
+    <bpmn:sequenceFlow id="F7" name="complément d&#39;information" sourceRef="G_Dec" targetRef="T5" />
+    <bpmn:sequenceFlow id="F8" name="réponse de l&#39;opérateur" sourceRef="T5" targetRef="S1" />
+    <bpmn:sequenceFlow id="F4" sourceRef="S1" targetRef="S2" />
+    <bpmn:sequenceFlow id="F5" sourceRef="S2" targetRef="A1" />
+    <bpmn:sequenceFlow id="F11" sourceRef="A2" targetRef="S3" />
+    <bpmn:sequenceFlow id="F12" sourceRef="S3" targetRef="S4" />
+    <bpmn:sequenceFlow id="F13" sourceRef="S4" targetRef="G_Par" />
+    <bpmn:sequenceFlow id="F14" sourceRef="G_Par" targetRef="G_Dom" />
+    <bpmn:sequenceFlow id="F18" sourceRef="G_Par" targetRef="G_Dou" />
+    <bpmn:sequenceFlow id="F15" name="oui" sourceRef="G_Dom" targetRef="S5" />
+    <bpmn:sequenceFlow id="F17" name="non" sourceRef="G_Dom" targetRef="End_Sous" />
+    <bpmn:sequenceFlow id="F16" sourceRef="S5" targetRef="End_Dom" />
+    <bpmn:sequenceFlow id="F19" name="oui" sourceRef="G_Dou" targetRef="S6" />
+    <bpmn:sequenceFlow id="F21" name="non" sourceRef="G_Dou" targetRef="End_NoDou" />
+    <bpmn:sequenceFlow id="F20" sourceRef="S6" targetRef="End_Dou" />
+    <bpmn:sequenceFlow id="F6" sourceRef="A1" targetRef="G_Dec" />
+    <bpmn:sequenceFlow id="F9" name="rejet motivé" sourceRef="G_Dec" targetRef="End_Rejet" />
+    <bpmn:sequenceFlow id="F10" name="validation" sourceRef="G_Dec" targetRef="A2" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_DI_Services">
+      <bpmndi:BPMNShape id="Participant_DI_di" bpmnElement="Participant_DI" isHorizontal="true">
+        <dc:Bounds x="150" y="80" width="1900" height="800" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_ANA_di" bpmnElement="L_ANA" isHorizontal="true">
+        <dc:Bounds x="180" y="630" width="1870" height="250" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_SYS_di" bpmnElement="L_SYS" isHorizontal="true">
+        <dc:Bounds x="180" y="300" width="1870" height="330" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_OPE_di" bpmnElement="L_OPE" isHorizontal="true">
+        <dc:Bounds x="180" y="80" width="1870" height="220" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_DI_di" bpmnElement="Start_DI">
+        <dc:Bounds x="230" y="172" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="212" y="243" width="116" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T1_di" bpmnElement="T1">
+        <dc:Bounds x="310" y="145" width="170" height="90" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T2_di" bpmnElement="T2">
+        <dc:Bounds x="530" y="145" width="160" height="90" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T5_di" bpmnElement="T5">
+        <dc:Bounds x="910" y="145" width="160" height="90" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S1_di" bpmnElement="S1">
+        <dc:Bounds x="530" y="335" width="160" height="90" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S2_di" bpmnElement="S2">
+        <dc:Bounds x="750" y="335" width="160" height="90" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S3_di" bpmnElement="S3">
+        <dc:Bounds x="1110" y="335" width="170" height="90" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S4_di" bpmnElement="S4">
+        <dc:Bounds x="1320" y="335" width="170" height="90" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="G_Par_di" bpmnElement="G_Par">
+        <dc:Bounds x="1530" y="355" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1501" y="312" width="108" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="G_Dom_di" bpmnElement="G_Dom" isMarkerVisible="true">
+        <dc:Bounds x="1620" y="355" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1630" y="302" width="70" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S5_di" bpmnElement="S5">
+        <dc:Bounds x="1750" y="335" width="170" height="90" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_Dom_di" bpmnElement="End_Dom">
+        <dc:Bounds x="1950" y="362" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1939" y="325" width="63" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_Sous_di" bpmnElement="End_Sous">
+        <dc:Bounds x="1735" y="432" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1780" y="430" width="75" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="G_Dou_di" bpmnElement="G_Dou" isMarkerVisible="true">
+        <dc:Bounds x="1400" y="495" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1275" y="508" width="101" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S6_di" bpmnElement="S6">
+        <dc:Bounds x="1480" y="475" width="160" height="90" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_Dou_di" bpmnElement="End_Dou">
+        <dc:Bounds x="1660" y="502" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1707" y="527" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_NoDou_di" bpmnElement="End_NoDou">
+        <dc:Bounds x="1407" y="580" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1254" y="585" width="142" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A1_di" bpmnElement="A1">
+        <dc:Bounds x="750" y="675" width="160" height="90" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="G_Dec_di" bpmnElement="G_Dec" isMarkerVisible="true">
+        <dc:Bounds x="970" y="695" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="969" y="665" width="52" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_Rejet_di" bpmnElement="End_Rejet">
+        <dc:Bounds x="977" y="800" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1043" y="808" width="115" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="A2_di" bpmnElement="A2">
+        <dc:Bounds x="1090" y="675" width="160" height="90" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="F1_di" bpmnElement="F1">
+        <di:waypoint x="266" y="190" />
+        <di:waypoint x="310" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F2_di" bpmnElement="F2">
+        <di:waypoint x="480" y="190" />
+        <di:waypoint x="530" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F3_di" bpmnElement="F3">
+        <di:waypoint x="610" y="235" />
+        <di:waypoint x="610" y="335" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F7_di" bpmnElement="F7">
+        <di:waypoint x="995" y="695" />
+        <di:waypoint x="995" y="235" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1024" y="450" width="63" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F8_di" bpmnElement="F8">
+        <di:waypoint x="910" y="190" />
+        <di:waypoint x="790" y="190" />
+        <di:waypoint x="790" y="270" />
+        <di:waypoint x="650" y="270" />
+        <di:waypoint x="650" y="335" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="671" y="248" width="110" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F4_di" bpmnElement="F4">
+        <di:waypoint x="690" y="380" />
+        <di:waypoint x="750" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F5_di" bpmnElement="F5">
+        <di:waypoint x="830" y="425" />
+        <di:waypoint x="830" y="675" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F11_di" bpmnElement="F11">
+        <di:waypoint x="1170" y="675" />
+        <di:waypoint x="1170" y="425" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F12_di" bpmnElement="F12">
+        <di:waypoint x="1280" y="380" />
+        <di:waypoint x="1320" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F13_di" bpmnElement="F13">
+        <di:waypoint x="1490" y="380" />
+        <di:waypoint x="1530" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F14_di" bpmnElement="F14">
+        <di:waypoint x="1580" y="380" />
+        <di:waypoint x="1620" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F18_di" bpmnElement="F18">
+        <di:waypoint x="1555" y="405" />
+        <di:waypoint x="1555" y="450" />
+        <di:waypoint x="1425" y="450" />
+        <di:waypoint x="1425" y="495" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F15_di" bpmnElement="F15">
+        <di:waypoint x="1670" y="380" />
+        <di:waypoint x="1750" y="380" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1703" y="385" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F17_di" bpmnElement="F17">
+        <di:waypoint x="1645" y="405" />
+        <di:waypoint x="1645" y="450" />
+        <di:waypoint x="1735" y="450" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1658" y="415" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F16_di" bpmnElement="F16">
+        <di:waypoint x="1920" y="380" />
+        <di:waypoint x="1950" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F19_di" bpmnElement="F19">
+        <di:waypoint x="1450" y="520" />
+        <di:waypoint x="1480" y="520" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1458" y="498" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F21_di" bpmnElement="F21">
+        <di:waypoint x="1425" y="545" />
+        <di:waypoint x="1425" y="580" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1438" y="552" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F20_di" bpmnElement="F20">
+        <di:waypoint x="1640" y="520" />
+        <di:waypoint x="1660" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F6_di" bpmnElement="F6">
+        <di:waypoint x="910" y="720" />
+        <di:waypoint x="970" y="720" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F9_di" bpmnElement="F9">
+        <di:waypoint x="995" y="745" />
+        <di:waypoint x="995" y="800" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1017" y="760" width="57" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F10_di" bpmnElement="F10">
+        <di:waypoint x="1020" y="720" />
+        <di:waypoint x="1090" y="720" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1032" y="698" width="47" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_Douane_di" bpmnElement="Participant_Douane" isHorizontal="true">
+        <dc:Bounds x="1370" y="940" width="330" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_Domiciliation_di" bpmnElement="Participant_Domiciliation" isHorizontal="true">
+        <dc:Bounds x="1730" y="940" width="320" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="As1_di" bpmnElement="As1">
+        <di:waypoint x="1841" y="242" />
+        <di:waypoint x="1666" y="376" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="M1_di" bpmnElement="M1">
+        <di:waypoint x="1900" y="425" />
+        <di:waypoint x="1900" y="940" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1913" y="770" width="125" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="M2_di" bpmnElement="M2">
+        <di:waypoint x="1560" y="565" />
+        <di:waypoint x="1560" y="940" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1579" y="770" width="93" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Note_Dom_di" bpmnElement="Note_Dom">
+        <dc:Bounds x="1712" y="188" width="300" height="54" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,25 @@
+{
+  "id": "A02",
+  "titre": "Magasin de données lu par la décision",
+  "pattern": "Π3 / P2 : magasin de données → donnée d'entrée (IR)",
+  "elements_bpmn": "dataStoreReference, dataInputAssociation, userTask, exclusiveGateway",
+  "decisions": [
+    "Vérifier l'inscription de l'opérateur"
+  ],
+  "inputs": [
+    "Fichier des importateurs"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Fichier des importateurs",
+      "Vérifier l'inscription de l'opérateur",
+      "P2"
+    ]
+  ],
+  "points_experts": [],
+  "ecartes": [],
+  "verdict_attendu": "conforme",
+  "enseignement": "Un magasin persistant est traité comme un objet transitoire : même donnée d'entrée, même exigence d'information."
+}

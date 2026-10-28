@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
+             xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+             xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             id="Definitions_Ressource_syst_me__cart_e"
+             name="Ressource système écartée"
+             namespace="http://bpmn2dmn/genere"
+             exporter="bpmn2dmn" exporterVersion="1.0">
+  <decision id="D1" name="Contrôler la cohérence de la déclaration">
+    <informationRequirement id="ir1"><requiredInput href="#I1"/></informationRequirement>
+    <decisionTable id="D1_table" hitPolicy="UNIQUE">
+      <input id="D1_entree1" label="Déclaration d'importation"><inputExpression id="D1_entree1_expr" typeRef="string"><text>declarationDImportation</text></inputExpression></input>
+      <output id="D1_sortie" label="Demande recevable ?" name="controlerLaCoherenceDeLaDeclaration" typeRef="string"><outputValues id="D1_sortie_valeurs"><text>"oui","non"</text></outputValues></output>
+      <rule id="D1_regle1"><inputEntry id="D1_regle1_e1"><text>-</text></inputEntry><outputEntry id="D1_regle1_s"><text>"oui"</text></outputEntry></rule>
+      <rule id="D1_regle2"><inputEntry id="D1_regle2_e1"><text>-</text></inputEntry><outputEntry id="D1_regle2_s"><text>"non"</text></outputEntry></rule>
+    </decisionTable>
+  </decision>
+  <inputData id="I1" name="Déclaration d'importation"/>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DRD_Ressource_syst_me__cart_e">
+      <dmndi:DMNShape id="s_D1" dmnElementRef="D1">
+        <dc:Bounds x="80" y="40" width="218" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I1" dmnElementRef="I1">
+        <dc:Bounds x="120" y="240" width="137" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="e_ir1" dmnElementRef="ir1">
+        <di:waypoint x="189" y="240"/><di:waypoint x="189" y="120"/>
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

@@ -1,0 +1,17 @@
+{
+  "id": "C01",
+  "titre": "Tâche générique devant une passerelle",
+  "pattern": "Hors définition : une tâche non typée n'est pas candidate, même corroborée",
+  "elements_bpmn": "task (générique), exclusiveGateway",
+  "decisions": [],
+  "inputs": [],
+  "sources": [],
+  "bkms": [],
+  "arcs": [],
+  "points_experts": [
+    "hors-definition"
+  ],
+  "ecartes": [],
+  "verdict_attendu": "limite",
+  "enseignement": "La définition des candidates retient les tâches utilisateur, les tâches de règle métier et les sous-processus repliés : la tâche générique corroborée par la passerelle est signalée hors définition, le DRD est vide et le diagnostic invite à la retyper."
+}

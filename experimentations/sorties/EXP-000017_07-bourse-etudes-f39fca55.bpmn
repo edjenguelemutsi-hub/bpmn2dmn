@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1" targetNamespace="http://bpmn2dmn/jeux" exporter="bpmn2dmn" exporterVersion="1.0">
+  <bpmn:collaboration id="Collab_1">
+    <bpmn:participant id="Pool_1" name="Université — Service des bourses" processRef="Process_1"/>
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1" name="Attribution d'une bourse d'études" isExecutable="false">
+    <bpmn:laneSet id="Lanes_1">
+      <bpmn:lane id="Lane_1" name="Guichet des bourses">
+        <bpmn:flowNodeRef>depart1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>tache2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>tache5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>passerelle10</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin12</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>tache35</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin38</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_2" name="Commission d'attribution">
+        <bpmn:flowNodeRef>tache14</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>tache23</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>passerelle31</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin33</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+      <bpmn:startEvent id="depart1" name="Dossier de bourse déposé"><bpmn:messageEventDefinition id="depart1_md"/></bpmn:startEvent>
+      <bpmn:userTask id="tache2" name="Enregistrer le dossier"></bpmn:userTask>
+      <bpmn:sequenceFlow id="flux4" sourceRef="depart1" targetRef="tache2"/>
+      <bpmn:dataObjectReference id="donnee7" name="Dossier de bourse" dataObjectRef="donnee7_o"/>
+      <bpmn:dataObject id="donnee7_o"/>
+      <bpmn:userTask id="tache5" name="Vérifier les pièces du dossier"><bpmn:property id="prop6" name="__targetRef_placeholder"/>        <bpmn:dataInputAssociation id="lecture8"><bpmn:sourceRef>donnee7</bpmn:sourceRef><bpmn:targetRef>prop6</bpmn:targetRef></bpmn:dataInputAssociation></bpmn:userTask>
+      <bpmn:sequenceFlow id="flux9" sourceRef="tache2" targetRef="tache5"/>
+      <bpmn:exclusiveGateway id="passerelle10" name="Dossier recevable ?"/>
+      <bpmn:sequenceFlow id="flux11" sourceRef="tache5" targetRef="passerelle10"/>
+      <bpmn:endEvent id="fin12" name="Dossier retourné"/>
+      <bpmn:sequenceFlow id="flux13" sourceRef="passerelle10" targetRef="fin12" name="incomplet"/>
+      <bpmn:dataObjectReference id="donnee16" name="Relevés de notes" dataObjectRef="donnee16_o"/>
+      <bpmn:dataObject id="donnee16_o"/>
+      <bpmn:dataObjectReference id="donnee18" name="Note de mérite" dataObjectRef="donnee18_o"/>
+      <bpmn:dataObject id="donnee18_o"/>
+      <bpmn:userTask id="tache14" name="Coter le mérite académique"><bpmn:property id="prop15" name="__targetRef_placeholder"/>        <bpmn:dataInputAssociation id="lecture17"><bpmn:sourceRef>donnee16</bpmn:sourceRef><bpmn:targetRef>prop15</bpmn:targetRef></bpmn:dataInputAssociation>        <bpmn:dataOutputAssociation id="ecriture19"><bpmn:targetRef>donnee18</bpmn:targetRef></bpmn:dataOutputAssociation></bpmn:userTask>
+      <bpmn:sequenceFlow id="flux20" sourceRef="passerelle10" targetRef="tache14" name="recevable"/>
+      <bpmn:dataStoreReference id="donnee26" name="Fichier des boursiers"/>
+      <bpmn:userTask id="tache23" name="Statuer sur l'attribution de la bourse"><bpmn:property id="prop24" name="__targetRef_placeholder"/>        <bpmn:dataInputAssociation id="lecture25"><bpmn:sourceRef>donnee18</bpmn:sourceRef><bpmn:targetRef>prop24</bpmn:targetRef></bpmn:dataInputAssociation>        <bpmn:dataInputAssociation id="lecture27"><bpmn:sourceRef>donnee26</bpmn:sourceRef><bpmn:targetRef>prop24</bpmn:targetRef></bpmn:dataInputAssociation></bpmn:userTask>
+      <bpmn:sequenceFlow id="flux28" sourceRef="tache14" targetRef="tache23"/>
+      <bpmn:exclusiveGateway id="passerelle31" name="Bourse accordée ?"/>
+      <bpmn:sequenceFlow id="flux32" sourceRef="tache23" targetRef="passerelle31"/>
+      <bpmn:endEvent id="fin33" name="Demande ajournée"/>
+      <bpmn:sequenceFlow id="flux34" sourceRef="passerelle31" targetRef="fin33" name="ajournée"/>
+      <bpmn:sendTask id="tache35" name="Notifier le bénéficiaire"></bpmn:sendTask>
+      <bpmn:sequenceFlow id="flux37" sourceRef="passerelle31" targetRef="tache35" name="accordée"/>
+      <bpmn:endEvent id="fin38" name="Bourse attribuée"/>
+      <bpmn:sequenceFlow id="flux39" sourceRef="tache35" targetRef="fin38"/>
+      <bpmn:textAnnotation id="annot21"><bpmn:text>Barème de cotation du mérite académique</bpmn:text></bpmn:textAnnotation>
+      <bpmn:association id="assocannot22" sourceRef="annot21" targetRef="tache14"/>
+      <bpmn:textAnnotation id="annot29"><bpmn:text>Arrêté ministériel fixant les quotas de bourses</bpmn:text></bpmn:textAnnotation>
+      <bpmn:association id="assocannot30" sourceRef="annot29" targetRef="tache23"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagramme_1">
+    <bpmndi:BPMNPlane id="Plan_1" bpmnElement="Collab_1">
+      <bpmndi:BPMNShape id="di_Pool_1" bpmnElement="Pool_1" isHorizontal="true"><dc:Bounds x="160" y="80" width="1572" height="520"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Lane_1" bpmnElement="Lane_1" isHorizontal="true"><dc:Bounds x="190" y="80" width="1542" height="260"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Lane_2" bpmnElement="Lane_2" isHorizontal="true"><dc:Bounds x="190" y="340" width="1542" height="260"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_depart1" bpmnElement="depart1"><dc:Bounds x="240" y="202" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache2" bpmnElement="tache2"><dc:Bounds x="346" y="180" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache5" bpmnElement="tache5"><dc:Bounds x="546" y="180" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_donnee7" bpmnElement="donnee7"><dc:Bounds x="553" y="100" width="36" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="595" y="111" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_passerelle10" bpmnElement="passerelle10"><dc:Bounds x="746" y="195" width="50" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="696" y="163" width="150" height="26"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_fin12" bpmnElement="fin12"><dc:Bounds x="753" y="268" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache14" bpmnElement="tache14"><dc:Bounds x="866" y="440" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_donnee16" bpmnElement="donnee16"><dc:Bounds x="873" y="360" width="36" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="915" y="371" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_donnee18" bpmnElement="donnee18"><dc:Bounds x="1063" y="360" width="36" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="1105" y="371" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_annot21" bpmnElement="annot21"><dc:Bounds x="831" y="540" width="200" height="48"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache23" bpmnElement="tache23"><dc:Bounds x="1066" y="440" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_donnee26" bpmnElement="donnee26"><dc:Bounds x="1191" y="360" width="50" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="1247" y="371" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_annot29" bpmnElement="annot29"><dc:Bounds x="1031" y="540" width="200" height="48"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_passerelle31" bpmnElement="passerelle31"><dc:Bounds x="1266" y="455" width="50" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="1216" y="423" width="150" height="26"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_fin33" bpmnElement="fin33"><dc:Bounds x="1273" y="528" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache35" bpmnElement="tache35"><dc:Bounds x="1386" y="180" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_fin38" bpmnElement="fin38"><dc:Bounds x="1586" y="202" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="di_flux4" bpmnElement="flux4"><di:waypoint x="276" y="220"/><di:waypoint x="346" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_lecture8" bpmnElement="lecture8"><di:waypoint x="571" y="150"/><di:waypoint x="571" y="162"/><di:waypoint x="581" y="162"/><di:waypoint x="581" y="180"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux9" bpmnElement="flux9"><di:waypoint x="476" y="220"/><di:waypoint x="546" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux11" bpmnElement="flux11"><di:waypoint x="676" y="220"/><di:waypoint x="746" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux13" bpmnElement="flux13"><di:waypoint x="771" y="245"/><di:waypoint x="771" y="268"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_lecture17" bpmnElement="lecture17"><di:waypoint x="891" y="410"/><di:waypoint x="891" y="422"/><di:waypoint x="901" y="422"/><di:waypoint x="901" y="440"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_ecriture19" bpmnElement="ecriture19"><di:waypoint x="975" y="440"/><di:waypoint x="975" y="414"/><di:waypoint x="1081" y="414"/><di:waypoint x="1081" y="410"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux20" bpmnElement="flux20"><di:waypoint x="796" y="220"/><di:waypoint x="831" y="220"/><di:waypoint x="831" y="480"/><di:waypoint x="866" y="480"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_assocannot22" bpmnElement="assocannot22"><di:waypoint x="931" y="540"/><di:waypoint x="931" y="520"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_lecture25" bpmnElement="lecture25"><di:waypoint x="1081" y="410"/><di:waypoint x="1081" y="422"/><di:waypoint x="1101" y="422"/><di:waypoint x="1101" y="440"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_lecture27" bpmnElement="lecture27"><di:waypoint x="1216" y="410"/><di:waypoint x="1216" y="422"/><di:waypoint x="1127" y="422"/><di:waypoint x="1127" y="440"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux28" bpmnElement="flux28"><di:waypoint x="996" y="480"/><di:waypoint x="1066" y="480"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_assocannot30" bpmnElement="assocannot30"><di:waypoint x="1131" y="540"/><di:waypoint x="1131" y="520"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux32" bpmnElement="flux32"><di:waypoint x="1196" y="480"/><di:waypoint x="1266" y="480"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux34" bpmnElement="flux34"><di:waypoint x="1291" y="505"/><di:waypoint x="1291" y="528"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux37" bpmnElement="flux37"><di:waypoint x="1316" y="480"/><di:waypoint x="1351" y="480"/><di:waypoint x="1351" y="220"/><di:waypoint x="1386" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux39" bpmnElement="flux39"><di:waypoint x="1516" y="220"/><di:waypoint x="1586" y="220"/></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,124 @@
+{
+  "nom": "Admission d'un patient aux urgences",
+  "resume": {
+    "decisions": 2,
+    "inputs": 3,
+    "sources": 0,
+    "bkm": 1,
+    "IR": 4,
+    "KR": 1,
+    "AR": 0,
+    "a_confirmer": 6,
+    "ecartes": 0
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "nom": "Coter la gravité du patient",
+      "origine": "tache5",
+      "motif": "verbe décisionnel dans le libellé"
+    },
+    {
+      "id": "D2",
+      "nom": "Examiner le patient",
+      "origine": "tache14",
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "I1",
+      "nom": "Fiche de constantes",
+      "pattern": "P2"
+    },
+    {
+      "id": "I2",
+      "nom": "Dossier médical",
+      "pattern": "P2"
+    },
+    {
+      "id": "I3",
+      "nom": "Lit disponible (optionnel)",
+      "pattern": "P3"
+    }
+  ],
+  "sources": [],
+  "bkms": [
+    {
+      "id": "B1",
+      "nom": "Règle : Score de gravité calculé selon l'échelle de tri"
+    }
+  ],
+  "IR": [
+    [
+      "I1",
+      "D1"
+    ],
+    [
+      "I2",
+      "D2"
+    ],
+    [
+      "I3",
+      "D2"
+    ],
+    [
+      "D1",
+      "D2"
+    ]
+  ],
+  "KR": [
+    [
+      "B1",
+      "D1"
+    ]
+  ],
+  "AR": [],
+  "acyclique": true,
+  "invariants_violes": [],
+  "a_confirmer": [
+    {
+      "cle": "tache2",
+      "categorie": "candidat",
+      "objet": "Mesurer les constantes vitales",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "tache25",
+      "categorie": "candidat",
+      "objet": "Installer le patient au lit",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "tache29",
+      "categorie": "candidat",
+      "objet": "Rédiger le compte rendu d'admission",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "ressource:Infirmier d'accueil",
+      "categorie": "ressource",
+      "objet": "Infirmier d'accueil",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    },
+    {
+      "cle": "annot12",
+      "categorie": "annotation",
+      "objet": "Score de gravité calculé selon l'échelle de tri",
+      "motif": "proposée comme MODÈLE DE CONNAISSANCE MÉTIER (règle exécutable)",
+      "proposition": "BKM"
+    },
+    {
+      "cle": "ressource:Médecin urgentiste",
+      "categorie": "ressource",
+      "objet": "Médecin urgentiste",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    }
+  ],
+  "ecartes": []
+}

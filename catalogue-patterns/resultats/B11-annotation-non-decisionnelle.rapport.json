@@ -1,0 +1,36 @@
+{
+  "decisions": [
+    "Vérifier la recevabilité de la demande"
+  ],
+  "inputs": [],
+  "sources": [],
+  "bkms": [],
+  "arcs": [],
+  "points_experts": [],
+  "ecartes": [
+    "annotation"
+  ],
+  "acyclique": true,
+  "invariants_violes": [],
+  "anomalies_source": [],
+  "diagnostic_vide": "",
+  "resume": {
+    "decisions": 1,
+    "inputs": 0,
+    "sources": 0,
+    "bkm": 0,
+    "IR": 0,
+    "KR": 0,
+    "AR": 0,
+    "a_confirmer": 0,
+    "ecartes": 1
+  },
+  "points": [],
+  "ecartes_detail": [
+    {
+      "categorie": "annotation",
+      "objet": "Apposer le logo et le cachet officiel",
+      "motif": "aucune valeur décisionnelle"
+    }
+  ]
+}

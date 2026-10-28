@@ -1,0 +1,27 @@
+{
+  "id": "A08",
+  "titre": "Événement-frontière non interruptif",
+  "pattern": "Π5 / P3 : frontière à message non interruptive → donnée d'entrée optionnelle (IR)",
+  "elements_bpmn": "boundaryEvent cancelActivity=false + messageEventDefinition, userTask",
+  "decisions": [
+    "Statuer sur la demande d'agrément"
+  ],
+  "inputs": [
+    "Observation de l'opérateur (optionnel)"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Observation de l'opérateur (optionnel)",
+      "Statuer sur la demande d'agrément",
+      "P3"
+    ]
+  ],
+  "points_experts": [
+    "ressource"
+  ],
+  "ecartes": [],
+  "verdict_attendu": "conforme",
+  "enseignement": "La frontière non interruptive porteuse alimente la décision sans l'arrêter : donnée d'entrée marquée optionnelle. Le couloir « Chef de service » soulève en outre la question ω (point ressource)."
+}

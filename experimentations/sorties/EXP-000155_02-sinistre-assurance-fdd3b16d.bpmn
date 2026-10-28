@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1" targetNamespace="http://bpmn2dmn/jeux" exporter="Camunda Modeler" exporterVersion="5.50.1">
+  <bpmn:collaboration id="Collab_1">
+    <bpmn:participant id="Pool_1" name="Compagnie d&#39;assurance" processRef="Process_1" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1" name="Traitement d&#39;une déclaration de sinistre" isExecutable="false">
+    <bpmn:laneSet id="Lanes_1">
+      <bpmn:lane id="Lane_1" name="Gestionnaire sinistres">
+        <bpmn:flowNodeRef>depart1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>tache2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>tache5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>passerelle12</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin14</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>tache16</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>tache28</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>passerelle34</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin36</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin38</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_2" name="Expert automobile">
+        <bpmn:flowNodeRef>tache19</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="depart1" name="Déclaration reçue">
+      <bpmn:messageEventDefinition id="depart1_md" />
+    </bpmn:startEvent>
+    <bpmn:userTask id="tache2" name="Enregistrer la déclaration" />
+    <bpmn:sequenceFlow id="flux4" sourceRef="depart1" targetRef="tache2" />
+    <bpmn:dataObjectReference id="donnee7" name="Constat amiable" dataObjectRef="donnee7_o" />
+    <bpmn:dataObject id="donnee7_o" />
+    <bpmn:dataStoreReference id="donnee9" name="Base des contrats" />
+    <bpmn:userTask id="tache5" name="Vérifier la validité de la garantie">
+      <bpmn:property id="prop6" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="lecture8">
+        <bpmn:sourceRef>donnee7</bpmn:sourceRef>
+        <bpmn:targetRef>prop6</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation id="lecture10">
+        <bpmn:sourceRef>donnee9</bpmn:sourceRef>
+        <bpmn:targetRef>prop6</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="flux11" sourceRef="tache2" targetRef="tache5" />
+    <bpmn:exclusiveGateway id="passerelle12" name="Garantie acquise ?" />
+    <bpmn:sequenceFlow id="flux13" sourceRef="tache5" targetRef="passerelle12" />
+    <bpmn:endEvent id="fin14" name="Sinistre non couvert" />
+    <bpmn:sequenceFlow id="flux15" name="exclue" sourceRef="passerelle12" targetRef="fin14" />
+    <bpmn:sendTask id="tache16" name="Missionner l&#39;expert" />
+    <bpmn:sequenceFlow id="flux18" name="acquise" sourceRef="passerelle12" targetRef="tache16" />
+    <bpmn:dataObjectReference id="donnee21" name="Rapport d&#39;expertise" dataObjectRef="donnee21_o" />
+    <bpmn:dataObject id="donnee21_o" />
+    <bpmn:dataObjectReference id="donnee23" name="Montant évalué" dataObjectRef="donnee23_o" />
+    <bpmn:dataObject id="donnee23_o" />
+    <bpmn:userTask id="tache19" name="Évaluer le montant des dommages">
+      <bpmn:property id="prop20" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="lecture22">
+        <bpmn:sourceRef>donnee21</bpmn:sourceRef>
+        <bpmn:targetRef>prop20</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataOutputAssociation id="ecriture24">
+        <bpmn:targetRef>donnee23</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="flux25" sourceRef="tache16" targetRef="tache19" />
+    <bpmn:userTask id="tache28" name="Statuer sur l&#39;indemnisation">
+      <bpmn:property id="prop29" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="lecture30">
+        <bpmn:sourceRef>donnee23</bpmn:sourceRef>
+        <bpmn:targetRef>prop29</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="flux31" sourceRef="tache19" targetRef="tache28" />
+    <bpmn:exclusiveGateway id="passerelle34" name="Indemnisation due ?" />
+    <bpmn:sequenceFlow id="flux35" sourceRef="tache28" targetRef="passerelle34" />
+    <bpmn:endEvent id="fin36" name="Dossier transmis au contentieux" />
+    <bpmn:sequenceFlow id="flux37" name="contestée" sourceRef="passerelle34" targetRef="fin36" />
+    <bpmn:endEvent id="fin38" name="Sinistre indemnisé" />
+    <bpmn:sequenceFlow id="flux39" name="due" sourceRef="passerelle34" targetRef="fin38" />
+    <bpmn:textAnnotation id="annot26">
+      <bpmn:text>Barème d'indemnisation par type de dommage</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="assocannot27" sourceRef="annot26" targetRef="tache19" />
+    <bpmn:textAnnotation id="annot32">
+      <bpmn:text>Code CIMA des assurances, livre II</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="assocannot33" sourceRef="annot32" targetRef="tache28" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagramme_1">
+    <bpmndi:BPMNPlane id="Plan_1" bpmnElement="Collab_1">
+      <bpmndi:BPMNShape id="di_Pool_1" bpmnElement="Pool_1" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="1572" height="520" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Lane_2" bpmnElement="Lane_2" isHorizontal="true">
+        <dc:Bounds x="190" y="340" width="1542" height="260" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Lane_1" bpmnElement="Lane_1" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="1542" height="260" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_depart1" bpmnElement="depart1">
+        <dc:Bounds x="240" y="202" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache2" bpmnElement="tache2">
+        <dc:Bounds x="346" y="180" width="130" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_donnee7" bpmnElement="donnee7">
+        <dc:Bounds x="553" y="100" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="595" y="111" width="110" height="28" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_donnee9" bpmnElement="donnee9">
+        <dc:Bounds x="796" y="100" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="852" y="111" width="110" height="28" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache5" bpmnElement="tache5">
+        <dc:Bounds x="546" y="180" width="130" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_passerelle12" bpmnElement="passerelle12" isMarkerVisible="true">
+        <dc:Bounds x="746" y="195" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="696" y="163" width="150" height="26" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_fin14" bpmnElement="fin14">
+        <dc:Bounds x="753" y="268" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache16" bpmnElement="tache16">
+        <dc:Bounds x="866" y="180" width="130" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_donnee21" bpmnElement="donnee21">
+        <dc:Bounds x="1073" y="360" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1115" y="371" width="110" height="28" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_donnee23" bpmnElement="donnee23">
+        <dc:Bounds x="1263" y="360" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1305" y="371" width="110" height="28" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache19" bpmnElement="tache19">
+        <dc:Bounds x="1066" y="440" width="130" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache28" bpmnElement="tache28">
+        <dc:Bounds x="1266" y="180" width="130" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_passerelle34" bpmnElement="passerelle34" isMarkerVisible="true">
+        <dc:Bounds x="1466" y="195" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1416" y="163" width="150" height="26" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_fin36" bpmnElement="fin36">
+        <dc:Bounds x="1473" y="268" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_fin38" bpmnElement="fin38">
+        <dc:Bounds x="1586" y="202" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_annot26" bpmnElement="annot26">
+        <dc:Bounds x="1031" y="540" width="200" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_annot32" bpmnElement="annot32">
+        <dc:Bounds x="1231" y="280" width="200" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="di_flux4" bpmnElement="flux4">
+        <di:waypoint x="276" y="220" />
+        <di:waypoint x="346" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux11" bpmnElement="flux11">
+        <di:waypoint x="476" y="220" />
+        <di:waypoint x="546" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux13" bpmnElement="flux13">
+        <di:waypoint x="676" y="220" />
+        <di:waypoint x="746" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux15" bpmnElement="flux15">
+        <di:waypoint x="771" y="245" />
+        <di:waypoint x="771" y="268" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux18" bpmnElement="flux18">
+        <di:waypoint x="796" y="220" />
+        <di:waypoint x="866" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux25" bpmnElement="flux25">
+        <di:waypoint x="996" y="220" />
+        <di:waypoint x="1031" y="220" />
+        <di:waypoint x="1031" y="480" />
+        <di:waypoint x="1066" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux31" bpmnElement="flux31">
+        <di:waypoint x="1196" y="480" />
+        <di:waypoint x="1231" y="480" />
+        <di:waypoint x="1231" y="220" />
+        <di:waypoint x="1266" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux35" bpmnElement="flux35">
+        <di:waypoint x="1396" y="220" />
+        <di:waypoint x="1466" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux37" bpmnElement="flux37">
+        <di:waypoint x="1491" y="245" />
+        <di:waypoint x="1491" y="268" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux39" bpmnElement="flux39">
+        <di:waypoint x="1516" y="220" />
+        <di:waypoint x="1586" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_assocannot27" bpmnElement="assocannot27">
+        <di:waypoint x="1131" y="540" />
+        <di:waypoint x="1131" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_assocannot33" bpmnElement="assocannot33">
+        <di:waypoint x="1331" y="280" />
+        <di:waypoint x="1331" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_lecture8" bpmnElement="lecture8">
+        <di:waypoint x="571" y="150" />
+        <di:waypoint x="571" y="162" />
+        <di:waypoint x="581" y="162" />
+        <di:waypoint x="581" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_lecture10" bpmnElement="lecture10">
+        <di:waypoint x="821" y="150" />
+        <di:waypoint x="821" y="162" />
+        <di:waypoint x="607" y="162" />
+        <di:waypoint x="607" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_lecture22" bpmnElement="lecture22">
+        <di:waypoint x="1091" y="410" />
+        <di:waypoint x="1091" y="422" />
+        <di:waypoint x="1101" y="422" />
+        <di:waypoint x="1101" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_ecriture24" bpmnElement="ecriture24">
+        <di:waypoint x="1175" y="440" />
+        <di:waypoint x="1175" y="414" />
+        <di:waypoint x="1281" y="414" />
+        <di:waypoint x="1281" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_lecture30" bpmnElement="lecture30">
+        <di:waypoint x="1299" y="385" />
+        <di:waypoint x="1420" y="385" />
+        <di:waypoint x="1420" y="162" />
+        <di:waypoint x="1301" y="162" />
+        <di:waypoint x="1301" y="180" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

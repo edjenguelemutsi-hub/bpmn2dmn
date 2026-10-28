@@ -1,0 +1,51 @@
+{
+  "nom": "Frontière de minuterie",
+  "resume": {
+    "decisions": 1,
+    "inputs": 1,
+    "sources": 0,
+    "bkm": 0,
+    "IR": 1,
+    "KR": 0,
+    "AR": 0,
+    "a_confirmer": 1,
+    "ecartes": 0
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "nom": "Vérifier la recevabilité de la demande",
+      "origine": "Tache_2",
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "I1",
+      "nom": "Demande d'agrément",
+      "pattern": "P2"
+    }
+  ],
+  "sources": [],
+  "bkms": [],
+  "IR": [
+    [
+      "I1",
+      "D1"
+    ]
+  ],
+  "KR": [],
+  "AR": [],
+  "acyclique": true,
+  "invariants_violes": [],
+  "a_confirmer": [
+    {
+      "cle": "ressource:Chef de service",
+      "categorie": "ressource",
+      "objet": "Chef de service",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    }
+  ],
+  "ecartes": []
+}

@@ -1,0 +1,129 @@
+{
+  "nom": "Instruction d'une demande de crédit",
+  "resume": {
+    "decisions": 3,
+    "inputs": 2,
+    "sources": 1,
+    "bkm": 1,
+    "IR": 4,
+    "KR": 1,
+    "AR": 1,
+    "a_confirmer": 5,
+    "ecartes": 0
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "nom": "Vérifier la complétude du dossier",
+      "origine": "tache5",
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+    },
+    {
+      "id": "D2",
+      "nom": "Évaluer la solvabilité du demandeur",
+      "origine": "tache16",
+      "motif": "verbe décisionnel dans le libellé"
+    },
+    {
+      "id": "D3",
+      "nom": "Statuer sur l'octroi du crédit",
+      "origine": "tache26",
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "I1",
+      "nom": "Demande de crédit",
+      "pattern": "P2"
+    },
+    {
+      "id": "I2",
+      "nom": "Centrale des risques",
+      "pattern": "P2"
+    }
+  ],
+  "sources": [
+    {
+      "id": "K1",
+      "nom": "Réglementation prudentielle COBAC applicable",
+      "pattern": "P6"
+    }
+  ],
+  "bkms": [
+    {
+      "id": "B1",
+      "nom": "Règle : Calcul du score interne selon la grille en vigueur"
+    }
+  ],
+  "IR": [
+    [
+      "I1",
+      "D1"
+    ],
+    [
+      "I2",
+      "D2"
+    ],
+    [
+      "D1",
+      "D2"
+    ],
+    [
+      "D2",
+      "D3"
+    ]
+  ],
+  "KR": [
+    [
+      "B1",
+      "D2"
+    ]
+  ],
+  "AR": [
+    [
+      "K1",
+      "D3"
+    ]
+  ],
+  "acyclique": true,
+  "invariants_violes": [],
+  "a_confirmer": [
+    {
+      "cle": "tache2",
+      "categorie": "candidat",
+      "objet": "Saisir les informations du client",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "ressource:Chargé de clientèle",
+      "categorie": "ressource",
+      "objet": "Chargé de clientèle",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    },
+    {
+      "cle": "annot24",
+      "categorie": "annotation",
+      "objet": "Calcul du score interne selon la grille en vigueur",
+      "motif": "proposée comme MODÈLE DE CONNAISSANCE MÉTIER (règle exécutable)",
+      "proposition": "BKM"
+    },
+    {
+      "cle": "ressource:Comité de crédit",
+      "categorie": "ressource",
+      "objet": "Comité de crédit",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    },
+    {
+      "cle": "annot30",
+      "categorie": "annotation",
+      "objet": "Réglementation prudentielle COBAC applicable",
+      "motif": "proposée comme SOURCE DE CONNAISSANCE (elle gouverne la décision)",
+      "proposition": "KS"
+    }
+  ],
+  "ecartes": []
+}

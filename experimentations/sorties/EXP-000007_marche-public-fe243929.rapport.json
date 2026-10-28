@@ -1,0 +1,183 @@
+{
+  "nom": "Évaluation des offres d'un appel d'offres",
+  "resume": {
+    "decisions": 4,
+    "inputs": 5,
+    "sources": 1,
+    "bkm": 1,
+    "IR": 7,
+    "KR": 1,
+    "AR": 1,
+    "a_confirmer": 8,
+    "ecartes": 0
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "nom": "Vérifier la conformité administrative des offres",
+      "origine": "t4",
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+    },
+    {
+      "id": "D2",
+      "nom": "Coter les offres techniques",
+      "origine": "t5",
+      "motif": "verbe décisionnel dans le libellé"
+    },
+    {
+      "id": "D3",
+      "nom": "Statuer sur l'attribution du marché",
+      "origine": "t6",
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+    },
+    {
+      "id": "D4",
+      "nom": "Apprécier la recevabilité des recours",
+      "origine": "t8",
+      "motif": "verbe décisionnel dans le libellé"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "I1",
+      "nom": "Offres techniques",
+      "pattern": "P2"
+    },
+    {
+      "id": "I2",
+      "nom": "Registre des prestataires",
+      "pattern": "P2"
+    },
+    {
+      "id": "I3",
+      "nom": "Cahier des charges",
+      "pattern": "P2"
+    },
+    {
+      "id": "I4",
+      "nom": "Offres financières",
+      "pattern": "P2"
+    },
+    {
+      "id": "I5",
+      "nom": "Mémoire de recours",
+      "pattern": "P2"
+    }
+  ],
+  "sources": [
+    {
+      "id": "K1",
+      "nom": "Code des marchés publics : règles de passation et de publicité",
+      "pattern": "P6"
+    }
+  ],
+  "bkms": [
+    {
+      "id": "B1",
+      "nom": "Règle : Formule de pondération technique et financière des offres"
+    }
+  ],
+  "IR": [
+    [
+      "I1",
+      "D1"
+    ],
+    [
+      "I2",
+      "D1"
+    ],
+    [
+      "I1",
+      "D2"
+    ],
+    [
+      "I3",
+      "D2"
+    ],
+    [
+      "I4",
+      "D3"
+    ],
+    [
+      "I5",
+      "D4"
+    ],
+    [
+      "D2",
+      "D3"
+    ]
+  ],
+  "KR": [
+    [
+      "B1",
+      "D2"
+    ]
+  ],
+  "AR": [
+    [
+      "K1",
+      "D3"
+    ]
+  ],
+  "acyclique": true,
+  "invariants_violes": [],
+  "a_confirmer": [
+    {
+      "cle": "t1",
+      "categorie": "candidat",
+      "objet": "Enregistrer les plis reçus",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "t2",
+      "categorie": "candidat",
+      "objet": "Ouvrir les plis en séance",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "t3",
+      "categorie": "candidat",
+      "objet": "Transmettre les offres à la sous-commission",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "t9",
+      "categorie": "candidat",
+      "objet": "Archiver le dossier du marché",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "ressource:Sous-commission d'analyse",
+      "categorie": "ressource",
+      "objet": "Sous-commission d'analyse",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    },
+    {
+      "cle": "an2",
+      "categorie": "annotation",
+      "objet": "Formule de pondération technique et financière des offres",
+      "motif": "proposée comme MODÈLE DE CONNAISSANCE MÉTIER (règle exécutable)",
+      "proposition": "BKM"
+    },
+    {
+      "cle": "ressource:Commission de passation",
+      "categorie": "ressource",
+      "objet": "Commission de passation",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    },
+    {
+      "cle": "an1",
+      "categorie": "annotation",
+      "objet": "Code des marchés publics : règles de passation et de publici…",
+      "motif": "proposée comme SOURCE DE CONNAISSANCE (elle gouverne la décision)",
+      "proposition": "KS"
+    }
+  ],
+  "ecartes": []
+}

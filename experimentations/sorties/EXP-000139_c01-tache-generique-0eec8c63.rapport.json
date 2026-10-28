@@ -1,0 +1,33 @@
+{
+  "nom": "Tâche générique devant une passerelle",
+  "resume": {
+    "decisions": 0,
+    "inputs": 0,
+    "sources": 0,
+    "bkm": 0,
+    "IR": 0,
+    "KR": 0,
+    "AR": 0,
+    "a_confirmer": 1,
+    "ecartes": 0
+  },
+  "decisions": [],
+  "inputs": [],
+  "sources": [],
+  "bkms": [],
+  "IR": [],
+  "KR": [],
+  "AR": [],
+  "acyclique": true,
+  "invariants_violes": [],
+  "a_confirmer": [
+    {
+      "cle": "Tache_4",
+      "categorie": "hors-definition",
+      "objet": "Examiner la demande",
+      "motif": "TÂCHE GÉNÉRIQUE corroborée par un indice de décision, hors de la définition de référence : si une décision y est prise, retypez-la en tâche utilisateur ou en tâche de règle métier dans votre outil de modélisation",
+      "proposition": ""
+    }
+  ],
+  "ecartes": []
+}

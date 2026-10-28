@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  =====================================================================
+   Attribution d'une bourse universitaire.
+   Inspiration : procedures d'attribution des bourses de l'enseignement
+   superieur (commissions nationales des bourses, criteres de merite et
+   de condition sociale), processus administratif documente.
+   3 decisions attendues (voir bourse-etudes.gold).
+  =====================================================================
+-->
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  id="Defs_bourse" targetNamespace="http://bpmn2dmn/corpus/bourse">
+  <bpmn:process id="proc_bourse" name="Attribution d'une bourse universitaire" isExecutable="false">
+
+    <bpmn:laneSet id="ls1">
+      <bpmn:lane id="l1" name="Direction des affaires académiques">
+        <bpmn:flowNodeRef>debut</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>g1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin3</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="l2" name="Commission des bourses">
+        <bpmn:flowNodeRef>t4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>g2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin2</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+
+    <!-- donnees -->
+    <bpmn:dataObjectReference id="do1" name="Dossier de bourse" dataObjectRef="do1_o"/>
+    <bpmn:dataObject id="do1_o"/>
+    <bpmn:dataObjectReference id="do2" name="Relevés de notes" dataObjectRef="do2_o"/>
+    <bpmn:dataObject id="do2_o"/>
+    <bpmn:dataObjectReference id="do3" name="Note de mérite" dataObjectRef="do3_o"/>
+    <bpmn:dataObject id="do3_o"/>
+    <bpmn:dataStoreReference id="ds1" name="Base des étudiants"/>
+
+    <!-- annotations -->
+    <bpmn:textAnnotation id="an1"><bpmn:text>Arrêté ministériel fixant les conditions d'attribution des bourses</bpmn:text></bpmn:textAnnotation>
+    <bpmn:textAnnotation id="an2"><bpmn:text>Calcul de la moyenne pondérée des résultats académiques</bpmn:text></bpmn:textAnnotation>
+    <bpmn:association id="as1" sourceRef="an1" targetRef="t3"/>
+    <bpmn:association id="as2" sourceRef="an2" targetRef="t4"/>
+
+    <!-- chaine -->
+    <bpmn:startEvent id="debut" name="Campagne de bourses ouverte"/>
+
+    <bpmn:userTask id="t1" name="Enregistrer les demandes de bourse"/>
+    <bpmn:userTask id="t2" name="Saisir les relevés de notes"/>
+
+    <bpmn:userTask id="t3" name="Vérifier les pièces du dossier de bourse">
+      <bpmn:dataInputAssociation id="dia1"><bpmn:sourceRef>do1</bpmn:sourceRef></bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation id="dia2"><bpmn:sourceRef>ds1</bpmn:sourceRef></bpmn:dataInputAssociation>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="g1" name="Dossier recevable ?"/>
+    <bpmn:endEvent id="fin1" name="Demande rejetée"/>
+
+    <bpmn:businessRuleTask id="t4" name="Évaluer le mérite académique du candidat">
+      <bpmn:dataInputAssociation id="dia3"><bpmn:sourceRef>do2</bpmn:sourceRef></bpmn:dataInputAssociation>
+      <bpmn:dataOutputAssociation id="doa1"><bpmn:targetRef>do3</bpmn:targetRef></bpmn:dataOutputAssociation>
+    </bpmn:businessRuleTask>
+
+    <bpmn:userTask id="t5" name="Décider de l'attribution de la bourse">
+      <bpmn:dataInputAssociation id="dia4"><bpmn:sourceRef>do3</bpmn:sourceRef></bpmn:dataInputAssociation>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="g2" name="Bourse accordée ?"/>
+    <bpmn:endEvent id="fin2" name="Candidature non retenue"/>
+
+    <bpmn:userTask id="t6" name="Publier la liste des bénéficiaires"/>
+    <bpmn:sendTask id="t7" name="Notifier les candidats"/>
+    <bpmn:endEvent id="fin3" name="Campagne close"/>
+
+    <bpmn:sequenceFlow id="f1" sourceRef="debut" targetRef="t1"/>
+    <bpmn:sequenceFlow id="f2" sourceRef="t1" targetRef="t2"/>
+    <bpmn:sequenceFlow id="f3" sourceRef="t2" targetRef="t3"/>
+    <bpmn:sequenceFlow id="f4" sourceRef="t3" targetRef="g1"/>
+    <bpmn:sequenceFlow id="f5" name="irrecevable" sourceRef="g1" targetRef="fin1"/>
+    <bpmn:sequenceFlow id="f6" name="recevable" sourceRef="g1" targetRef="t4"/>
+    <bpmn:sequenceFlow id="f7" sourceRef="t4" targetRef="t5"/>
+    <bpmn:sequenceFlow id="f8" sourceRef="t5" targetRef="g2"/>
+    <bpmn:sequenceFlow id="f9" name="non retenue" sourceRef="g2" targetRef="fin2"/>
+    <bpmn:sequenceFlow id="f10" name="accordée" sourceRef="g2" targetRef="t6"/>
+    <bpmn:sequenceFlow id="f11" sourceRef="t6" targetRef="t7"/>
+    <bpmn:sequenceFlow id="f12" sourceRef="t7" targetRef="fin3"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="diag_auto" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI">
+    <bpmndi:BPMNPlane id="plane_auto" bpmnElement="proc_bourse">
+      <bpmndi:BPMNShape id="dis_debut" bpmnElement="debut"><dc:Bounds x="102" y="222" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t1" bpmnElement="t1"><dc:Bounds x="250" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t2" bpmnElement="t2"><dc:Bounds x="440" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t3" bpmnElement="t3"><dc:Bounds x="630" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_g1" bpmnElement="g1"><dc:Bounds x="855" y="215" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_fin1" bpmnElement="fin1"><dc:Bounds x="1052" y="222" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t4" bpmnElement="t4"><dc:Bounds x="1010" y="330" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t5" bpmnElement="t5"><dc:Bounds x="1200" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_g2" bpmnElement="g2"><dc:Bounds x="1425" y="215" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_fin2" bpmnElement="fin2"><dc:Bounds x="1622" y="222" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t6" bpmnElement="t6"><dc:Bounds x="1580" y="330" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t7" bpmnElement="t7"><dc:Bounds x="1770" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_fin3" bpmnElement="fin3"><dc:Bounds x="2002" y="222" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_do1" bpmnElement="do1"><dc:Bounds x="650" y="60" width="36" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_do2" bpmnElement="do2"><dc:Bounds x="1090" y="60" width="36" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_do3" bpmnElement="do3"><dc:Bounds x="1150" y="60" width="36" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_ds1" bpmnElement="ds1"><dc:Bounds x="650" y="60" width="36" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_an1" bpmnElement="an1"><dc:Bounds x="630" y="460" width="200" height="40"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_an2" bpmnElement="an2"><dc:Bounds x="1010" y="510" width="200" height="40"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="die_f1" bpmnElement="f1"><di:waypoint x="120" y="240"/><di:waypoint x="310" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f2" bpmnElement="f2"><di:waypoint x="310" y="240"/><di:waypoint x="500" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f3" bpmnElement="f3"><di:waypoint x="500" y="240"/><di:waypoint x="690" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f4" bpmnElement="f4"><di:waypoint x="690" y="240"/><di:waypoint x="880" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f5" bpmnElement="f5"><di:waypoint x="880" y="240"/><di:waypoint x="1070" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f6" bpmnElement="f6"><di:waypoint x="880" y="240"/><di:waypoint x="1070" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f7" bpmnElement="f7"><di:waypoint x="1070" y="370"/><di:waypoint x="1260" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f8" bpmnElement="f8"><di:waypoint x="1260" y="240"/><di:waypoint x="1450" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f9" bpmnElement="f9"><di:waypoint x="1450" y="240"/><di:waypoint x="1640" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f10" bpmnElement="f10"><di:waypoint x="1450" y="240"/><di:waypoint x="1640" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f11" bpmnElement="f11"><di:waypoint x="1640" y="370"/><di:waypoint x="1830" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f12" bpmnElement="f12"><di:waypoint x="1830" y="240"/><di:waypoint x="2020" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_as1" bpmnElement="as1"><di:waypoint x="730" y="480"/><di:waypoint x="690" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_as2" bpmnElement="as2"><di:waypoint x="1110" y="530"/><di:waypoint x="1070" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_dia1" bpmnElement="dia1"><di:waypoint x="668" y="85"/><di:waypoint x="690" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_dia2" bpmnElement="dia2"><di:waypoint x="668" y="85"/><di:waypoint x="690" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_dia3" bpmnElement="dia3"><di:waypoint x="1108" y="85"/><di:waypoint x="1070" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_doa1" bpmnElement="doa1"><di:waypoint x="1070" y="370"/><di:waypoint x="1168" y="85"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_dia4" bpmnElement="dia4"><di:waypoint x="1168" y="85"/><di:waypoint x="1260" y="240"/></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

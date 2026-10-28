@@ -1,0 +1,19 @@
+{
+  "id": "A03",
+  "titre": "Annotation portant une valeur",
+  "pattern": "Π2 / P6 (γ) : annotation-valeur → donnée d'entrée attendue, non tranchée",
+  "elements_bpmn": "textAnnotation, association, userTask, exclusiveGateway",
+  "decisions": [
+    "Vérifier la recevabilité de la demande"
+  ],
+  "inputs": [],
+  "sources": [],
+  "bkms": [],
+  "arcs": [],
+  "points_experts": [
+    "annotation"
+  ],
+  "ecartes": [],
+  "verdict_attendu": "point-expert",
+  "enseignement": "Sans indice lexical d'autorité ni de règle, γ ne tranche pas : l'annotation est soumise à l'expert (donnée d'entrée ou source de connaissance ?) et aucun nœud n'est créé avant arbitrage."
+}

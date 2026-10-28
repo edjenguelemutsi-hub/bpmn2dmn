@@ -1,0 +1,48 @@
+{
+  "id": "A11",
+  "titre": "Composition des patterns",
+  "pattern": "P1–P6 composés : DRD à deux décisions (P2, P3, P4, P5, P6)",
+  "elements_bpmn": "startEvent à message, deux couloirs, objets de données, annotation, passerelles",
+  "decisions": [
+    "Vérifier la complétude du dossier",
+    "Statuer sur l'agrément"
+  ],
+  "inputs": [
+    "Demande d'agrément reçue",
+    "Demande d'agrément"
+  ],
+  "sources": [
+    "Réglementation FIMEX en vigueur"
+  ],
+  "bkms": [],
+  "arcs": [
+    [
+      "Demande d'agrément reçue",
+      "Vérifier la complétude du dossier",
+      "P3"
+    ],
+    [
+      "Demande d'agrément",
+      "Vérifier la complétude du dossier",
+      "P2"
+    ],
+    [
+      "Vérifier la complétude du dossier",
+      "Statuer sur l'agrément",
+      "P4"
+    ],
+    [
+      "Réglementation FIMEX en vigueur",
+      "Statuer sur l'agrément",
+      "P6"
+    ]
+  ],
+  "points_experts": [
+    "annotation",
+    "ressource",
+    "ressource"
+  ],
+  "ecartes": [],
+  "verdict_attendu": "conforme",
+  "enseignement": "Les fragments produits par chaque pattern se composent en un DRD unique et acyclique ; les deux rôles et l'annotation restent des points d'arbitrage."
+}

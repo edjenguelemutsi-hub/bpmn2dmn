@@ -1,0 +1,32 @@
+{
+  "nom": "Décision sans donnée lue",
+  "resume": {
+    "decisions": 1,
+    "inputs": 0,
+    "sources": 0,
+    "bkm": 0,
+    "IR": 0,
+    "KR": 0,
+    "AR": 0,
+    "a_confirmer": 0,
+    "ecartes": 0
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "nom": "Évaluer la demande d'agrément",
+      "origine": "Tache_2",
+      "motif": "verbe décisionnel dans le libellé"
+    }
+  ],
+  "inputs": [],
+  "sources": [],
+  "bkms": [],
+  "IR": [],
+  "KR": [],
+  "AR": [],
+  "acyclique": true,
+  "invariants_violes": [],
+  "a_confirmer": [],
+  "ecartes": []
+}

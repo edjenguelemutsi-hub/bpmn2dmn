@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
+             xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+             xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             id="Definitions_Circuit_entre_deux_d_cisions"
+             name="Circuit entre deux décisions"
+             namespace="http://bpmn2dmn/genere"
+             exporter="bpmn2dmn" exporterVersion="1.0">
+  <decision id="D1" name="Évaluer la demande">
+    <informationRequirement id="ir1"><requiredDecision href="#D2"/></informationRequirement>
+    <decisionTable id="D1_table" hitPolicy="UNIQUE">
+      <input id="D1_entree1" label="Contrôler les observations"><inputExpression id="D1_entree1_expr" typeRef="string"><text>controlerLesObservations</text></inputExpression></input>
+      <output id="D1_sortie" label="Avis favorable ?" name="evaluerLaDemande" typeRef="string"><outputValues id="D1_sortie_valeurs"><text>"oui","non"</text></outputValues></output>
+      <rule id="D1_regle1"><inputEntry id="D1_regle1_e1"><text>-</text></inputEntry><outputEntry id="D1_regle1_s"><text>"oui"</text></outputEntry></rule>
+      <rule id="D1_regle2"><inputEntry id="D1_regle2_e1"><text>-</text></inputEntry><outputEntry id="D1_regle2_s"><text>"non"</text></outputEntry></rule>
+    </decisionTable>
+  </decision>
+  <decision id="D2" name="Contrôler les observations">
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DRD_Circuit_entre_deux_d_cisions">
+      <dmndi:DMNShape id="s_D1" dmnElementRef="D1">
+        <dc:Bounds x="82" y="40" width="180" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_D2" dmnElementRef="D2">
+        <dc:Bounds x="80" y="230" width="185" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="e_ir1" dmnElementRef="ir1">
+        <di:waypoint x="172" y="230"/><di:waypoint x="172" y="120"/>
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

@@ -1,0 +1,19 @@
+{
+  "id": "B11",
+  "titre": "Annotation non décisionnelle écartée",
+  "pattern": "γ = ⊥ : annotation décorative écartée automatiquement, avec motif",
+  "elements_bpmn": "textAnnotation, association, userTask, exclusiveGateway",
+  "decisions": [
+    "Vérifier la recevabilité de la demande"
+  ],
+  "inputs": [],
+  "sources": [],
+  "bkms": [],
+  "arcs": [],
+  "points_experts": [],
+  "ecartes": [
+    "annotation"
+  ],
+  "verdict_attendu": "conforme",
+  "enseignement": "Une annotation sans valeur décisionnelle (logo, cachet, mise en forme) est écartée sans question à l'expert, et tracée."
+}

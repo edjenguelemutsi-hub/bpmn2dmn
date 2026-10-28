@@ -1,0 +1,99 @@
+{
+  "nom": "e-GUCE 3G – Procédure DI Services",
+  "resume": {
+    "decisions": 2,
+    "inputs": 0,
+    "sources": 1,
+    "bkm": 0,
+    "IR": 0,
+    "KR": 0,
+    "AR": 1,
+    "a_confirmer": 6,
+    "ecartes": 0
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "nom": "Choisir la banque de traitement et soumettre",
+      "origine": "T2",
+      "motif": "verbe décisionnel dans le libellé"
+    },
+    {
+      "id": "D2",
+      "nom": "Traiter la DI (pièces, régularité de l'opération)",
+      "origine": "A1",
+      "motif": "précède une passerelle exclusive"
+    }
+  ],
+  "inputs": [],
+  "sources": [
+    {
+      "id": "K1",
+      "nom": "Banque – Analyste commerce extérieur (e-Business)",
+      "pattern": "P5"
+    }
+  ],
+  "bkms": [],
+  "IR": [],
+  "KR": [],
+  "AR": [
+    [
+      "K1",
+      "D2"
+    ]
+  ],
+  "acyclique": true,
+  "invariants_violes": [],
+  "a_confirmer": [
+    {
+      "cle": "S1",
+      "categorie": "hors-definition",
+      "objet": "Contrôler la soumission, attribuer le numéro de DI",
+      "motif": "tâche de SERVICE corroborée par un indice de décision : décision de fait, non couverte par la définition de référence",
+      "proposition": ""
+    },
+    {
+      "cle": "S2",
+      "categorie": "hors-definition",
+      "objet": "Coter la DI à un analyste de la banque choisie (le même après complément)",
+      "motif": "tâche de SERVICE corroborée par un indice de décision : décision de fait, non couverte par la définition de référence",
+      "proposition": ""
+    },
+    {
+      "cle": "T1",
+      "categorie": "candidat",
+      "objet": "Renseigner le formulaire et joindre les pièces",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "T5",
+      "categorie": "candidat",
+      "objet": "Répondre au complément d'information",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "A2",
+      "categorie": "candidat",
+      "objet": "Valider et signer électroniquement la DI",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "ressource:Opérateur importateur / CDA (eFORCE)",
+      "categorie": "ressource",
+      "objet": "Opérateur importateur / CDA (eFORCE)",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    }
+  ],
+  "ecartes": [],
+  "extensions": [
+    "donnees-processus",
+    "evenements-conditionnels"
+  ],
+  "variante": "extensions:donnees-processus+evenements-conditionnels",
+  "anomalies_source": [],
+  "diagnostic_vide": ""
+}

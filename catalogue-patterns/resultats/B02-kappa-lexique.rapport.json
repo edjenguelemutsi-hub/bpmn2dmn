@@ -1,0 +1,42 @@
+{
+  "decisions": [
+    "Évaluer le niveau de risque de l'opérateur"
+  ],
+  "inputs": [
+    "Dossier de l'opérateur",
+    "Historique des contrôles"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Dossier de l'opérateur",
+      "Évaluer le niveau de risque de l'opérateur",
+      "P2"
+    ],
+    [
+      "Historique des contrôles",
+      "Évaluer le niveau de risque de l'opérateur",
+      "P2"
+    ]
+  ],
+  "points_experts": [],
+  "ecartes": [],
+  "acyclique": true,
+  "invariants_violes": [],
+  "anomalies_source": [],
+  "diagnostic_vide": "",
+  "resume": {
+    "decisions": 1,
+    "inputs": 2,
+    "sources": 0,
+    "bkm": 0,
+    "IR": 2,
+    "KR": 0,
+    "AR": 0,
+    "a_confirmer": 0,
+    "ecartes": 0
+  },
+  "points": [],
+  "ecartes_detail": []
+}

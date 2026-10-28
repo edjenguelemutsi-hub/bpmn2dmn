@@ -1,0 +1,27 @@
+{
+  "id": "A09",
+  "titre": "Rôle du couloir qui exécute la décision",
+  "pattern": "Π6 / P5 (ω) : ressource humaine → source de connaissance proposée (AR), non tranchée",
+  "elements_bpmn": "laneSet / lane, userTask, exclusiveGateway",
+  "decisions": [
+    "Vérifier la recevabilité de la demande"
+  ],
+  "inputs": [
+    "Demande d'agrément"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Demande d'agrément",
+      "Vérifier la recevabilité de la demande",
+      "P2"
+    ]
+  ],
+  "points_experts": [
+    "ressource"
+  ],
+  "ecartes": [],
+  "verdict_attendu": "point-expert",
+  "enseignement": "Un rôle humain gouverne-t-il la décision ou l'applique-t-il ? ω ne tranche pas : la source de connaissance est proposée, l'expert arbitre (règle ouverte)."
+}

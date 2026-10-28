@@ -1,0 +1,51 @@
+{
+  "decisions": [
+    "Vérifier la conformité des pièces"
+  ],
+  "inputs": [
+    "Demande d'agrément",
+    "Pièce complémentaire reçue (optionnel)"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Demande d'agrément",
+      "Vérifier la conformité des pièces",
+      "P2"
+    ],
+    [
+      "Pièce complémentaire reçue (optionnel)",
+      "Vérifier la conformité des pièces",
+      "P3"
+    ]
+  ],
+  "points_experts": [
+    "ressource"
+  ],
+  "ecartes": [],
+  "acyclique": true,
+  "invariants_violes": [],
+  "anomalies_source": [],
+  "diagnostic_vide": "",
+  "resume": {
+    "decisions": 1,
+    "inputs": 2,
+    "sources": 0,
+    "bkm": 0,
+    "IR": 2,
+    "KR": 0,
+    "AR": 0,
+    "a_confirmer": 1,
+    "ecartes": 0
+  },
+  "points": [
+    {
+      "categorie": "ressource",
+      "objet": "Agent instructeur",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    }
+  ],
+  "ecartes_detail": []
+}

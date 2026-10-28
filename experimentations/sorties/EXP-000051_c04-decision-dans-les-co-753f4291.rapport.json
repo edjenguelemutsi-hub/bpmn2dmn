@@ -1,0 +1,33 @@
+{
+  "nom": "Décision encodée dans les conditions des flux",
+  "resume": {
+    "decisions": 0,
+    "inputs": 0,
+    "sources": 0,
+    "bkm": 0,
+    "IR": 0,
+    "KR": 0,
+    "AR": 0,
+    "a_confirmer": 1,
+    "ecartes": 0
+  },
+  "decisions": [],
+  "inputs": [],
+  "sources": [],
+  "bkms": [],
+  "IR": [],
+  "KR": [],
+  "AR": [],
+  "acyclique": true,
+  "invariants_violes": [],
+  "a_confirmer": [
+    {
+      "cle": "Tache_2",
+      "categorie": "hors-definition",
+      "objet": "Calculer le montant des droits",
+      "motif": "tâche de SERVICE corroborée par un indice de décision : décision de fait, non couverte par la définition de référence",
+      "proposition": ""
+    }
+  ],
+  "ecartes": []
+}

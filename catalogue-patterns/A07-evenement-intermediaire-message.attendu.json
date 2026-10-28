@@ -1,0 +1,25 @@
+{
+  "id": "A07",
+  "titre": "Événement intermédiaire de réception",
+  "pattern": "Π4 / P3 : événement intermédiaire porteur précédant la décision → donnée d'entrée (IR)",
+  "elements_bpmn": "intermediateCatchEvent + messageEventDefinition, userTask, exclusiveGateway",
+  "decisions": [
+    "Statuer sur la demande d'agrément"
+  ],
+  "inputs": [
+    "Pièces complémentaires reçues"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Pièces complémentaires reçues",
+      "Statuer sur la demande d'agrément",
+      "P3"
+    ]
+  ],
+  "points_experts": [],
+  "ecartes": [],
+  "verdict_attendu": "conforme",
+  "enseignement": "Un événement intermédiaire de réception qui précède la décision joue le même rôle qu'un événement de départ porteur."
+}

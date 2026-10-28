@@ -1,0 +1,33 @@
+{
+  "id": "B10",
+  "titre": "Sous-processus déplié",
+  "pattern": "Dépliage : nœuds internes remontés, couloir hérité, frontière sur la façade",
+  "elements_bpmn": "subProcess (déplié) avec contenu, boundaryEvent sur la façade, lane",
+  "decisions": [
+    "Vérifier la conformité des pièces"
+  ],
+  "inputs": [
+    "Demande d'agrément",
+    "Pièce complémentaire reçue (optionnel)"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Demande d'agrément",
+      "Vérifier la conformité des pièces",
+      "P2"
+    ],
+    [
+      "Pièce complémentaire reçue (optionnel)",
+      "Vérifier la conformité des pièces",
+      "P3"
+    ]
+  ],
+  "points_experts": [
+    "ressource"
+  ],
+  "ecartes": [],
+  "verdict_attendu": "conforme",
+  "enseignement": "Le sous-processus déplié disparaît au profit de ses activités ; la frontière posée sur sa façade vaut pour la décision qu'il contient, et le couloir de la façade lui est hérité."
+}

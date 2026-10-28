@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
+             xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+             xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             id="Definitions_Instruction_d_une_demande_de_cr_dit"
+             name="Instruction d'une demande de crédit"
+             namespace="http://bpmn2dmn/genere"
+             exporter="bpmn2dmn" exporterVersion="1.0">
+  <decision id="D1" name="Vérifier la complétude du dossier de crédit">
+    <informationRequirement id="ir1"><requiredInput href="#I1"/></informationRequirement>
+  </decision>
+  <decision id="D2" name="Évaluer la solvabilité du demandeur">
+    <informationRequirement id="ir2"><requiredInput href="#I2"/></informationRequirement>
+    <informationRequirement id="ir3"><requiredInput href="#I3"/></informationRequirement>
+    <informationRequirement id="ir4"><requiredInput href="#I4"/></informationRequirement>
+    <knowledgeRequirement id="kr1"><requiredKnowledge href="#B1"/></knowledgeRequirement>
+  </decision>
+  <decision id="D3" name="Statuer sur l'octroi du crédit">
+    <informationRequirement id="ir5"><requiredDecision href="#D2"/></informationRequirement>
+    <authorityRequirement id="ar1"><requiredAuthority href="#K1"/></authorityRequirement>
+  </decision>
+  <businessKnowledgeModel id="B1" name="Règle : Calcul du score interne de solvabilité selon la grille en vigueur">
+  </businessKnowledgeModel>
+  <inputData id="I1" name="Demande de crédit"/>
+  <inputData id="I2" name="Relevés de compte"/>
+  <inputData id="I3" name="Plan d'affaires"/>
+  <inputData id="I4" name="Centrale des risques"/>
+  <knowledgeSource id="K1" name="Réglementation prudentielle COBAC : ratios d'endettement à respecter"/>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DRD_Instruction_d_une_demande_de_cr_dit">
+      <dmndi:DMNShape id="s_D1" dmnElementRef="D1">
+        <dc:Bounds x="80" y="230" width="226" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_D2" dmnElementRef="D2">
+        <dc:Bounds x="396" y="230" width="206" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_D3" dmnElementRef="D3">
+        <dc:Bounds x="402" y="40" width="194" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I1" dmnElementRef="I1">
+        <dc:Bounds x="126" y="430" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_B1" dmnElementRef="B1">
+        <dc:Bounds x="384" y="422" width="230" height="76"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I2" dmnElementRef="I2">
+        <dc:Bounds x="660" y="430" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I3" dmnElementRef="I3">
+        <dc:Bounds x="842" y="438" width="135" height="45"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_I4" dmnElementRef="I4">
+        <dc:Bounds x="1022" y="430" width="135" height="60"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_K1" dmnElementRef="K1">
+        <dc:Bounds x="1204" y="422" width="230" height="76"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="e_ir1" dmnElementRef="ir1">
+        <di:waypoint x="193" y="430"/><di:waypoint x="193" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir2" dmnElementRef="ir2">
+        <di:waypoint x="728" y="430"/><di:waypoint x="499" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir3" dmnElementRef="ir3">
+        <di:waypoint x="909" y="438"/><di:waypoint x="505" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir4" dmnElementRef="ir4">
+        <di:waypoint x="1090" y="430"/><di:waypoint x="1090" y="332"/><di:waypoint x="420" y="332"/><di:waypoint x="420" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_kr1" dmnElementRef="kr1">
+        <di:waypoint x="499" y="422"/><di:waypoint x="493" y="310"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir5" dmnElementRef="ir5">
+        <di:waypoint x="499" y="230"/><di:waypoint x="496" y="120"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ar1" dmnElementRef="ar1">
+        <di:waypoint x="1319" y="422"/><di:waypoint x="502" y="120"/>
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

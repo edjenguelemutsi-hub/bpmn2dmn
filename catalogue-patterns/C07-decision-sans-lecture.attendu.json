@@ -1,0 +1,17 @@
+{
+  "id": "C07",
+  "titre": "Décision sans donnée lue",
+  "pattern": "Décision isolée : aucune lecture, seule une écriture → aucune exigence",
+  "elements_bpmn": "businessRuleTask, dataOutputAssociation",
+  "decisions": [
+    "Évaluer la demande d'agrément"
+  ],
+  "inputs": [],
+  "sources": [],
+  "bkms": [],
+  "arcs": [],
+  "points_experts": [],
+  "ecartes": [],
+  "verdict_attendu": "conforme",
+  "enseignement": "Le DRD contient une décision sans aucune exigence : le modèle ne dit pas ce qu'elle consomme. La limite est celle du modèle source, l'algorithme ne peut pas inventer les entrées."
+}

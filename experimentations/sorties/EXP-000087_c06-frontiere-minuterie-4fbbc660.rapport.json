@@ -1,0 +1,81 @@
+{
+  "nom": "Frontière de minuterie",
+  "resume": {
+    "decisions": 1,
+    "inputs": 1,
+    "sources": 1,
+    "bkm": 0,
+    "IR": 1,
+    "KR": 0,
+    "AR": 1,
+    "a_confirmer": 1,
+    "ecartes": 0
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "nom": "Vérifier la recevabilité de la demande",
+      "origine": "Tache_2",
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "I1",
+      "nom": "Demande d'agrément",
+      "pattern": "P2"
+    }
+  ],
+  "sources": [
+    {
+      "id": "K1",
+      "nom": "Chef de service",
+      "pattern": "P5"
+    }
+  ],
+  "bkms": [],
+  "IR": [
+    [
+      "I1",
+      "D1"
+    ]
+  ],
+  "KR": [],
+  "AR": [
+    [
+      "K1",
+      "D1"
+    ]
+  ],
+  "acyclique": true,
+  "invariants_violes": [],
+  "a_confirmer": [
+    {
+      "cle": "ressource:Chef de service",
+      "categorie": "ressource",
+      "objet": "Chef de service",
+      "motif": "proposée comme SOURCE DE CONNAISSANCE : son nom désigne une instance qui gouverne (extension « roles-gouvernants »)",
+      "proposition": "KS (indice lexical)"
+    }
+  ],
+  "ecartes": [],
+  "extensions": [
+    "conditions-passerelle",
+    "definition-etendue",
+    "donnees-processus",
+    "evenements-conditionnels",
+    "logique",
+    "noms-suggeres",
+    "roles-gouvernants"
+  ],
+  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+logique+noms-suggeres+roles-gouvernants",
+  "logique": {
+    "D1": {
+      "passerelle": "Demande recevable ?",
+      "branches": [
+        "oui",
+        "non"
+      ]
+    }
+  }
+}

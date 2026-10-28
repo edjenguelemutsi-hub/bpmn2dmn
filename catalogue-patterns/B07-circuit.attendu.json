@@ -1,0 +1,26 @@
+{
+  "id": "B07",
+  "titre": "Circuit entre deux décisions",
+  "pattern": "Garde d'acyclicité : boucle de réexamen où chaque décision nourrit l'autre",
+  "elements_bpmn": "deux userTask décisionnelles, flux de retour, données croisées",
+  "decisions": [
+    "Évaluer la demande",
+    "Contrôler les observations"
+  ],
+  "inputs": [],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Contrôler les observations",
+      "Évaluer la demande",
+      "P4"
+    ]
+  ],
+  "points_experts": [
+    "circuit"
+  ],
+  "ecartes": [],
+  "verdict_attendu": "point-expert",
+  "enseignement": "Chaque décision produit une donnée que l'autre lit : le second arc P4 fermerait un circuit, il est écarté et le sens réel de la dépendance est soumis à l'expert."
+}

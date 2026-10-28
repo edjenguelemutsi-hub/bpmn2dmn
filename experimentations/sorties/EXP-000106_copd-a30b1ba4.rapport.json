@@ -1,0 +1,192 @@
+{
+  "nom": "Diagnostic et traitement de la BPCO",
+  "resume": {
+    "decisions": 4,
+    "inputs": 4,
+    "sources": 3,
+    "bkm": 0,
+    "IR": 5,
+    "KR": 0,
+    "AR": 3,
+    "a_confirmer": 9,
+    "ecartes": 1
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "nom": "Evaluate request",
+      "origine": "t_eval_request",
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+    },
+    {
+      "id": "D2",
+      "nom": "Evaluate hospitalization",
+      "origine": "t_eval_hosp",
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+    },
+    {
+      "id": "D3",
+      "nom": "Plan an examination",
+      "origine": "t_plan_exam",
+      "motif": "verbe décisionnel dans le libellé"
+    },
+    {
+      "id": "D4",
+      "nom": "Make working diagnosis",
+      "origine": "t_working_diag",
+      "motif": "verbe décisionnel dans le libellé"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "I1",
+      "nom": "Patient request",
+      "pattern": "P3"
+    },
+    {
+      "id": "I2",
+      "nom": "EHR",
+      "pattern": "P2"
+    },
+    {
+      "id": "I3",
+      "nom": "Free time slot (optionnel)",
+      "pattern": "P3"
+    },
+    {
+      "id": "I4",
+      "nom": "Anamnesis report",
+      "pattern": "P2"
+    }
+  ],
+  "sources": [
+    {
+      "id": "K1",
+      "nom": "Hospitalize if: symptoms are acute, sensory disturbances, new cardiac arrhythmia, no response to treatment",
+      "pattern": "P6"
+    },
+    {
+      "id": "K2",
+      "nom": "Consider patient conditions (and COPD stage)",
+      "pattern": "P6"
+    },
+    {
+      "id": "K3",
+      "nom": "Consider the following symptoms: chronic cough, phlegm and breath shortage",
+      "pattern": "P6"
+    }
+  ],
+  "bkms": [],
+  "IR": [
+    [
+      "I1",
+      "D1"
+    ],
+    [
+      "I2",
+      "D2"
+    ],
+    [
+      "I3",
+      "D3"
+    ],
+    [
+      "I4",
+      "D4"
+    ],
+    [
+      "I2",
+      "D4"
+    ]
+  ],
+  "KR": [],
+  "AR": [
+    [
+      "K1",
+      "D2"
+    ],
+    [
+      "K2",
+      "D3"
+    ],
+    [
+      "K3",
+      "D4"
+    ]
+  ],
+  "acyclique": true,
+  "invariants_violes": [],
+  "a_confirmer": [
+    {
+      "cle": "t_treat_exac",
+      "categorie": "candidat",
+      "objet": "Treat exacerbations",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "t_prescribe",
+      "categorie": "candidat",
+      "objet": "Prescribe therapy",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "t_refresh",
+      "categorie": "candidat",
+      "objet": "Refresh calendar",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "t_examine",
+      "categorie": "candidat",
+      "objet": "Examine and interview patient",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "t_workup",
+      "categorie": "candidat",
+      "objet": "Conduct diagnostic workup",
+      "motif": "sous-processus : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "ressource:Physician",
+      "categorie": "ressource",
+      "objet": "Physician",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    },
+    {
+      "cle": "an_hosp",
+      "categorie": "annotation",
+      "objet": "Hospitalize if: symptoms are acute, sensory disturbances, ne…",
+      "motif": "proposée comme SOURCE DE CONNAISSANCE (elle gouverne la décision)",
+      "proposition": "KS"
+    },
+    {
+      "cle": "an_stage",
+      "categorie": "annotation",
+      "objet": "Consider patient conditions (and COPD stage)",
+      "motif": "proposée comme SOURCE DE CONNAISSANCE (elle gouverne la décision)",
+      "proposition": "KS"
+    },
+    {
+      "cle": "an_symptoms",
+      "categorie": "annotation",
+      "objet": "Consider the following symptoms: chronic cough, phlegm and b…",
+      "motif": "proposée comme SOURCE DE CONNAISSANCE (elle gouverne la décision)",
+      "proposition": "KS"
+    }
+  ],
+  "ecartes": [
+    {
+      "cle": "an_samedoc",
+      "categorie": "annotation",
+      "objet": "Must be the same doctor that has evaluated the patient reque…",
+      "motif": "aucune valeur décisionnelle"
+    }
+  ]
+}

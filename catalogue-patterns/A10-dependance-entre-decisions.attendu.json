@@ -1,0 +1,31 @@
+{
+  "id": "A10",
+  "titre": "Dépendance entre deux décisions",
+  "pattern": "P4 raffiné + P2 raffiné : d1 produit une donnée lue par d2 → IR décision → décision",
+  "elements_bpmn": "deux userTask décisionnelles, dataOutputAssociation, dataInputAssociation",
+  "decisions": [
+    "Vérifier la complétude du dossier",
+    "Statuer sur l'agrément"
+  ],
+  "inputs": [
+    "Demande d'agrément"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Demande d'agrément",
+      "Vérifier la complétude du dossier",
+      "P2"
+    ],
+    [
+      "Vérifier la complétude du dossier",
+      "Statuer sur l'agrément",
+      "P4"
+    ]
+  ],
+  "points_experts": [],
+  "ecartes": [],
+  "verdict_attendu": "conforme",
+  "enseignement": "La donnée intermédiaire « Dossier vérifié » n'est pas une donnée d'entrée : elle porte la dépendance d1 → d2 (P4 raffiné : atteignabilité et donnée partagée)."
+}

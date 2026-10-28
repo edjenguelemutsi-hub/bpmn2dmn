@@ -1,0 +1,50 @@
+{
+  "nom": "Ressource système écartée",
+  "resume": {
+    "decisions": 1,
+    "inputs": 1,
+    "sources": 0,
+    "bkm": 0,
+    "IR": 1,
+    "KR": 0,
+    "AR": 0,
+    "a_confirmer": 0,
+    "ecartes": 1
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "nom": "Contrôler la cohérence de la déclaration",
+      "origine": "Tache_4",
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "I1",
+      "nom": "Déclaration d'importation",
+      "pattern": "P2"
+    }
+  ],
+  "sources": [],
+  "bkms": [],
+  "IR": [
+    [
+      "I1",
+      "D1"
+    ]
+  ],
+  "KR": [],
+  "AR": [],
+  "acyclique": true,
+  "invariants_violes": [],
+  "a_confirmer": [],
+  "ecartes": [
+    {
+      "cle": "ressource:Système d'information du guichet",
+      "categorie": "ressource",
+      "objet": "Système d'information du guichet",
+      "motif": "un système exécute, il ne gouverne pas"
+    }
+  ]
+}

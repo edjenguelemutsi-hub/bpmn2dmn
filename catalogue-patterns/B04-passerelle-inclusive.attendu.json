@@ -1,0 +1,25 @@
+{
+  "id": "B04",
+  "titre": "Passerelle inclusive comme indice de position",
+  "pattern": "κ (position) : la passerelle inclusive vaut passerelle de choix",
+  "elements_bpmn": "userTask, inclusiveGateway",
+  "decisions": [
+    "Instruire la demande"
+  ],
+  "inputs": [
+    "Demande d'agrément"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Demande d'agrément",
+      "Instruire la demande",
+      "P2"
+    ]
+  ],
+  "points_experts": [],
+  "ecartes": [],
+  "verdict_attendu": "conforme",
+  "enseignement": "Une passerelle inclusive applique aussi un verdict : elle corrobore la tâche qui la précède, comme l'exclusive."
+}

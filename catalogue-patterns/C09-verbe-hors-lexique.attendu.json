@@ -1,0 +1,17 @@
+{
+  "id": "C09",
+  "titre": "Verbe absent du lexique de décision",
+  "pattern": "κ (lexique) : « valider » est volontairement exclu de Λ",
+  "elements_bpmn": "userTask, dataObjectReference, sans passerelle",
+  "decisions": [],
+  "inputs": [],
+  "sources": [],
+  "bkms": [],
+  "arcs": [],
+  "points_experts": [
+    "candidat"
+  ],
+  "ecartes": [],
+  "verdict_attendu": "limite",
+  "enseignement": "« Valider » ne figure pas dans Λ (valider un formulaire ne décide rien) : sans passerelle, la tâche n'est pas corroborée et reste soumise à l'expert. Le lexique est un paramètre, pas une vérité."
+}

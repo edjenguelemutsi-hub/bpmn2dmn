@@ -1,0 +1,42 @@
+{
+  "decisions": [
+    "Statuer sur l'agrément",
+    "Vérifier la complétude du dossier"
+  ],
+  "inputs": [
+    "Demande d'agrément"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Demande d'agrément",
+      "Vérifier la complétude du dossier",
+      "P2"
+    ],
+    [
+      "Vérifier la complétude du dossier",
+      "Statuer sur l'agrément",
+      "P4"
+    ]
+  ],
+  "points_experts": [],
+  "ecartes": [],
+  "acyclique": true,
+  "invariants_violes": [],
+  "anomalies_source": [],
+  "diagnostic_vide": "",
+  "resume": {
+    "decisions": 2,
+    "inputs": 1,
+    "sources": 0,
+    "bkm": 0,
+    "IR": 2,
+    "KR": 0,
+    "AR": 0,
+    "a_confirmer": 0,
+    "ecartes": 0
+  },
+  "points": [],
+  "ecartes_detail": []
+}

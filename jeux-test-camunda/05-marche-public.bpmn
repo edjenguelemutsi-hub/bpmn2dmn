@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1" targetNamespace="http://bpmn2dmn/jeux" exporter="bpmn2dmn" exporterVersion="1.0">
+  <bpmn:collaboration id="Collab_1">
+    <bpmn:participant id="Pool_1" name="Commission de passation des marchés" processRef="Process_1"/>
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1" name="Évaluation des offres d'un appel d'offres" isExecutable="false">
+    <bpmn:laneSet id="Lanes_1">
+      <bpmn:lane id="Lane_1" name="Secrétariat de la commission">
+        <bpmn:flowNodeRef>depart1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>tache2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>tache5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>passerelle12</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin14</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>tache41</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin44</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_2" name="Sous-commission d'analyse">
+        <bpmn:flowNodeRef>tache16</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>tache25</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>tache32</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>passerelle37</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin39</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+      <bpmn:startEvent id="depart1" name="Offres réceptionnées"></bpmn:startEvent>
+      <bpmn:userTask id="tache2" name="Ouvrir les plis en séance"></bpmn:userTask>
+      <bpmn:sequenceFlow id="flux4" sourceRef="depart1" targetRef="tache2"/>
+      <bpmn:dataObjectReference id="donnee7" name="Offre administrative" dataObjectRef="donnee7_o"/>
+      <bpmn:dataObject id="donnee7_o"/>
+      <bpmn:userTask id="tache5" name="Vérifier la conformité administrative"><bpmn:property id="prop6" name="__targetRef_placeholder"/>        <bpmn:dataInputAssociation id="lecture8"><bpmn:sourceRef>donnee7</bpmn:sourceRef><bpmn:targetRef>prop6</bpmn:targetRef></bpmn:dataInputAssociation></bpmn:userTask>
+      <bpmn:sequenceFlow id="flux9" sourceRef="tache2" targetRef="tache5"/>
+      <bpmn:exclusiveGateway id="passerelle12" name="Offre recevable ?"/>
+      <bpmn:sequenceFlow id="flux13" sourceRef="tache5" targetRef="passerelle12"/>
+      <bpmn:endEvent id="fin14" name="Offre écartée"/>
+      <bpmn:sequenceFlow id="flux15" sourceRef="passerelle12" targetRef="fin14" name="irrecevable"/>
+      <bpmn:dataObjectReference id="donnee18" name="Offre technique" dataObjectRef="donnee18_o"/>
+      <bpmn:dataObject id="donnee18_o"/>
+      <bpmn:dataObjectReference id="donnee20" name="Note technique" dataObjectRef="donnee20_o"/>
+      <bpmn:dataObject id="donnee20_o"/>
+      <bpmn:userTask id="tache16" name="Évaluer l'offre technique"><bpmn:property id="prop17" name="__targetRef_placeholder"/>        <bpmn:dataInputAssociation id="lecture19"><bpmn:sourceRef>donnee18</bpmn:sourceRef><bpmn:targetRef>prop17</bpmn:targetRef></bpmn:dataInputAssociation>        <bpmn:dataOutputAssociation id="ecriture21"><bpmn:targetRef>donnee20</bpmn:targetRef></bpmn:dataOutputAssociation></bpmn:userTask>
+      <bpmn:sequenceFlow id="flux22" sourceRef="passerelle12" targetRef="tache16" name="recevable"/>
+      <bpmn:dataObjectReference id="donnee27" name="Offre financière" dataObjectRef="donnee27_o"/>
+      <bpmn:dataObject id="donnee27_o"/>
+      <bpmn:dataObjectReference id="donnee29" name="Note financière" dataObjectRef="donnee29_o"/>
+      <bpmn:dataObject id="donnee29_o"/>
+      <bpmn:userTask id="tache25" name="Évaluer l'offre financière"><bpmn:property id="prop26" name="__targetRef_placeholder"/>        <bpmn:dataInputAssociation id="lecture28"><bpmn:sourceRef>donnee27</bpmn:sourceRef><bpmn:targetRef>prop26</bpmn:targetRef></bpmn:dataInputAssociation>        <bpmn:dataOutputAssociation id="ecriture30"><bpmn:targetRef>donnee29</bpmn:targetRef></bpmn:dataOutputAssociation></bpmn:userTask>
+      <bpmn:sequenceFlow id="flux31" sourceRef="tache16" targetRef="tache25"/>
+      <bpmn:userTask id="tache32" name="Statuer sur l'attribution du marché"><bpmn:property id="prop33" name="__targetRef_placeholder"/>        <bpmn:dataInputAssociation id="lecture34"><bpmn:sourceRef>donnee20</bpmn:sourceRef><bpmn:targetRef>prop33</bpmn:targetRef></bpmn:dataInputAssociation>        <bpmn:dataInputAssociation id="lecture35"><bpmn:sourceRef>donnee29</bpmn:sourceRef><bpmn:targetRef>prop33</bpmn:targetRef></bpmn:dataInputAssociation></bpmn:userTask>
+      <bpmn:sequenceFlow id="flux36" sourceRef="tache25" targetRef="tache32"/>
+      <bpmn:inclusiveGateway id="passerelle37" name="Marché attribué ?"/>
+      <bpmn:sequenceFlow id="flux38" sourceRef="tache32" targetRef="passerelle37"/>
+      <bpmn:endEvent id="fin39" name="Appel d'offres déclaré infructueux"/>
+      <bpmn:sequenceFlow id="flux40" sourceRef="passerelle37" targetRef="fin39" name="infructueux"/>
+      <bpmn:sendTask id="tache41" name="Notifier l'attributaire"></bpmn:sendTask>
+      <bpmn:sequenceFlow id="flux43" sourceRef="passerelle37" targetRef="tache41" name="attribué"/>
+      <bpmn:endEvent id="fin44" name="Marché notifié"/>
+      <bpmn:sequenceFlow id="flux45" sourceRef="tache41" targetRef="fin44"/>
+      <bpmn:textAnnotation id="annot10"><bpmn:text>Code des marchés publics, articles 45 à 52</bpmn:text></bpmn:textAnnotation>
+      <bpmn:association id="assocannot11" sourceRef="annot10" targetRef="tache5"/>
+      <bpmn:textAnnotation id="annot23"><bpmn:text>Pondération technique et financière des offres</bpmn:text></bpmn:textAnnotation>
+      <bpmn:association id="assocannot24" sourceRef="annot23" targetRef="tache16"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagramme_1">
+    <bpmndi:BPMNPlane id="Plan_1" bpmnElement="Collab_1">
+      <bpmndi:BPMNShape id="di_Pool_1" bpmnElement="Pool_1" isHorizontal="true"><dc:Bounds x="160" y="80" width="1772" height="520"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Lane_1" bpmnElement="Lane_1" isHorizontal="true"><dc:Bounds x="190" y="80" width="1742" height="260"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_Lane_2" bpmnElement="Lane_2" isHorizontal="true"><dc:Bounds x="190" y="340" width="1742" height="260"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_depart1" bpmnElement="depart1"><dc:Bounds x="240" y="202" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache2" bpmnElement="tache2"><dc:Bounds x="346" y="180" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache5" bpmnElement="tache5"><dc:Bounds x="546" y="180" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_donnee7" bpmnElement="donnee7"><dc:Bounds x="553" y="100" width="36" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="595" y="111" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_annot10" bpmnElement="annot10"><dc:Bounds x="511" y="280" width="200" height="48"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_passerelle12" bpmnElement="passerelle12"><dc:Bounds x="746" y="195" width="50" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="696" y="163" width="150" height="26"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_fin14" bpmnElement="fin14"><dc:Bounds x="753" y="268" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache16" bpmnElement="tache16"><dc:Bounds x="866" y="440" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_donnee18" bpmnElement="donnee18"><dc:Bounds x="873" y="360" width="36" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="915" y="371" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_donnee20" bpmnElement="donnee20"><dc:Bounds x="1063" y="360" width="36" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="1105" y="371" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_annot23" bpmnElement="annot23"><dc:Bounds x="831" y="540" width="200" height="48"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache25" bpmnElement="tache25"><dc:Bounds x="1066" y="440" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_donnee27" bpmnElement="donnee27"><dc:Bounds x="1198" y="360" width="36" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="1240" y="371" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_donnee29" bpmnElement="donnee29"><dc:Bounds x="1388" y="360" width="36" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="1430" y="371" width="110" height="28"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache32" bpmnElement="tache32"><dc:Bounds x="1266" y="440" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_passerelle37" bpmnElement="passerelle37"><dc:Bounds x="1466" y="455" width="50" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="1416" y="423" width="150" height="26"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_fin39" bpmnElement="fin39"><dc:Bounds x="1473" y="528" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_tache41" bpmnElement="tache41"><dc:Bounds x="1586" y="180" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="di_fin44" bpmnElement="fin44"><dc:Bounds x="1786" y="202" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="di_flux4" bpmnElement="flux4"><di:waypoint x="276" y="220"/><di:waypoint x="346" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_lecture8" bpmnElement="lecture8"><di:waypoint x="571" y="150"/><di:waypoint x="571" y="162"/><di:waypoint x="581" y="162"/><di:waypoint x="581" y="180"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux9" bpmnElement="flux9"><di:waypoint x="476" y="220"/><di:waypoint x="546" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_assocannot11" bpmnElement="assocannot11"><di:waypoint x="611" y="280"/><di:waypoint x="611" y="260"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux13" bpmnElement="flux13"><di:waypoint x="676" y="220"/><di:waypoint x="746" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux15" bpmnElement="flux15"><di:waypoint x="771" y="245"/><di:waypoint x="771" y="268"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_lecture19" bpmnElement="lecture19"><di:waypoint x="891" y="410"/><di:waypoint x="891" y="422"/><di:waypoint x="901" y="422"/><di:waypoint x="901" y="440"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_ecriture21" bpmnElement="ecriture21"><di:waypoint x="975" y="440"/><di:waypoint x="975" y="414"/><di:waypoint x="1081" y="414"/><di:waypoint x="1081" y="410"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux22" bpmnElement="flux22"><di:waypoint x="796" y="220"/><di:waypoint x="831" y="220"/><di:waypoint x="831" y="480"/><di:waypoint x="866" y="480"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_assocannot24" bpmnElement="assocannot24"><di:waypoint x="931" y="540"/><di:waypoint x="931" y="520"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_lecture28" bpmnElement="lecture28"><di:waypoint x="1216" y="410"/><di:waypoint x="1216" y="422"/><di:waypoint x="1101" y="422"/><di:waypoint x="1101" y="440"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_ecriture30" bpmnElement="ecriture30"><di:waypoint x="1175" y="440"/><di:waypoint x="1175" y="414"/><di:waypoint x="1406" y="414"/><di:waypoint x="1406" y="410"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux31" bpmnElement="flux31"><di:waypoint x="996" y="480"/><di:waypoint x="1066" y="480"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_lecture34" bpmnElement="lecture34"><di:waypoint x="1081" y="410"/><di:waypoint x="1081" y="422"/><di:waypoint x="1301" y="422"/><di:waypoint x="1301" y="440"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_lecture35" bpmnElement="lecture35"><di:waypoint x="1406" y="410"/><di:waypoint x="1406" y="422"/><di:waypoint x="1327" y="422"/><di:waypoint x="1327" y="440"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux36" bpmnElement="flux36"><di:waypoint x="1196" y="480"/><di:waypoint x="1266" y="480"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux38" bpmnElement="flux38"><di:waypoint x="1396" y="480"/><di:waypoint x="1466" y="480"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux40" bpmnElement="flux40"><di:waypoint x="1491" y="505"/><di:waypoint x="1491" y="528"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux43" bpmnElement="flux43"><di:waypoint x="1516" y="480"/><di:waypoint x="1551" y="480"/><di:waypoint x="1551" y="220"/><di:waypoint x="1586" y="220"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="di_flux45" bpmnElement="flux45"><di:waypoint x="1716" y="220"/><di:waypoint x="1786" y="220"/></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

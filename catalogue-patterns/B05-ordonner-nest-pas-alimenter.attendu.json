@@ -1,0 +1,32 @@
+{
+  "id": "B05",
+  "titre": "Ordonner n'est pas alimenter",
+  "pattern": "P4 raffiné : deux décisions en séquence sans donnée partagée → aucun arc",
+  "elements_bpmn": "deux userTask décisionnelles, passerelles, données distinctes",
+  "decisions": [
+    "Vérifier la recevabilité de la demande",
+    "Évaluer le risque de l'opérateur"
+  ],
+  "inputs": [
+    "Demande d'agrément",
+    "Historique des contrôles"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Demande d'agrément",
+      "Vérifier la recevabilité de la demande",
+      "P2"
+    ],
+    [
+      "Historique des contrôles",
+      "Évaluer le risque de l'opérateur",
+      "P2"
+    ]
+  ],
+  "points_experts": [],
+  "ecartes": [],
+  "verdict_attendu": "conforme",
+  "enseignement": "Le flux de séquence ordonne les décisions mais ne les alimente pas : sans donnée produite puis lue, pas d'exigence d'information entre elles."
+}

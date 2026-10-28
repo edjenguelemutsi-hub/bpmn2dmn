@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
+             xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+             xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             id="Definitions_e-GUCE_3G___Proc_dure_DI_Services"
+             name="e-GUCE 3G – Procédure DI Services"
+             namespace="http://bpmn2dmn/genere"
+             exporter="bpmn2dmn" exporterVersion="1.0">
+  <decision id="D1" name="Choisir la banque de traitement et soumettre">
+  </decision>
+  <decision id="D2" name="Traiter la DI (pièces, régularité de l'opération)">
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DRD_e-GUCE_3G___Proc_dure_DI_Services">
+      <dmndi:DMNShape id="s_D1" dmnElementRef="D1">
+        <dc:Bounds x="86" y="40" width="228" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_D2" dmnElementRef="D2">
+        <dc:Bounds x="400" y="40" width="240" height="80"/>
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

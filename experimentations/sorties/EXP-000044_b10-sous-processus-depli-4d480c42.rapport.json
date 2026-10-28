@@ -1,0 +1,60 @@
+{
+  "nom": "Sous-processus déplié",
+  "resume": {
+    "decisions": 1,
+    "inputs": 2,
+    "sources": 0,
+    "bkm": 0,
+    "IR": 2,
+    "KR": 0,
+    "AR": 0,
+    "a_confirmer": 1,
+    "ecartes": 0
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "nom": "Vérifier la conformité des pièces",
+      "origine": "Tache_4",
+      "motif": "verbe décisionnel dans le libellé"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "I1",
+      "nom": "Demande d'agrément",
+      "pattern": "P2"
+    },
+    {
+      "id": "I2",
+      "nom": "Pièce complémentaire reçue (optionnel)",
+      "pattern": "P3"
+    }
+  ],
+  "sources": [],
+  "bkms": [],
+  "IR": [
+    [
+      "I1",
+      "D1"
+    ],
+    [
+      "I2",
+      "D1"
+    ]
+  ],
+  "KR": [],
+  "AR": [],
+  "acyclique": true,
+  "invariants_violes": [],
+  "a_confirmer": [
+    {
+      "cle": "ressource:Agent instructeur",
+      "categorie": "ressource",
+      "objet": "Agent instructeur",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    }
+  ],
+  "ecartes": []
+}

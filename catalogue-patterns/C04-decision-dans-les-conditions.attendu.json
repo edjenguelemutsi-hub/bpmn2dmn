@@ -1,0 +1,17 @@
+{
+  "id": "C04",
+  "titre": "Décision encodée dans les conditions des flux",
+  "pattern": "Non couvert : cascade de passerelles conditionnées sans activité décisionnelle",
+  "elements_bpmn": "serviceTask, deux exclusiveGateway, conditionExpression",
+  "decisions": [],
+  "inputs": [],
+  "sources": [],
+  "bkms": [],
+  "arcs": [],
+  "points_experts": [
+    "hors-definition"
+  ],
+  "ecartes": [],
+  "verdict_attendu": "limite",
+  "enseignement": "La logique de décision réside dans les expressions de condition des flux (approche par le flux de contrôle) ; l'algorithme ne lit pas les conditions et ne voit aucune activité de décision."
+}

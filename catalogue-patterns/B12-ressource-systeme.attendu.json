@@ -1,0 +1,27 @@
+{
+  "id": "B12",
+  "titre": "Ressource système écartée",
+  "pattern": "ω = ⊥ : un couloir « système » exécute la règle sans la gouverner",
+  "elements_bpmn": "lane « Système d'information », businessRuleTask, exclusiveGateway",
+  "decisions": [
+    "Contrôler la cohérence de la déclaration"
+  ],
+  "inputs": [
+    "Déclaration d'importation"
+  ],
+  "sources": [],
+  "bkms": [],
+  "arcs": [
+    [
+      "Déclaration d'importation",
+      "Contrôler la cohérence de la déclaration",
+      "P2"
+    ]
+  ],
+  "points_experts": [],
+  "ecartes": [
+    "ressource"
+  ],
+  "verdict_attendu": "conforme",
+  "enseignement": "L'indice « système » suffit à ω : la ressource est écartée comme simple exécutant, sans question à l'expert."
+}

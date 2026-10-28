@@ -1,0 +1,218 @@
+{
+  "nom": "Instruction d'une demande FIMEX",
+  "resume": {
+    "decisions": 3,
+    "inputs": 4,
+    "sources": 2,
+    "bkm": 1,
+    "IR": 5,
+    "KR": 1,
+    "AR": 2,
+    "a_confirmer": 10,
+    "ecartes": 1
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "nom": "Affecter le dossier à un agent",
+      "origine": "T1",
+      "motif": "verbe décisionnel dans le libellé"
+    },
+    {
+      "id": "D2",
+      "nom": "Vérifier la conformité documentaire",
+      "origine": "T3",
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+    },
+    {
+      "id": "D3",
+      "nom": "Consulter la demande et la décision",
+      "origine": "T9",
+      "motif": "précède une passerelle exclusive"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "I1",
+      "nom": "Agents actifs et leur charge",
+      "pattern": "P2"
+    },
+    {
+      "id": "I2",
+      "nom": "Demande reçue",
+      "pattern": "P3"
+    },
+    {
+      "id": "I3",
+      "nom": "Dossier FIMEX",
+      "pattern": "P2"
+    },
+    {
+      "id": "I4",
+      "nom": "Observation de réexamen",
+      "pattern": "P2"
+    }
+  ],
+  "sources": [
+    {
+      "id": "K1",
+      "nom": "Réglementation FIMEX : pièces exigées, critères de recevabilité",
+      "pattern": "P6"
+    },
+    {
+      "id": "K2",
+      "nom": "Agent signataire",
+      "pattern": "P5"
+    }
+  ],
+  "bkms": [
+    {
+      "id": "B1",
+      "nom": "Règle : Cotation automatique, aléatoire et équitable entre les agents actifs"
+    }
+  ],
+  "IR": [
+    [
+      "I1",
+      "D1"
+    ],
+    [
+      "I2",
+      "D1"
+    ],
+    [
+      "I3",
+      "D2"
+    ],
+    [
+      "I4",
+      "D2"
+    ],
+    [
+      "D2",
+      "D3"
+    ]
+  ],
+  "KR": [
+    [
+      "B1",
+      "D1"
+    ]
+  ],
+  "AR": [
+    [
+      "K1",
+      "D2"
+    ],
+    [
+      "K2",
+      "D3"
+    ]
+  ],
+  "acyclique": true,
+  "invariants_violes": [],
+  "a_confirmer": [
+    {
+      "cle": "T2",
+      "categorie": "candidat",
+      "objet": "Consulter le dossier coté",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "T4",
+      "categorie": "candidat",
+      "objet": "Saisir l'observation de complément",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "T5",
+      "categorie": "candidat",
+      "objet": "Saisir le motif de rejet",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "T8",
+      "categorie": "candidat",
+      "objet": "Valider pour signature",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "T12",
+      "categorie": "candidat",
+      "objet": "Saisir l'observation de réexamen",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "T11",
+      "categorie": "candidat",
+      "objet": "Signer électroniquement l'attestation",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "proposition": ""
+    },
+    {
+      "cle": "A1",
+      "categorie": "annotation",
+      "objet": "Cotation automatique, aléatoire et équitable entre les agent…",
+      "motif": "proposée comme MODÈLE DE CONNAISSANCE MÉTIER (règle exécutable)",
+      "proposition": "BKM"
+    },
+    {
+      "cle": "ressource:Agent de traitement",
+      "categorie": "ressource",
+      "objet": "Agent de traitement",
+      "motif": "gouverne-t-elle la décision, ou se contente-t-elle de l'appliquer ?",
+      "proposition": "KS si elle gouverne"
+    },
+    {
+      "cle": "A2",
+      "categorie": "annotation",
+      "objet": "Réglementation FIMEX : pièces exigées, critères de recevabil…",
+      "motif": "proposée comme SOURCE DE CONNAISSANCE (elle gouverne la décision)",
+      "proposition": "KS"
+    },
+    {
+      "cle": "ressource:Agent signataire",
+      "categorie": "ressource",
+      "objet": "Agent signataire",
+      "motif": "proposée comme SOURCE DE CONNAISSANCE : son nom désigne une instance qui gouverne (extension « roles-gouvernants »)",
+      "proposition": "KS (indice lexical)"
+    }
+  ],
+  "ecartes": [
+    {
+      "cle": "ressource:Système e-GOV",
+      "categorie": "ressource",
+      "objet": "Système e-GOV",
+      "motif": "un système exécute, il ne gouverne pas"
+    }
+  ],
+  "extensions": [
+    "logique",
+    "roles-gouvernants"
+  ],
+  "variante": "extensions:logique+roles-gouvernants",
+  "logique": {
+    "D2": {
+      "passerelle": "Verdict : Vérifier la conformité documentaire",
+      "branches": [
+        "Incomplet",
+        "Non conforme",
+        "Conforme"
+      ]
+    },
+    "D3": {
+      "passerelle": "Verdict : Consulter la demande et la décision",
+      "branches": [
+        "Signature accordée",
+        "Retour pour réexamen"
+      ]
+    }
+  },
+  "anomalies_source": [],
+  "diagnostic_vide": ""
+}

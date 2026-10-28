@@ -1,0 +1,14 @@
+{
+  "_commentaire": "Arbitrages de l'expert pour FIMEX — reproduit le DRD du mémoire (§3.7) : k2 = Agent signataire (omega=KS après arbitrage), noms des décisions reformulés par delta comme au chapitre 3.",
+  "candidats": {},
+  "ressources": {
+    "Agent de traitement": "non",
+    "Agent signataire": "KS"
+  },
+  "annotations": {},
+  "renommages": {
+    "T1": "Affecter le dossier à un agent",
+    "T3": "Statuer sur la conformité du dossier",
+    "T9": "Statuer sur la signature"
+  }
+}

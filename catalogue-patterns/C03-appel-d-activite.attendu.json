@@ -1,0 +1,17 @@
+{
+  "id": "C03",
+  "titre": "Appel d'activité corroboré",
+  "pattern": "Hors définition : un appel d'activité (processus réutilisable) n'est pas candidat",
+  "elements_bpmn": "callActivity, exclusiveGateway",
+  "decisions": [],
+  "inputs": [],
+  "sources": [],
+  "bkms": [],
+  "arcs": [],
+  "points_experts": [
+    "hors-definition"
+  ],
+  "ecartes": [],
+  "verdict_attendu": "limite",
+  "enseignement": "La décision est prise dans un processus appelé que le modèle ne montre pas : l'appel est signalé, la décision ne peut être extraite sans le modèle appelé."
+}

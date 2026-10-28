@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  =====================================================================
+   Instruction d'un permis de construire.
+   Inspiration : procedures d'instruction des autorisations d'urbanisme
+   des communes (guichet unique, avis des services techniques,
+   commission d'urbanisme) - processus administratif documente.
+   3 decisions attendues (voir permis-construire.gold).
+  =====================================================================
+-->
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  id="Defs_permis" targetNamespace="http://bpmn2dmn/corpus/permis">
+  <bpmn:process id="proc_permis" name="Instruction d'un permis de construire" isExecutable="false">
+
+    <bpmn:laneSet id="ls1">
+      <bpmn:lane id="l1" name="Agent du guichet urbanisme">
+        <bpmn:flowNodeRef>debut</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>g1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t8</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin3</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="l2" name="Commission technique">
+        <bpmn:flowNodeRef>t5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>g2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fin2</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="l3" name="Système de gestion du foncier">
+        <bpmn:flowNodeRef>t9</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+
+    <!-- donnees -->
+    <bpmn:dataObjectReference id="do1" name="Demande de permis" dataObjectRef="do1_o"/>
+    <bpmn:dataObject id="do1_o"/>
+    <bpmn:dataObjectReference id="do2" name="Plans architecturaux" dataObjectRef="do2_o"/>
+    <bpmn:dataObject id="do2_o"/>
+    <bpmn:dataObjectReference id="do3" name="Avis d'urbanisme" dataObjectRef="do3_o"/>
+    <bpmn:dataObject id="do3_o"/>
+    <bpmn:dataStoreReference id="ds1" name="Plan d'urbanisme"/>
+
+    <!-- annotations -->
+    <bpmn:textAnnotation id="an1"><bpmn:text>Réglementation d'urbanisme : servitudes et emprises applicables</bpmn:text></bpmn:textAnnotation>
+    <bpmn:textAnnotation id="an2"><bpmn:text>Barème des redevances de délivrance du permis</bpmn:text></bpmn:textAnnotation>
+    <bpmn:textAnnotation id="an3"><bpmn:text>Cachet et visa du maire sur l'attestation délivrée</bpmn:text></bpmn:textAnnotation>
+    <bpmn:association id="as1" sourceRef="an1" targetRef="t5"/>
+    <bpmn:association id="as2" sourceRef="an2" targetRef="t6"/>
+    <bpmn:association id="as3" sourceRef="an3" targetRef="t7"/>
+
+    <!-- chaine -->
+    <bpmn:startEvent id="debut" name="Demande déposée">
+      <bpmn:messageEventDefinition id="debut_med"/>
+    </bpmn:startEvent>
+
+    <bpmn:userTask id="t1" name="Enregistrer la demande de permis"/>
+    <bpmn:userTask id="t2" name="Saisir les caractéristiques du projet"/>
+
+    <bpmn:userTask id="t3" name="Vérifier la complétude de la demande de permis">
+      <bpmn:dataInputAssociation id="dia1"><bpmn:sourceRef>do1</bpmn:sourceRef></bpmn:dataInputAssociation>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="g1" name="Demande complète ?"/>
+    <bpmn:endEvent id="fin1" name="Demande retournée"/>
+
+    <bpmn:userTask id="t4" name="Consulter les services techniques"/>
+
+    <bpmn:userTask id="t5" name="Examiner la conformité au plan d'urbanisme">
+      <bpmn:dataInputAssociation id="dia2"><bpmn:sourceRef>do2</bpmn:sourceRef></bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation id="dia3"><bpmn:sourceRef>ds1</bpmn:sourceRef></bpmn:dataInputAssociation>
+      <bpmn:dataOutputAssociation id="doa1"><bpmn:targetRef>do3</bpmn:targetRef></bpmn:dataOutputAssociation>
+    </bpmn:userTask>
+
+    <bpmn:userTask id="t6" name="Statuer sur la délivrance du permis">
+      <bpmn:dataInputAssociation id="dia4"><bpmn:sourceRef>do3</bpmn:sourceRef></bpmn:dataInputAssociation>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="g2" name="Permis délivré ?"/>
+    <bpmn:endEvent id="fin2" name="Permis refusé"/>
+
+    <bpmn:sendTask id="t7" name="Notifier la réponse au demandeur"/>
+    <bpmn:userTask id="t8" name="Archiver le dossier du permis"/>
+    <bpmn:serviceTask id="t9" name="Enregistrer le permis au registre foncier"/>
+    <bpmn:endEvent id="fin3" name="Permis délivré"/>
+
+    <bpmn:sequenceFlow id="f1" sourceRef="debut" targetRef="t1"/>
+    <bpmn:sequenceFlow id="f2" sourceRef="t1" targetRef="t2"/>
+    <bpmn:sequenceFlow id="f3" sourceRef="t2" targetRef="t3"/>
+    <bpmn:sequenceFlow id="f4" sourceRef="t3" targetRef="g1"/>
+    <bpmn:sequenceFlow id="f5" name="incomplète" sourceRef="g1" targetRef="fin1"/>
+    <bpmn:sequenceFlow id="f6" name="complète" sourceRef="g1" targetRef="t4"/>
+    <bpmn:sequenceFlow id="f7" sourceRef="t4" targetRef="t5"/>
+    <bpmn:sequenceFlow id="f8" sourceRef="t5" targetRef="t6"/>
+    <bpmn:sequenceFlow id="f9" sourceRef="t6" targetRef="g2"/>
+    <bpmn:sequenceFlow id="f10" name="refus" sourceRef="g2" targetRef="fin2"/>
+    <bpmn:sequenceFlow id="f11" name="délivrance" sourceRef="g2" targetRef="t7"/>
+    <bpmn:sequenceFlow id="f12" sourceRef="t7" targetRef="t9"/>
+    <bpmn:sequenceFlow id="f13" sourceRef="t9" targetRef="t8"/>
+    <bpmn:sequenceFlow id="f14" sourceRef="t8" targetRef="fin3"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="diag_auto" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI">
+    <bpmndi:BPMNPlane id="plane_auto" bpmnElement="proc_permis">
+      <bpmndi:BPMNShape id="dis_debut" bpmnElement="debut"><dc:Bounds x="102" y="222" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t1" bpmnElement="t1"><dc:Bounds x="250" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t2" bpmnElement="t2"><dc:Bounds x="440" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t3" bpmnElement="t3"><dc:Bounds x="630" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_g1" bpmnElement="g1"><dc:Bounds x="855" y="215" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_fin1" bpmnElement="fin1"><dc:Bounds x="1052" y="222" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t4" bpmnElement="t4"><dc:Bounds x="1010" y="330" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t5" bpmnElement="t5"><dc:Bounds x="1200" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t6" bpmnElement="t6"><dc:Bounds x="1390" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_g2" bpmnElement="g2"><dc:Bounds x="1615" y="215" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_fin2" bpmnElement="fin2"><dc:Bounds x="1812" y="222" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t7" bpmnElement="t7"><dc:Bounds x="1770" y="330" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t8" bpmnElement="t8"><dc:Bounds x="2150" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_t9" bpmnElement="t9"><dc:Bounds x="1960" y="200" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_fin3" bpmnElement="fin3"><dc:Bounds x="2382" y="222" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_do1" bpmnElement="do1"><dc:Bounds x="650" y="60" width="36" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_do2" bpmnElement="do2"><dc:Bounds x="1280" y="60" width="36" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_do3" bpmnElement="do3"><dc:Bounds x="1340" y="60" width="36" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_ds1" bpmnElement="ds1"><dc:Bounds x="1220" y="60" width="36" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_an1" bpmnElement="an1"><dc:Bounds x="1200" y="460" width="200" height="40"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_an2" bpmnElement="an2"><dc:Bounds x="1390" y="510" width="200" height="40"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="dis_an3" bpmnElement="an3"><dc:Bounds x="1770" y="560" width="200" height="40"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="die_f1" bpmnElement="f1"><di:waypoint x="120" y="240"/><di:waypoint x="310" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f2" bpmnElement="f2"><di:waypoint x="310" y="240"/><di:waypoint x="500" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f3" bpmnElement="f3"><di:waypoint x="500" y="240"/><di:waypoint x="690" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f4" bpmnElement="f4"><di:waypoint x="690" y="240"/><di:waypoint x="880" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f5" bpmnElement="f5"><di:waypoint x="880" y="240"/><di:waypoint x="1070" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f6" bpmnElement="f6"><di:waypoint x="880" y="240"/><di:waypoint x="1070" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f7" bpmnElement="f7"><di:waypoint x="1070" y="370"/><di:waypoint x="1260" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f8" bpmnElement="f8"><di:waypoint x="1260" y="240"/><di:waypoint x="1450" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f9" bpmnElement="f9"><di:waypoint x="1450" y="240"/><di:waypoint x="1640" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f10" bpmnElement="f10"><di:waypoint x="1640" y="240"/><di:waypoint x="1830" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f11" bpmnElement="f11"><di:waypoint x="1640" y="240"/><di:waypoint x="1830" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f12" bpmnElement="f12"><di:waypoint x="1830" y="370"/><di:waypoint x="2020" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f13" bpmnElement="f13"><di:waypoint x="2020" y="240"/><di:waypoint x="2210" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_f14" bpmnElement="f14"><di:waypoint x="2210" y="240"/><di:waypoint x="2400" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_as1" bpmnElement="as1"><di:waypoint x="1300" y="480"/><di:waypoint x="1260" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_as2" bpmnElement="as2"><di:waypoint x="1490" y="530"/><di:waypoint x="1450" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_as3" bpmnElement="as3"><di:waypoint x="1870" y="580"/><di:waypoint x="1830" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_dia1" bpmnElement="dia1"><di:waypoint x="668" y="85"/><di:waypoint x="690" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_dia2" bpmnElement="dia2"><di:waypoint x="1298" y="85"/><di:waypoint x="1260" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_dia3" bpmnElement="dia3"><di:waypoint x="1238" y="85"/><di:waypoint x="1260" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_doa1" bpmnElement="doa1"><di:waypoint x="1260" y="240"/><di:waypoint x="1358" y="85"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="die_dia4" bpmnElement="dia4"><di:waypoint x="1358" y="85"/><di:waypoint x="1450" y="240"/></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
