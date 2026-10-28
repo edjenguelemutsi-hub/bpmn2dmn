@@ -3,7 +3,7 @@
 Extraction of DMN decision requirements diagrams (DRD) from BPMN process models,
 by a formal graph transformation with hybrid filtering of decision candidates.
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.NNNNNNN.svg)](https://doi.org/10.5281/zenodo.NNNNNNN)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23736474.svg)](https://doi.org/10.5281/zenodo.23736474)
 [![Licence](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
 
 This tool accompanies the article:
@@ -17,7 +17,7 @@ This tool accompanies the article:
 If this tool helps your work, please cite the article above and the software:
 
 > F. Edjenguele, R. Djeumen. *bpmn2dmn* (version 1.0.0). Zenodo, 2026.
-> https://doi.org/10.5281/zenodo.NNNNNNN
+> https://doi.org/10.5281/zenodo.23736474
 
 A BibTeX entry is available through the "Cite this repository" button of GitHub (file
 `CITATION.cff`). We would be glad to hear about the work in which the tool was useful:

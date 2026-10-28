@@ -1,6 +1,5 @@
 # Citation file read by GitHub ("Cite this repository") and by Zenodo.
 # Repository: https://github.com/edjenguelemutsi-hub/bpmn2dmn
-# After the Zenodo release: remove the "#" in front of doi and date-released and fill them in.
 cff-version: 1.2.0
 message: "If you use this software, please cite it and the associated article."
 title: "bpmn2dmn: extraction of DMN decision requirements diagrams from BPMN process models"
@@ -14,8 +13,8 @@ authors:
     given-names: Rodrigue
     affiliation: "University of Douala"
 version: 1.0.0
-# date-released: "2026-11-01"
-# doi: 10.5281/zenodo.NNNNNNN
+date-released: "2026-10-28"
+doi: 10.5281/zenodo.23736474
 repository-code: "https://github.com/edjenguelemutsi-hub/bpmn2dmn"
 license: MIT
 keywords:
