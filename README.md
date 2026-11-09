@@ -7,7 +7,7 @@ traceability between the two models (DMN-to-BPMN synchronisation, impact
 analysis), an optional semantic clue computed by a light multilingual language
 model, and an open benchmark on more than three thousand third-party models.
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23736474.svg)](https://doi.org/10.5281/zenodo.23736474)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24089310.svg)](https://doi.org/10.5281/zenodo.24089310)
 [![Licence](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
 
 This tool accompanies the article:
@@ -21,7 +21,8 @@ This tool accompanies the article:
 If this tool helps your work, please cite the article above and the software:
 
 > F. Edjenguele, R. Djeumen. *bpmn2dmn* (version 1.2.0). Zenodo, 2026.
-> https://doi.org/10.5281/zenodo.23736473 (concept DOI, resolves to the latest version;
+> https://doi.org/10.5281/zenodo.24089310
+> (concept DOI, resolving to the latest version: https://doi.org/10.5281/zenodo.23736473;
 > version 1.0.0, the one used for the article: https://doi.org/10.5281/zenodo.23736474)
 
 A BibTeX entry is available through the "Cite this repository" button of GitHub (file
