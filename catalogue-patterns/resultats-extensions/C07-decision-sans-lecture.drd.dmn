@@ -3,15 +3,17 @@
              xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
              xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
              xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             xmlns:bpmn2dmn="https://github.com/edjenguelemutsi-hub/bpmn2dmn/trace"
              id="Definitions_D_cision_sans_donn_e_lue"
              name="Décision sans donnée lue"
              namespace="http://bpmn2dmn/genere"
-             exporter="bpmn2dmn" exporterVersion="1.0">
-  <decision id="D1" name="Évaluer la demande d'agrément">
+             exporter="bpmn2dmn" exporterVersion="1.2.0">
+  <decision id="Decision_Tache_2" name="Évaluer la demande d'agrément">
+    <extensionElements><bpmn2dmn:trace source="Tache_2" pattern="P1" motif="verbe décisionnel dans le libellé ; indice sémantique : score 0.90 (seuil 0.50), proche de « Évaluer la pertinence de l'offre » (décision, similarité 0.82)"/></extensionElements>
   </decision>
   <dmndi:DMNDI>
     <dmndi:DMNDiagram id="DRD_D_cision_sans_donn_e_lue">
-      <dmndi:DMNShape id="s_D1" dmnElementRef="D1">
+      <dmndi:DMNShape id="s_Decision_Tache_2" dmnElementRef="Decision_Tache_2">
         <dc:Bounds x="80" y="40" width="192" height="80"/>
       </dmndi:DMNShape>
     </dmndi:DMNDiagram>

@@ -13,10 +13,10 @@
   },
   "decisions": [
     {
-      "id": "D1",
+      "id": "Decision_Tache_2",
       "nom": "Évaluer la demande d'agrément",
       "origine": "Tache_2",
-      "motif": "verbe décisionnel dans le libellé"
+      "motif": "verbe décisionnel dans le libellé ; indice sémantique : score 0.90 (seuil 0.50), proche de « Évaluer la pertinence de l'offre » (décision, similarité 0.82)"
     }
   ],
   "inputs": [],
@@ -34,9 +34,10 @@
     "definition-etendue",
     "donnees-processus",
     "evenements-conditionnels",
+    "indice-semantique",
     "logique",
     "noms-suggeres",
     "roles-gouvernants"
   ],
-  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+logique+noms-suggeres+roles-gouvernants"
+  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+indice-semantique+logique+noms-suggeres+roles-gouvernants"
 }

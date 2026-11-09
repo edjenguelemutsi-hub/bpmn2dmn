@@ -13,15 +13,15 @@
   },
   "decisions": [
     {
-      "id": "D1",
+      "id": "Decision_Tache_2",
       "nom": "Instruire la demande",
       "origine": "Tache_2",
-      "motif": "précède une passerelle exclusive"
+      "motif": "précède une passerelle exclusive ; indice sémantique : score 0.52 (seuil 0.50), proche de « Apprécier le bien-fondé de la demande » (décision, similarité 0.76)"
     }
   ],
   "inputs": [
     {
-      "id": "I1",
+      "id": "InputData_Donnee_4",
       "nom": "Demande d'agrément",
       "pattern": "P2"
     }
@@ -30,8 +30,8 @@
   "bkms": [],
   "IR": [
     [
-      "I1",
-      "D1"
+      "InputData_Donnee_4",
+      "Decision_Tache_2"
     ]
   ],
   "KR": [],
@@ -45,17 +45,44 @@
     "definition-etendue",
     "donnees-processus",
     "evenements-conditionnels",
+    "indice-semantique",
     "logique",
     "noms-suggeres",
     "roles-gouvernants"
   ],
-  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+logique+noms-suggeres+roles-gouvernants",
+  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+indice-semantique+logique+noms-suggeres+roles-gouvernants",
   "suggestions_noms": {
     "Tache_2": "Décider : Contrôles requis"
   },
   "logique": {
-    "D1": {
+    "Decision_Tache_2": {
       "passerelle": "Contrôles requis",
+      "politique": "UNIQUE",
+      "executable": false,
+      "entrees": [
+        {
+          "variable": "demandeDAgrement",
+          "libelle": "Demande d'agrément",
+          "type": "string",
+          "source": "exigence"
+        }
+      ],
+      "regles": [
+        {
+          "branche": "documentaire",
+          "cellules": {},
+          "lue": false,
+          "defaut": false,
+          "condition": ""
+        },
+        {
+          "branche": "physique",
+          "cellules": {},
+          "lue": false,
+          "defaut": false,
+          "condition": ""
+        }
+      ],
       "branches": [
         "documentaire",
         "physique"

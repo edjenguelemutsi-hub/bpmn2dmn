@@ -3,10 +3,11 @@
              xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
              xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
              xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             xmlns:bpmn2dmn="https://github.com/edjenguelemutsi-hub/bpmn2dmn/trace"
              id="Definitions_Verbe_absent_du_lexique_de_d_cision"
              name="Verbe absent du lexique de décision"
              namespace="http://bpmn2dmn/genere"
-             exporter="bpmn2dmn" exporterVersion="1.0">
+             exporter="bpmn2dmn" exporterVersion="1.2.0">
   <dmndi:DMNDI>
     <dmndi:DMNDiagram id="DRD_Verbe_absent_du_lexique_de_d_cision">
     </dmndi:DMNDiagram>

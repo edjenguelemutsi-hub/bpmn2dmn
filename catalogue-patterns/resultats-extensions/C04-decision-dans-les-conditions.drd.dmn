@@ -3,12 +3,47 @@
              xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
              xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
              xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             xmlns:bpmn2dmn="https://github.com/edjenguelemutsi-hub/bpmn2dmn/trace"
              id="Definitions_D_cision_encod_e_dans_les_conditions_des"
              name="Décision encodée dans les conditions des flux"
              namespace="http://bpmn2dmn/genere"
-             exporter="bpmn2dmn" exporterVersion="1.0">
+             exporter="bpmn2dmn" exporterVersion="1.2.0">
+  <decision id="Decision_Tache_2" name="Calculer le montant des droits">
+    <extensionElements><bpmn2dmn:trace source="Tache_2" pattern="P1" motif="précède une passerelle exclusive ; indice sémantique : score 0.82 (seuil 0.50), proche de « Fixer le montant de l'indemnité » (décision, similarité 0.67) ; tâche de service hors de la définition de référence, retenue par l'extension « definition-etendue »"/></extensionElements>
+    <informationRequirement id="ir1"><extensionElements><bpmn2dmn:trace pattern="P7"/></extensionElements><requiredInput href="#InputData_condition_montant"/></informationRequirement>
+    <informationRequirement id="ir2"><extensionElements><bpmn2dmn:trace pattern="P7"/></extensionElements><requiredInput href="#InputData_condition_paysARisque"/></informationRequirement>
+    <decisionTable id="Decision_Tache_2_table" hitPolicy="UNIQUE">
+      <input id="Decision_Tache_2_entree1" label="montant"><inputExpression id="Decision_Tache_2_entree1_expr" typeRef="number"><text>montant</text></inputExpression></input>
+      <input id="Decision_Tache_2_entree2" label="paysARisque"><inputExpression id="Decision_Tache_2_entree2_expr" typeRef="boolean"><text>paysARisque</text></inputExpression></input>
+      <output id="Decision_Tache_2_sortie" label="Montant élevé ?" name="calculerLeMontantDesDroits" typeRef="string"><outputValues id="Decision_Tache_2_sortie_valeurs"><text>"montant ≤ 5 M","non","oui"</text></outputValues></output>
+      <rule id="Decision_Tache_2_regle1"><inputEntry id="Decision_Tache_2_regle1_e1"><text>&lt;= 5000000</text></inputEntry><inputEntry id="Decision_Tache_2_regle1_e2"><text>-</text></inputEntry><outputEntry id="Decision_Tache_2_regle1_s"><text>"montant ≤ 5 M"</text></outputEntry></rule>
+      <rule id="Decision_Tache_2_regle2"><inputEntry id="Decision_Tache_2_regle2_e1"><text>&gt; 5000000</text></inputEntry><inputEntry id="Decision_Tache_2_regle2_e2"><text>false</text></inputEntry><outputEntry id="Decision_Tache_2_regle2_s"><text>"non"</text></outputEntry></rule>
+      <rule id="Decision_Tache_2_regle3"><inputEntry id="Decision_Tache_2_regle3_e1"><text>&gt; 5000000</text></inputEntry><inputEntry id="Decision_Tache_2_regle3_e2"><text>true</text></inputEntry><outputEntry id="Decision_Tache_2_regle3_s"><text>"oui"</text></outputEntry></rule>
+    </decisionTable>
+  </decision>
+  <inputData id="InputData_condition_montant" name="montant">
+    <extensionElements><bpmn2dmn:trace source="Passerelle_4" pattern="P7"/></extensionElements>
+  </inputData>
+  <inputData id="InputData_condition_paysARisque" name="paysARisque">
+    <extensionElements><bpmn2dmn:trace source="Passerelle_5" pattern="P7"/></extensionElements>
+  </inputData>
   <dmndi:DMNDI>
     <dmndi:DMNDiagram id="DRD_D_cision_encod_e_dans_les_conditions">
+      <dmndi:DMNShape id="s_Decision_Tache_2" dmnElementRef="Decision_Tache_2">
+        <dc:Bounds x="80" y="40" width="194" height="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_InputData_condition_montant" dmnElementRef="InputData_condition_montant">
+        <dc:Bounds x="110" y="248" width="135" height="45"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="s_InputData_condition_paysARisque" dmnElementRef="InputData_condition_paysARisque">
+        <dc:Bounds x="290" y="248" width="135" height="45"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="e_ir1" dmnElementRef="ir1">
+        <di:waypoint x="177" y="248"/><di:waypoint x="174" y="120"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="e_ir2" dmnElementRef="ir2">
+        <di:waypoint x="358" y="248"/><di:waypoint x="180" y="120"/>
+      </dmndi:DMNEdge>
     </dmndi:DMNDiagram>
   </dmndi:DMNDI>
 </definitions>

@@ -21,6 +21,7 @@ import copy
 import re
 from typing import Dict, FrozenSet, Iterable, List, Set, Tuple
 
+from . import feel
 from .extensions import normaliser_extensions
 from .metamodeles import (BKM, DECISION, INPUT_DATA, KNOWLEDGE_SOURCE,
                           Mf, Mi, NoeudDonnees, NoeudMf, PointExpert)
@@ -51,18 +52,34 @@ def _libelle(nom: str, defaut: str) -> str:
     return nom.strip() if nom and nom.strip() else defaut
 
 
+def identifiant_sur(texte: str) -> str:
+    """Un fragment d'identifiant XML (NCName) tiré d'un texte quelconque."""
+    s = re.sub(r"[^A-Za-z0-9_.-]", "_", texte or "")
+    s = re.sub(r"_+", "_", s).strip("_") or "n"
+    return s if re.match(r"[A-Za-z_]", s) else "n" + s
+
+
 class _Fabrique:
-    """Attribution d'identifiants stables et déterministes (D1, I1, K1, B1...)."""
-    PREFIXES = {DECISION: "D", INPUT_DATA: "I",
-                KNOWLEDGE_SOURCE: "K", BKM: "B"}
+    """Attribution d'identifiants stables, déterministes et traçables : chaque
+    sommet de Mf porte l'identifiant de l'élément BPMN dont il vient
+    (Decision_T3, InputData_Donnee_1, KnowledgeSource_role_Agent_signataire,
+    BKM_Annotation_2). Un identifiant déjà pris reçoit un suffixe numérique.
+    L'identité d'un sommet ne dépend donc ni de l'ordre de parcours ni des
+    autres éléments du modèle : ajouter une tâche au processus ne renumérote
+    pas les décisions, ce qui fonde la co-évolution (module coevolution)."""
+    PREFIXES = {DECISION: "Decision", INPUT_DATA: "InputData",
+                KNOWLEDGE_SOURCE: "KnowledgeSource", BKM: "BKM"}
 
     def __init__(self, mf: Mf):
         self.mf = mf
-        self.compteurs = {t: 0 for t in self.PREFIXES}
+        self.pris: Dict[str, int] = {}
 
-    def creer(self, type_: str, nom: str, origine: str, pattern: str) -> str:
-        self.compteurs[type_] += 1
-        nid = "%s%d" % (self.PREFIXES[type_], self.compteurs[type_])
+    def creer(self, type_: str, nom: str, origine: str, pattern: str,
+              cle: str = "") -> str:
+        base = "%s_%s" % (self.PREFIXES[type_], identifiant_sur(cle or origine))
+        n = self.pris.get(base, 0)
+        self.pris[base] = n + 1
+        nid = base if n == 0 else "%s_%d" % (base, n + 1)
         self.mf.noeuds[nid] = NoeudMf(id=nid, type=type_, nom=nom,
                                       origine=origine, pattern=pattern)
         return nid
@@ -103,6 +120,10 @@ def transformer(mi: Mi, arbitrages: Arbitrages = VIDE,
     l'algorithme de référence ; chaque extension (voir extensions.py)
     ajoute une règle, activable une à une."""
     ext = normaliser_extensions(list(extensions)) if extensions else frozenset()
+    if "indice-semantique" in ext:
+        from . import semantique
+        if not semantique.disponible():
+            raise ValueError(semantique.motif_indisponible())
     construction = _Construction(_mi_etendu(mi, ext), arbitrages, ext)
 
     candidats = construction.extraire_candidats()          # lignes 2 à 4 : DA
@@ -269,11 +290,12 @@ class _Construction:
         """DA* : les candidats corroborés par kappa (position ou lexique) ou
         retenus par l'expert ; les autres lui sont soumis, jamais supprimés."""
         mi, mf = self.mi, self.mf
+        semantique = "indice-semantique" in self.ext
         DA_etoile: List[str] = []
         for aid in DA:
             a = mi.noeuds[aid]
             verdict_expert = self.arbitrages.candidats.get(aid)
-            indices = kappa(mi, aid)
+            indices = kappa(mi, aid, semantique)
             if verdict_expert is True:
                 DA_etoile.append(aid)
             elif verdict_expert is False:
@@ -281,7 +303,8 @@ class _Construction:
                     cle=aid, categorie="candidat", objet=_libelle(a.nom, aid),
                     motif="écarté par arbitrage de l'expert"))
             elif aid in self.candidats_etendus:
-                if indices["position"] and indices["lexical"]:
+                if indices["position"] and (indices["lexical"]
+                                            or indices.get("semantique")):
                     DA_etoile.append(aid)
                 else:
                     type_ = LIBELLES_HORS_DEFINITION[a.type][0]
@@ -296,15 +319,37 @@ class _Construction:
                         proposition="décision si l'expert confirme"))
             elif indices["position"] or indices["lexical"]:
                 DA_etoile.append(aid)
+            elif indices.get("semantique"):
+                # extension « indice-semantique » : l'indice sémantique seul ne
+                # retient pas, il propose (même règle qu'une candidate étendue à
+                # un seul indice) ; le motif porte le score et l'exemple proche
+                base = LIBELLES_TYPES.get(a.type, a.type)
+                mf.a_confirmer.append(PointExpert(
+                    cle=aid, categorie="candidat", objet=_libelle(a.nom, aid),
+                    motif=base + " : ni verbe de décision dans son nom, ni "
+                          "passerelle de choix à sa suite, mais son libellé est "
+                          "jugé décisionnel (%s) — est-ce une décision ?"
+                          % self._motif_semantique(a.nom),
+                    proposition="décision (indice sémantique)"))
             else:
                 base = LIBELLES_TYPES.get(a.type, a.type)
+                complement = ""
+                if semantique:
+                    complement = " ; l'indice sémantique ne la juge pas " \
+                                 "décisionnelle non plus (%s)" \
+                                 % self._motif_semantique(a.nom)
                 mf.a_confirmer.append(PointExpert(
                     cle=aid, categorie="candidat", objet=_libelle(a.nom, aid),
                     motif=base + " : rien n'indique qu'une décision y est prise "
                           "(pas de verbe de décision dans son nom, pas de "
-                          "passerelle de choix à sa suite) — est-ce une "
-                          "décision ?"))
+                          "passerelle de choix à sa suite%s) — est-ce une "
+                          "décision ?" % complement))
         return DA_etoile
+
+    @staticmethod
+    def _motif_semantique(libelle: str) -> str:
+        from .semantique import instance
+        return instance().motif(libelle)
 
     def preparer_graphes(self, DA_etoile: List[str]) -> None:
         """Précalculs partagés par P2, P3 et P4 : Ins et Outs de chaque
@@ -363,13 +408,18 @@ class _Construction:
         """P1 : la décision delta(a), avec le motif de sa corroboration."""
         mi, mf = self.mi, self.mf
         a = mi.noeuds[aid]
-        motifs = kappa(mi, aid)
+        semantique = "indice-semantique" in self.ext
+        motifs = kappa(mi, aid, semantique)
         motif_txt = " + ".join(
             m for m, ok in (("précède une passerelle exclusive",
                              motifs["position"]),
                             ("verbe décisionnel dans le libellé",
                              motifs["lexical"])) if ok) \
             or "retenue par arbitrage de l'expert"
+        if semantique:
+            motif_txt += " ; %s%s" % (
+                "" if motifs.get("semantique") else "mais ",
+                self._motif_semantique(a.nom))
         if aid in self.candidats_etendus:
             motif_txt += " ; %s hors de la définition de référence, retenue " \
                          "par l'extension « definition-etendue »" \
@@ -430,7 +480,7 @@ class _Construction:
             if a.ressource not in self.ks_par_nom:
                 self.ks_par_nom[a.ressource] = self.fab.creer(
                     KNOWLEDGE_SOURCE, a.ressource,
-                    origine=aid, pattern="P5")
+                    origine=aid, pattern="P5", cle="role_" + a.ressource)
             self._ajouter_arc(self.ks_par_nom[a.ressource], did, "P5")
         elif verdict == "non":
             arbitre_r = a.ressource in self.arbitrages.ressources
@@ -446,7 +496,7 @@ class _Construction:
             if a.ressource not in self.ks_par_nom:
                 self.ks_par_nom[a.ressource] = self.fab.creer(
                     KNOWLEDGE_SOURCE, a.ressource,
-                    origine=aid, pattern="P5")
+                    origine=aid, pattern="P5", cle="role_" + a.ressource)
             self._ajouter_arc(self.ks_par_nom[a.ressource], did, "P5")
             mf.a_confirmer.append(PointExpert(
                 cle="ressource:" + a.ressource, categorie="ressource",
@@ -565,7 +615,7 @@ class _Construction:
                         if cle not in mf.iota:
                             mf.iota[cle] = self.fab.creer(
                                 INPUT_DATA, arbitrages.noms.get(cle, variable),
-                                origine=g, pattern="P7")
+                                origine=g, pattern="P7", cle="condition_" + variable)
                         self._ajouter_arc(mf.iota[cle], did, "P7")
                     elif verdict == "non":
                         mf.ecartes.append(PointExpert(
@@ -607,9 +657,18 @@ class _Construction:
 
     def preparer_logique(self, DA_etoile: List[str]) -> None:
         """Extension « logique » : pour chaque décision suivie d'une
-        passerelle, les branches sortantes (libellés, à défaut le nom de la
-        cible) et leurs conditions ; le sérialiseur en fait une table de
-        décision squelette, le DRD restant identique."""
+        passerelle, la table de décision tirée des flux sortants. Les
+        branches donnent les valeurs de sortie (libellé du flux, à défaut
+        nom du nœud cible) ; les conditions écrites sur les flux, lues par
+        le module `feel`, donnent les colonnes d'entrée (une par variable)
+        et les cellules de chaque règle en tests unaires FEEL ; une
+        condition non lue laisse ses cellules à compléter (« - ») et reste
+        en description ; le flux par défaut devient une dernière règle sans
+        condition, la politique passant alors de UNIQUE à FIRST. Sans
+        aucune condition, une passerelle qui pose une question fermée
+        (branches oui/non) donne une colonne booléenne nommée d'après la
+        question. Le DRD (V_f, E_f) reste identique ; le sérialiseur écrit
+        la table."""
         if "logique" not in self.ext:
             return
         mi, mf = self.mi, self.mf
@@ -618,22 +677,10 @@ class _Construction:
             if not passerelles:
                 continue
             g = passerelles[0]
-            branches: List[Dict[str, str]] = []
-            for s, t, libelle in mi.flux_sequence:
-                if s != g:
-                    continue
-                cible = mi.noeuds.get(t)
-                nom = (libelle or "").strip() or _libelle(
-                    cible.nom if cible else "", t)
-                if any(b["sortie"] == nom for b in branches):
-                    nom = "%s (%d)" % (nom, len(branches) + 1)
-                branches.append({"sortie": nom,
-                                 "condition": mi.conditions.get((g, t), "")})
-            if branches:
-                mf.logique[mf.delta[aid]] = {
-                    "passerelle": _libelle(mi.noeuds[g].nom,
-                                           "Verdict : " + mf.noeuds[mf.delta[aid]].nom),
-                    "branches": branches}
+            did = mf.delta[aid]
+            table = _TableDecision(mi, mf, g, did)
+            if table.regles:
+                mf.logique[did] = table.as_dict()
 
     # ------------------------------------------------------------------
     # étape 3 : P4 raffiné, décisions amont
@@ -693,6 +740,151 @@ class _Construction:
                     vus.add(t)
                     uniques.append(p)
             liste[:] = uniques
+
+
+class _TableDecision:
+    """Construction de la table de décision d'une décision suivie d'une
+    passerelle (extension « logique »)."""
+
+    def __init__(self, mi: Mi, mf: Mf, g: str, did: str):
+        self.mi, self.mf, self.g, self.did = mi, mf, g, did
+        self.passerelle = _libelle(mi.noeuds[g].nom, "Verdict : " + mf.noeuds[did].nom)
+        self.entrees: List[Dict] = []        # colonnes
+        self.regles: List[Dict] = []
+        self.politique = "UNIQUE"
+        self._construire()
+
+    def _colonne_exigence(self, u: str) -> Dict:
+        n = self.mf.noeuds[u]
+        return {"variable": feel.identifiant_feel(n.nom), "libelle": n.nom,
+                "type": "string", "source": "exigence", "noeud": u}
+
+    def _trouver_colonne(self, variable: str) -> Dict:
+        nv = normaliser(variable)
+        nv2 = normaliser(variable.replace(".", " ").replace("_", " "))
+        for c in self.entrees:
+            if c["variable"] == variable or normaliser(c["libelle"]) in (nv, nv2) \
+               or normaliser(c["variable"]) == nv:
+                return c
+        noeud = self.mf.iota.get("condition:" + variable)       # P7 arbitrée
+        c = {"variable": variable,
+             "libelle": self.mf.noeuds[noeud].nom if noeud else variable,
+             "type": "string", "source": "condition", "noeud": noeud}
+        self.entrees.append(c)
+        return c
+
+    def _branches(self, g: str, prefixe: List[Dict], vus: set) -> List[Dict]:
+        """Les branches terminales de la cascade de passerelles qui suit la
+        décision : un flux dont la cible est elle-même une passerelle
+        exclusive ou inclusive sans activité intermédiaire est déplié, et la
+        branche terminale porte la conjonction des conditions rencontrées
+        (C04 du catalogue : « montant > 5 M » puis « pays à risque »)."""
+        mi = self.mi
+        vus = vus | {g}
+        flux_defaut = mi.flux_defaut.get(g)
+        branches: List[Dict] = []
+        for s, t, libelle in mi.flux_sequence:
+            if s != g:
+                continue
+            etape = {"flux": mi.ids_flux.get((g, t), ""), "condition": mi.conditions.get((g, t), ""),
+                     "libelle": (libelle or "").strip(),
+                     "defaut": bool(flux_defaut) and mi.ids_flux.get((g, t)) == flux_defaut}
+            cible = mi.noeuds.get(t)
+            if cible is not None and cible.type in ("exclusiveGateway", "inclusiveGateway") \
+               and t not in vus and any(s2 == t for s2, _, _ in mi.flux_sequence):
+                branches.extend(self._branches(t, prefixe + [etape], vus))
+                continue
+            chemin = prefixe + [etape]
+            nom = etape["libelle"] or _libelle(cible.nom if cible else "", t)
+            if any(b["sortie"] == nom for b in branches):
+                nom = "%s (%d)" % (nom, len(branches) + 1)
+            branches.append({"sortie": nom, "cible": t, "flux": etape["flux"],
+                             "condition": " et ".join(e["condition"] for e in chemin
+                                                      if e["condition"]),
+                             "conditions": [e["condition"] for e in chemin],
+                             "defaut": any(e["defaut"] for e in chemin)
+                             and not any(e["condition"] for e in chemin)})
+        return branches
+
+    @staticmethod
+    def _analyser_chemin(conditions: List[str]):
+        """La forme normale de la conjonction des conditions d'un chemin ;
+        None dès qu'une condition écrite n'est pas lue (une étape sans
+        condition n'impose rien)."""
+        fnd = [()]
+        for c in conditions:
+            if not c:
+                continue
+            f = feel.analyser(c)
+            if f is None:
+                return None
+            fnd = [a + b for a in fnd for b in f]
+        return fnd if any(fnd) and fnd != [()] else None
+
+    def _construire(self) -> None:
+        mi, mf, g = self.mi, self.mf, self.g
+        self.entrees = [self._colonne_exigence(u) for u, v in mf.arcs
+                        if v == self.did and mf.noeuds[u].type in (INPUT_DATA, DECISION)]
+        branches = self._branches(g, [], set())
+        if not branches:
+            return
+        types_par_colonne: Dict[str, List] = {}
+        aucune_condition = not any(b["condition"] for b in branches)
+        question = None
+        if aucune_condition and all(feel.libelle_booleen(b["sortie"]) is not None
+                                    for b in branches if not b["defaut"]) \
+           and (mi.noeuds[g].nom or "").strip():
+            question = {"variable": feel.identifiant_feel(mi.noeuds[g].nom),
+                        "libelle": mi.noeuds[g].nom.strip(), "type": "boolean",
+                        "source": "question", "noeud": None}
+            self.entrees.append(question)
+        for b in branches:
+            fnd = None if b["defaut"] else self._analyser_chemin(b["conditions"])
+            if fnd is None:
+                cellules: Dict[str, str] = {}
+                if question is not None and not b["defaut"]:
+                    cellules[question["variable"]] = \
+                        "true" if feel.libelle_booleen(b["sortie"]) else "false"
+                self.regles.append({"branche": b["sortie"], "cible": b["cible"],
+                                    "flux": b["flux"], "cellules": cellules,
+                                    "condition": b["condition"],
+                                    "lue": bool(cellules) and not b["defaut"],
+                                    "defaut": b["defaut"]})
+                continue
+            for conj in fnd:
+                par_variable: Dict[str, List[feel.Atome]] = {}
+                for a in conj:
+                    par_variable.setdefault(a.variable, []).append(a)
+                cellules = {}
+                for variable, atomes in par_variable.items():
+                    colonne = self._trouver_colonne(variable)
+                    cellules[colonne["variable"]] = feel.test_unaire(atomes)
+                    types_par_colonne.setdefault(colonne["variable"], []).extend(atomes)
+                self.regles.append({"branche": b["sortie"], "cible": b["cible"],
+                                    "flux": b["flux"], "cellules": cellules,
+                                    "condition": b["condition"], "lue": True,
+                                    "defaut": False})
+        for c in self.entrees:
+            if c["variable"] in types_par_colonne:
+                c["type"] = feel.type_feel(types_par_colonne[c["variable"]])
+        # le flux par défaut en dernier : sa règle n'impose rien, la
+        # politique FIRST la fait jouer quand aucune autre ne s'applique
+        if any(r["defaut"] for r in self.regles):
+            self.regles.sort(key=lambda r: 1 if r["defaut"] else 0)
+            self.politique = "FIRST"
+        elif not all(r["lue"] for r in self.regles):
+            self.politique = "UNIQUE"
+
+    def as_dict(self) -> Dict:
+        return {"passerelle": self.passerelle, "passerelle_id": self.g,
+                "politique": self.politique,
+                "entrees": self.entrees, "regles": self.regles,
+                "regles_lues": sum(1 for r in self.regles if r["lue"]),
+                "executable": all(r["lue"] or r["defaut"] for r in self.regles)
+                and any(r["lue"] for r in self.regles),
+                # forme courte, conservée pour les rapports et les tests
+                "branches": [{"sortie": r["branche"], "condition": r["condition"]}
+                             for r in self.regles]}
 
 
 def expliquer_drd_vide(mi: Mi, mf: Mf) -> str:

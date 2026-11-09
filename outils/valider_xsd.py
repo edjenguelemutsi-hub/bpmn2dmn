@@ -92,6 +92,43 @@ bpmn_gen, _ = generer(4242)
 valider(ajouter_di(bpmn_gen), XSD_BPMN, "bpmn",
         "modèle généré + mise en page auto")
 
+# 5. les BPMN mis à jour par la co-évolution (version 1.2) : sur chaque jeu
+# d'essai Camunda (fichiers conformes au schéma), la première décision est
+# renommée, une donnée et une source nouvelles lui sont ajoutées, une décision
+# nouvelle qui la requiert est insérée, la première règle de sa table est
+# écrite ; le BPMN mis à jour doit rester conforme et redonner le DRD modifié
+from bpmn2dmn import coevolution
+from bpmn2dmn.metamodeles import DECISION
+for chemin in sorted(glob.glob(os.path.join(RACINE, "jeux-test-camunda", "*.bpmn"))):
+    texte = io.open(chemin, encoding="utf-8").read()
+    mf0 = transformer(parser_bpmn(chemin), extensions={"logique"})
+    if not mf0.decisions:
+        continue
+    d0 = mf0.decisions[0]
+    dmn0 = serialiser_dmn(mf0)
+    valider(dmn0, XSD_DMN, "dmn", "DRD avec trace et tables de " + os.path.basename(chemin))
+    dmn1 = dmn0.replace('<decision id="%s" name=%s>' % (d0.id, '"%s"' % d0.nom),
+                        '<decision id="%s" name="%s (revue)">'
+                        '<informationRequirement id="irN"><requiredInput href="#InputData_nouvelle"/>'
+                        '</informationRequirement>'
+                        '<authorityRequirement id="arN"><requiredAuthority href="#KnowledgeSource_manuel"/>'
+                        '</authorityRequirement>' % (d0.id, d0.nom), 1)
+    dmn1 = dmn1.replace(
+        '<dmndi:DMNDI>',
+        '<inputData id="InputData_nouvelle" name="Avis du service juridique"/>'
+        '<knowledgeSource id="KnowledgeSource_manuel" name="Manuel de procédure"/>'
+        '<decision id="Decision_nouvelle" name="Apprécier le risque du dossier">'
+        '<informationRequirement id="irZ"><requiredDecision href="#%s"/>'
+        '</informationRequirement></decision><dmndi:DMNDI>' % d0.id)
+    if d0.id in mf0.logique and mf0.logique[d0.id]["entrees"]:
+        dmn1 = dmn1.replace('<inputEntry id="%s_regle1_e1"><text>-</text></inputEntry>' % d0.id,
+                            '<inputEntry id="%s_regle1_e1"><text>"complet"</text></inputEntry>' % d0.id)
+    bpmn_sync, _, rapport_sync = coevolution.synchroniser(texte, dmn1, Arbitrages(), {"logique"})
+    valider(bpmn_sync, XSD_BPMN, "bpmn", "co-évolution sur " + os.path.basename(chemin))
+    if not rapport_sync.coherent:
+        echecs.append(("bpmn", "cohérence de la co-évolution sur " + os.path.basename(chemin),
+                       rapport_sync.ecarts))
+
 # bilan
 print("Validation XSD OMG : %d documents DMN 1.3, %d documents BPMN 2.0"
       % (compteurs["dmn"], compteurs["bpmn"]))

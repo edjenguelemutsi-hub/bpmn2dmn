@@ -25,7 +25,7 @@
       "cle": "Tache_2",
       "categorie": "candidat",
       "objet": "Traiter la demande",
-      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
+      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite ; l'indice sémantique ne la juge pas décisionnelle non plus (indice sémantique : score 0.37 (seuil 0.50), proche de « Statuer sur la demande d'agrément » (décision, similarité 0.74))) — est-ce une décision ?",
       "proposition": ""
     }
   ],
@@ -35,9 +35,10 @@
     "definition-etendue",
     "donnees-processus",
     "evenements-conditionnels",
+    "indice-semantique",
     "logique",
     "noms-suggeres",
     "roles-gouvernants"
   ],
-  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+logique+noms-suggeres+roles-gouvernants"
+  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+indice-semantique+logique+noms-suggeres+roles-gouvernants"
 }

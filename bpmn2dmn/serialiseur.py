@@ -23,10 +23,12 @@ import re
 from typing import Dict, List, Tuple
 from xml.sax.saxutils import escape, quoteattr
 
+from . import __version__
 from .metamodeles import (BKM, DECISION, INPUT_DATA, KNOWLEDGE_SOURCE, Mf)
 from .qualification import normaliser
 
 NS_MODEL = "https://www.omg.org/spec/DMN/20191111/MODEL/"
+NS_TRACE = "https://github.com/edjenguelemutsi-hub/bpmn2dmn/trace"
 NS_DMNDI = "https://www.omg.org/spec/DMN/20191111/DMNDI/"
 NS_DC = "http://www.omg.org/spec/DMN/20180521/DC/"
 NS_DI = "http://www.omg.org/spec/DMN/20180521/DI/"
@@ -458,8 +460,10 @@ def serialiser_dmn(mf: Mf, nom_definitions: str = "", namespace: str = "") -> st
     L = _entete_definitions(nom, ns)
     L.extend(_elements_decisions(mf, noms, exigences))
     L.extend(_elements_bkm(mf, noms, exigences))
-    L.extend('  <inputData id="%s" name=%s/>' % (n.id, quoteattr(noms[n.id]))
-             for n in mf.inputs)
+    for n in mf.inputs:
+        L.append('  <inputData id="%s" name=%s>' % (n.id, quoteattr(noms[n.id])))
+        L.append(_trace_noeud(mf, n.id))
+        L.append('  </inputData>')
     L.extend(_elements_sources(mf, noms, exigences))
     L.extend(_bloc_dmndi(nom, pos, routes, exigences.arcs_ids))
     L.append('</definitions>')
@@ -474,11 +478,33 @@ def _entete_definitions(nom: str, ns: str) -> List[str]:
         '             xmlns:dmndi="%s"' % NS_DMNDI,
         '             xmlns:dc="%s"' % NS_DC,
         '             xmlns:di="%s"' % NS_DI,
+        '             xmlns:bpmn2dmn="%s"' % NS_TRACE,
         '             id="Definitions_%s"' % _sur(nom)[:40],
         '             name=%s' % quoteattr(nom),
         '             namespace=%s' % quoteattr(ns),
-        '             exporter="bpmn2dmn" exporterVersion="1.0">',
+        '             exporter="bpmn2dmn" exporterVersion=%s>' % quoteattr(__version__),
     ]
+
+
+def _trace_noeud(mf: Mf, nid: str, indent: str = "    ") -> str:
+    """L'élément de traçabilité d'un sommet : l'élément BPMN dont il vient,
+    le patron qui l'a posé, les indices qui ont retenu la décision. Il est
+    écrit dans extensionElements, que la norme DMN réserve aux outils, et
+    il est relu par parser_dmn (chemin inverse, co-évolution)."""
+    n = mf.noeuds[nid]
+    attrs = ' source=%s pattern=%s' % (quoteattr(texte_xml(n.origine or "")),
+                                      quoteattr(n.pattern or ""))
+    motif = mf.motifs_corroboration.get(nid)
+    if motif:
+        attrs += ' motif=%s' % quoteattr(texte_xml(motif))
+    return ('%s<extensionElements><bpmn2dmn:trace%s/></extensionElements>'
+            % (indent, attrs))
+
+
+def _trace_arc(mf: Mf, arc: Arc) -> str:
+    pattern = mf.arcs_origine.get(arc, "")
+    return ('<extensionElements><bpmn2dmn:trace pattern=%s/></extensionElements>'
+            % quoteattr(pattern)) if pattern else ""
 
 
 class _Exigences:
@@ -521,23 +547,25 @@ def _elements_decisions(mf: Mf, noms: Dict[str, str],
     L: List[str] = []
     for n in mf.decisions:
         L.append('  <decision id="%s" name=%s>' % (n.id, quoteattr(noms[n.id])))
+        L.append(_trace_noeud(mf, n.id))
         for arc in exigences.entrants_tries(n.id):
             u = arc[0]
             aid, genre = exigences.numeroter(arc)
             tu = mf.noeuds[u].type
+            trace = _trace_arc(mf, arc)
             if genre == "IR":
                 ref = "requiredDecision" if tu == DECISION else "requiredInput"
-                L.append('    <informationRequirement id="%s">'
+                L.append('    <informationRequirement id="%s">%s'
                          '<%s href="#%s"/></informationRequirement>'
-                         % (aid, ref, u))
+                         % (aid, trace, ref, u))
             elif genre == "KR":
-                L.append('    <knowledgeRequirement id="%s">'
+                L.append('    <knowledgeRequirement id="%s">%s'
                          '<requiredKnowledge href="#%s"/>'
-                         '</knowledgeRequirement>' % (aid, u))
+                         '</knowledgeRequirement>' % (aid, trace, u))
             else:
-                L.append('    <authorityRequirement id="%s">'
+                L.append('    <authorityRequirement id="%s">%s'
                          '<requiredAuthority href="#%s"/>'
-                         '</authorityRequirement>' % (aid, u))
+                         '</authorityRequirement>' % (aid, trace, u))
         if n.id in mf.logique:
             L.extend(_table_de_decision(mf, n.id, noms))
         L.append('  </decision>')
@@ -557,39 +585,51 @@ def _variable(nom: str) -> str:
 
 
 def _table_de_decision(mf: Mf, did: str, noms: Dict[str, str]) -> List[str]:
-    """Extension « logique » : la table de décision squelette d'une
-    décision. Entrées : les données d'entrée et décisions dont elle dépend ;
-    sortie : le verdict, dont les valeurs admises sont les branches de la
-    passerelle qui suit l'activité ; une règle par branche, ses conditions
-    laissées à compléter (« - »). La politique UNIQUE est celle attendue
-    d'une table achevée : les règles squelettes se recouvrent tant que les
-    conditions ne sont pas remplies."""
+    """Extension « logique » : la table de décision d'une décision, telle
+    que `_TableDecision` l'a construite. Entrées : les exigences
+    d'information de la décision et les variables lues dans les conditions
+    des flux ; sortie : le verdict, dont les valeurs admises sont les
+    branches de la passerelle ; une règle par branche (ou par terme d'une
+    disjonction), ses cellules en tests unaires FEEL quand la condition a
+    été lue, « - » sinon, la condition d'origine restant en description de
+    la règle. Politique UNIQUE, ou FIRST quand un flux par défaut donne une
+    dernière règle sans condition. La table se lit dans Camunda Modeler et
+    dmn-js ; elle est exécutable par un moteur DMN quand chaque règle est
+    lue (champ « executable » du rapport)."""
     logique = mf.logique[did]
-    entrees = [u for u, v in mf.arcs if v == did
-               and mf.noeuds[u].type in (INPUT_DATA, DECISION)]
-    branches = logique["branches"]
-    L = ['    <decisionTable id="%s_table" hitPolicy="UNIQUE">' % did]
-    for k, u in enumerate(entrees, start=1):
+    entrees = logique["entrees"]
+    regles = logique["regles"]
+    L = ['    <decisionTable id="%s_table" hitPolicy="%s">' % (did, logique["politique"])]
+    for k, c in enumerate(entrees, start=1):
         L.append('      <input id="%s_entree%d" label=%s>'
-                 '<inputExpression id="%s_entree%d_expr" typeRef="string">'
+                 '<inputExpression id="%s_entree%d_expr" typeRef="%s">'
                  '<text>%s</text></inputExpression></input>'
-                 % (did, k, quoteattr(noms[u]), did, k,
-                    escape(_variable(mf.noeuds[u].nom))))
-    valeurs = ",".join('"%s"' % b["sortie"].replace('"', "'") for b in branches)
+                 % (did, k, quoteattr(texte_xml(c["libelle"])), did, k, c["type"],
+                    escape(texte_xml(c["variable"]))))
+    valeurs = ",".join('"%s"' % texte_xml(r["branche"]).replace('"', "'")
+                       for r in regles)
+    vues = []
+    valeurs = ",".join(v for v in valeurs.split(",") if not (v in vues or vues.append(v)))
     L.append('      <output id="%s_sortie" label=%s name=%s typeRef="string">'
              '<outputValues id="%s_sortie_valeurs"><text>%s</text></outputValues>'
              '</output>'
-             % (did, quoteattr(logique["passerelle"]),
+             % (did, quoteattr(texte_xml(logique["passerelle"])),
                 quoteattr(_variable(mf.noeuds[did].nom)), did, escape(valeurs)))
-    for r, b in enumerate(branches, start=1):
-        cellules = "".join('<inputEntry id="%s_regle%d_e%d"><text>-</text></inputEntry>'
-                           % (did, r, k) for k in range(1, len(entrees) + 1))
-        description = ('<description>%s</description>' % escape(b["condition"])
-                       if b["condition"] else "")
+    for r, regle in enumerate(regles, start=1):
+        cellules = "".join(
+            '<inputEntry id="%s_regle%d_e%d"><text>%s</text></inputEntry>'
+            % (did, r, k, escape(texte_xml(regle["cellules"].get(c["variable"], "-"))))
+            for k, c in enumerate(entrees, start=1))
+        description = ""
+        if regle["defaut"]:
+            description = '<description>flux par défaut</description>'
+        elif regle["condition"] and not regle["lue"]:
+            description = ('<description>condition non lue : %s</description>'
+                           % escape(texte_xml(regle["condition"])))
         L.append('      <rule id="%s_regle%d">%s%s<outputEntry id="%s_regle%d_s">'
                  '<text>"%s"</text></outputEntry></rule>'
                  % (did, r, description, cellules, did, r,
-                    escape(b["sortie"].replace('"', "'"))))
+                    escape(texte_xml(regle["branche"]).replace('"', "'"))))
     L.append('    </decisionTable>')
     return L
 
@@ -602,13 +642,15 @@ def _elements_bkm(mf: Mf, noms: Dict[str, str],
     for n in mf.bkms:
         L.append('  <businessKnowledgeModel id="%s" name=%s>'
                  % (n.id, quoteattr(noms[n.id])))
+        L.append(_trace_noeud(mf, n.id))
         for arc in exigences.entrants_tries(n.id):
             aid, genre = exigences.numeroter(arc)
             balise = ("knowledgeRequirement", "requiredKnowledge") \
                 if genre == "KR" else ("authorityRequirement",
                                        "requiredAuthority")
-            L.append('    <%s id="%s"><%s href="#%s"/></%s>'
-                     % (balise[0], aid, balise[1], arc[0], balise[0]))
+            L.append('    <%s id="%s">%s<%s href="#%s"/></%s>'
+                     % (balise[0], aid, _trace_arc(mf, arc), balise[1], arc[0],
+                        balise[0]))
         L.append('  </businessKnowledgeModel>')
     return L
 
@@ -619,18 +661,15 @@ def _elements_sources(mf: Mf, noms: Dict[str, str],
     L: List[str] = []
     for n in mf.sources:
         entr = exigences.entrants.get(n.id, [])
-        if entr:
-            L.append('  <knowledgeSource id="%s" name=%s>'
-                     % (n.id, quoteattr(noms[n.id])))
-            for arc in entr:
-                aid, _ = exigences.numeroter(arc)
-                L.append('    <authorityRequirement id="%s">'
-                         '<requiredAuthority href="#%s"/>'
-                         '</authorityRequirement>' % (aid, arc[0]))
-            L.append('  </knowledgeSource>')
-        else:
-            L.append('  <knowledgeSource id="%s" name=%s/>'
-                     % (n.id, quoteattr(noms[n.id])))
+        L.append('  <knowledgeSource id="%s" name=%s>'
+                 % (n.id, quoteattr(noms[n.id])))
+        L.append(_trace_noeud(mf, n.id))
+        for arc in entr:
+            aid, _ = exigences.numeroter(arc)
+            L.append('    <authorityRequirement id="%s">%s'
+                     '<requiredAuthority href="#%s"/>'
+                     '</authorityRequirement>' % (aid, _trace_arc(mf, arc), arc[0]))
+        L.append('  </knowledgeSource>')
     return L
 
 

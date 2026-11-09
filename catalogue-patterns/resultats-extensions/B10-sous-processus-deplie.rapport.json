@@ -13,20 +13,20 @@
   },
   "decisions": [
     {
-      "id": "D1",
+      "id": "Decision_Tache_4",
       "nom": "Vérifier la conformité des pièces",
       "origine": "Tache_4",
-      "motif": "verbe décisionnel dans le libellé"
+      "motif": "verbe décisionnel dans le libellé ; indice sémantique : score 0.71 (seuil 0.50), proche de « Analyse de la solvabilité de l'emprunteur » (décision, similarité 0.60)"
     }
   ],
   "inputs": [
     {
-      "id": "I1",
+      "id": "InputData_Donnee_6",
       "nom": "Demande d'agrément",
       "pattern": "P2"
     },
     {
-      "id": "I2",
+      "id": "InputData_Bord_11",
       "nom": "Pièce complémentaire reçue (optionnel)",
       "pattern": "P3"
     }
@@ -35,12 +35,12 @@
   "bkms": [],
   "IR": [
     [
-      "I1",
-      "D1"
+      "InputData_Donnee_6",
+      "Decision_Tache_4"
     ],
     [
-      "I2",
-      "D1"
+      "InputData_Bord_11",
+      "Decision_Tache_4"
     ]
   ],
   "KR": [],
@@ -62,9 +62,10 @@
     "definition-etendue",
     "donnees-processus",
     "evenements-conditionnels",
+    "indice-semantique",
     "logique",
     "noms-suggeres",
     "roles-gouvernants"
   ],
-  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+logique+noms-suggeres+roles-gouvernants"
+  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+indice-semantique+logique+noms-suggeres+roles-gouvernants"
 }

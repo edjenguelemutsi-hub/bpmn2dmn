@@ -61,3 +61,16 @@ l'exécutable.
 Le classeur `registre.xlsx` peut rester ouvert dans Excel pendant les
 extractions : s'il est verrouillé, une copie datée est déposée à côté et le
 fichier CSV, lui, est toujours à jour.
+
+## Colonnes ajoutées par la version 1.2
+
+Six colonnes, en fin de table : `da_semantique` et `da_semantique_seul`
+(candidats à indice sémantique, candidats proposés par ce seul indice ;
+remplies avec l'extension « indice-semantique »), `tables_decision`,
+`regles`, `regles_feel` et `tables_executables` (remplies avec l'extension
+« logique »). Un registre écrit par la version 1.0 est migré en place à la
+première écriture : l'en-tête est complété, les lignes existantes gardent
+leur numéro et leurs valeurs, les colonnes nouvelles restent vides pour
+elles ; aucune ligne n'est perdue et aucun fichier n'est renommé. Le fichier
+`evaluation-indices-kappa-2026-11-09.md` donne la mesure des variantes du
+prédicat kappa sur le corpus (`python outils/evaluer-indices.py`).

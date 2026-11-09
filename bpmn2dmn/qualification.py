@@ -188,11 +188,18 @@ def indice_lexical(activite: NoeudFlux) -> bool:
     return any(contient_indice(n, v) for v in LAMBDA_VERBES)
 
 
-def kappa(mi: Mi, aid: str) -> Dict[str, bool]:
-    """Retourne les deux indices — le prédicat vaut leur disjonction."""
+def kappa(mi: Mi, aid: str, semantique: bool = False) -> Dict[str, bool]:
+    """Retourne les deux indices de référence, le prédicat valant leur
+    disjonction ; avec `semantique=True` (extension « indice-semantique »),
+    un troisième indice, calculé par le modèle de langue léger du module
+    `semantique`, s'ajoute sous la clé « semantique »."""
     a = mi.noeuds[aid]
-    return {"position": indice_position(mi, aid),
-            "lexical": indice_lexical(a)}
+    indices = {"position": indice_position(mi, aid),
+               "lexical": indice_lexical(a)}
+    if semantique:
+        from .semantique import indice_semantique
+        indices["semantique"] = indice_semantique(a.nom)
+    return indices
 
 
 # omega : qualification d'une ressource, {KS, ⊥} ou indéterminé

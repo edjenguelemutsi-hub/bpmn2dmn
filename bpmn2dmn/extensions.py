@@ -40,8 +40,14 @@ EXTENSIONS: "OrderedDict[str, str]" = OrderedDict([
      "d'après la question de la passerelle qui la suit (delta)."),
     ("logique",
      "Chaque décision suivie d'une passerelle reçoit dans le DMN une table de "
-     "décision squelette : entrées = ses exigences, sorties = les branches de "
-     "la passerelle (vers le déploiement dans Camunda)."),
+     "décision : entrées = ses exigences et les variables lues dans les "
+     "conditions des flux sortants, sorties = les branches de la passerelle, "
+     "règles écrites en FEEL quand les conditions sont lisibles, à compléter sinon."),
+    ("indice-semantique",
+     "Un modèle de langue léger juge le caractère décisionnel du libellé, quelle "
+     "que soit sa langue : un candidat retenu par ce seul indice est proposé à "
+     "l'expert avec son score, un candidat sans aucun indice est signalé comme tel "
+     "(nécessite le modèle téléchargé, voir requirements-semantique.txt)."),
 ])
 
 TOUTES = frozenset(EXTENSIONS)

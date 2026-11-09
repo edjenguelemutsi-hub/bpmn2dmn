@@ -247,12 +247,16 @@ def _parser_processus(mi: Mi, proc: ET.Element, pid: str,
             mi.noeuds[nid] = NoeudFlux(id=nid, type=t,
                                        nom=elem.get("name") or "",
                                        nature="passerelle", processus=pid)
+            if elem.get("default"):
+                mi.flux_defaut[nid] = elem.get("default").strip()
         elif t in EVENEMENTS:
             _parser_evenement(mi, elem, nid, t, pid)
         elif t == "sequenceFlow":
             s = (elem.get("sourceRef") or "").strip()
             c = (elem.get("targetRef") or "").strip()
             mi.flux_sequence.append((s, c, elem.get("name") or ""))
+            if nid:
+                mi.ids_flux[(s, c)] = nid
             for enfant in elem:
                 if _local(enfant.tag) == "conditionExpression":
                     texte = "".join(enfant.itertext()).strip()

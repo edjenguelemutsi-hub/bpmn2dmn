@@ -13,21 +13,21 @@
   },
   "decisions": [
     {
-      "id": "D1",
+      "id": "Decision_Tache_2",
       "nom": "Vérifier la complétude du dossier",
       "origine": "Tache_2",
-      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé ; indice sémantique : score 0.76 (seuil 0.50), proche de « Vérifier l'admissibilité du dossier » (décision, similarité 0.76)"
     },
     {
-      "id": "D2",
+      "id": "Decision_Tache_10",
       "nom": "Statuer sur l'agrément",
       "origine": "Tache_10",
-      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé ; mais indice sémantique : score 0.36 (seuil 0.50), proche de « Imprimer l'étiquette du colis » (non décision, similarité 0.48)"
     }
   ],
   "inputs": [
     {
-      "id": "I1",
+      "id": "InputData_Donnee_4",
       "nom": "Demande d'agrément",
       "pattern": "P2"
     }
@@ -36,12 +36,12 @@
   "bkms": [],
   "IR": [
     [
-      "I1",
-      "D1"
+      "InputData_Donnee_4",
+      "Decision_Tache_2"
     ],
     [
-      "D1",
-      "D2"
+      "Decision_Tache_2",
+      "Decision_Tache_10"
     ]
   ],
   "KR": [],
@@ -55,21 +55,94 @@
     "definition-etendue",
     "donnees-processus",
     "evenements-conditionnels",
+    "indice-semantique",
     "logique",
     "noms-suggeres",
     "roles-gouvernants"
   ],
-  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+logique+noms-suggeres+roles-gouvernants",
+  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+indice-semantique+logique+noms-suggeres+roles-gouvernants",
   "logique": {
-    "D1": {
+    "Decision_Tache_2": {
       "passerelle": "Dossier complet ?",
+      "politique": "UNIQUE",
+      "executable": true,
+      "entrees": [
+        {
+          "variable": "demandeDAgrement",
+          "libelle": "Demande d'agrément",
+          "type": "string",
+          "source": "exigence"
+        },
+        {
+          "variable": "dossierComplet",
+          "libelle": "Dossier complet ?",
+          "type": "boolean",
+          "source": "question"
+        }
+      ],
+      "regles": [
+        {
+          "branche": "oui",
+          "cellules": {
+            "dossierComplet": "true"
+          },
+          "lue": true,
+          "defaut": false,
+          "condition": ""
+        },
+        {
+          "branche": "non",
+          "cellules": {
+            "dossierComplet": "false"
+          },
+          "lue": true,
+          "defaut": false,
+          "condition": ""
+        }
+      ],
       "branches": [
         "oui",
         "non"
       ]
     },
-    "D2": {
+    "Decision_Tache_10": {
       "passerelle": "Agrément accordé ?",
+      "politique": "UNIQUE",
+      "executable": true,
+      "entrees": [
+        {
+          "variable": "verifierLaCompletudeDuDossier",
+          "libelle": "Vérifier la complétude du dossier",
+          "type": "string",
+          "source": "exigence"
+        },
+        {
+          "variable": "agrementAccorde",
+          "libelle": "Agrément accordé ?",
+          "type": "boolean",
+          "source": "question"
+        }
+      ],
+      "regles": [
+        {
+          "branche": "oui",
+          "cellules": {
+            "agrementAccorde": "true"
+          },
+          "lue": true,
+          "defaut": false,
+          "condition": ""
+        },
+        {
+          "branche": "non",
+          "cellules": {
+            "agrementAccorde": "false"
+          },
+          "lue": true,
+          "defaut": false,
+          "condition": ""
+        }
+      ],
       "branches": [
         "oui",
         "non"

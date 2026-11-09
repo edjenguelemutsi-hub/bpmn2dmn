@@ -3,25 +3,31 @@
              xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
              xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
              xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             xmlns:bpmn2dmn="https://github.com/edjenguelemutsi-hub/bpmn2dmn/trace"
              id="Definitions_Corroboration_par_le_lexique"
              name="Corroboration par le lexique"
              namespace="http://bpmn2dmn/genere"
-             exporter="bpmn2dmn" exporterVersion="1.0">
-  <decision id="D1" name="Évaluer le niveau de risque de l'opérateur">
-    <informationRequirement id="ir1"><requiredInput href="#I1"/></informationRequirement>
-    <informationRequirement id="ir2"><requiredInput href="#I2"/></informationRequirement>
+             exporter="bpmn2dmn" exporterVersion="1.2.0">
+  <decision id="Decision_Tache_2" name="Évaluer le niveau de risque de l'opérateur">
+    <extensionElements><bpmn2dmn:trace source="Tache_2" pattern="P1" motif="verbe décisionnel dans le libellé ; indice sémantique : score 0.94 (seuil 0.50), proche de « Assess the risk level of the transaction » (décision, similarité 0.72)"/></extensionElements>
+    <informationRequirement id="ir1"><extensionElements><bpmn2dmn:trace pattern="P2"/></extensionElements><requiredInput href="#InputData_Donnee_4"/></informationRequirement>
+    <informationRequirement id="ir2"><extensionElements><bpmn2dmn:trace pattern="P2"/></extensionElements><requiredInput href="#InputData_Donnee_6"/></informationRequirement>
   </decision>
-  <inputData id="I1" name="Dossier de l'opérateur"/>
-  <inputData id="I2" name="Historique des contrôles"/>
+  <inputData id="InputData_Donnee_4" name="Dossier de l'opérateur">
+    <extensionElements><bpmn2dmn:trace source="Donnee_4" pattern="P2"/></extensionElements>
+  </inputData>
+  <inputData id="InputData_Donnee_6" name="Historique des contrôles">
+    <extensionElements><bpmn2dmn:trace source="Donnee_6" pattern="P2"/></extensionElements>
+  </inputData>
   <dmndi:DMNDI>
     <dmndi:DMNDiagram id="DRD_Corroboration_par_le_lexique">
-      <dmndi:DMNShape id="s_D1" dmnElementRef="D1">
+      <dmndi:DMNShape id="s_Decision_Tache_2" dmnElementRef="Decision_Tache_2">
         <dc:Bounds x="80" y="40" width="223" height="80"/>
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="s_I1" dmnElementRef="I1">
+      <dmndi:DMNShape id="s_InputData_Donnee_4" dmnElementRef="InputData_Donnee_4">
         <dc:Bounds x="124" y="240" width="135" height="60"/>
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="s_I2" dmnElementRef="I2">
+      <dmndi:DMNShape id="s_InputData_Donnee_6" dmnElementRef="InputData_Donnee_6">
         <dc:Bounds x="306" y="240" width="135" height="60"/>
       </dmndi:DMNShape>
       <dmndi:DMNEdge id="e_ir1" dmnElementRef="ir1">

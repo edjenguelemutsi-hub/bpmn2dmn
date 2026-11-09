@@ -3,30 +3,37 @@
              xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
              xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
              xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             xmlns:bpmn2dmn="https://github.com/edjenguelemutsi-hub/bpmn2dmn/trace"
              id="Definitions_Branches_parall_les"
              name="Branches parallèles"
              namespace="http://bpmn2dmn/genere"
-             exporter="bpmn2dmn" exporterVersion="1.0">
-  <decision id="D1" name="Évaluer la garantie financière">
-    <informationRequirement id="ir1"><requiredInput href="#I1"/></informationRequirement>
+             exporter="bpmn2dmn" exporterVersion="1.2.0">
+  <decision id="Decision_Tache_3" name="Évaluer la garantie financière">
+    <extensionElements><bpmn2dmn:trace source="Tache_3" pattern="P1" motif="verbe décisionnel dans le libellé ; indice sémantique : score 0.92 (seuil 0.50), proche de « Assess the risk level of the transaction » (décision, similarité 0.68)"/></extensionElements>
+    <informationRequirement id="ir1"><extensionElements><bpmn2dmn:trace pattern="P2"/></extensionElements><requiredInput href="#InputData_Donnee_5"/></informationRequirement>
   </decision>
-  <decision id="D2" name="Statuer sur la demande">
-    <informationRequirement id="ir2"><requiredInput href="#I2"/></informationRequirement>
+  <decision id="Decision_Tache_9" name="Statuer sur la demande">
+    <extensionElements><bpmn2dmn:trace source="Tache_9" pattern="P1" motif="verbe décisionnel dans le libellé ; indice sémantique : score 0.61 (seuil 0.50), proche de « Apprécier le bien-fondé de la demande » (décision, similarité 0.88)"/></extensionElements>
+    <informationRequirement id="ir2"><extensionElements><bpmn2dmn:trace pattern="P2"/></extensionElements><requiredInput href="#InputData_Donnee_7"/></informationRequirement>
   </decision>
-  <inputData id="I1" name="Garantie proposée"/>
-  <inputData id="I2" name="Avis financier"/>
+  <inputData id="InputData_Donnee_5" name="Garantie proposée">
+    <extensionElements><bpmn2dmn:trace source="Donnee_5" pattern="P2"/></extensionElements>
+  </inputData>
+  <inputData id="InputData_Donnee_7" name="Avis financier">
+    <extensionElements><bpmn2dmn:trace source="Donnee_7" pattern="P2"/></extensionElements>
+  </inputData>
   <dmndi:DMNDI>
     <dmndi:DMNDiagram id="DRD_Branches_parall_les">
-      <dmndi:DMNShape id="s_D1" dmnElementRef="D1">
+      <dmndi:DMNShape id="s_Decision_Tache_3" dmnElementRef="Decision_Tache_3">
         <dc:Bounds x="80" y="40" width="194" height="80"/>
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="s_D2" dmnElementRef="D2">
+      <dmndi:DMNShape id="s_Decision_Tache_9" dmnElementRef="Decision_Tache_9">
         <dc:Bounds x="361" y="40" width="180" height="80"/>
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="s_I1" dmnElementRef="I1">
+      <dmndi:DMNShape id="s_InputData_Donnee_5" dmnElementRef="InputData_Donnee_5">
         <dc:Bounds x="110" y="240" width="135" height="60"/>
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="s_I2" dmnElementRef="I2">
+      <dmndi:DMNShape id="s_InputData_Donnee_7" dmnElementRef="InputData_Donnee_7">
         <dc:Bounds x="384" y="248" width="135" height="45"/>
       </dmndi:DMNShape>
       <dmndi:DMNEdge id="e_ir1" dmnElementRef="ir1">

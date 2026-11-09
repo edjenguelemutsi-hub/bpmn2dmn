@@ -1,0 +1,2148 @@
+{
+ "description": "Indice sémantique de kappa : régression logistique sur les plongements MiniLM multilingues (384 dimensions) des libellés d'activité ; score >= seuil => libellé décisionnel.",
+ "modele": {
+  "depot": "Xenova/paraphrase-multilingual-MiniLM-L12-v2",
+  "fichiers": {
+   "model_quantized.onnx": "66fc00f5f29afcaff34092e1bdd20008ca3918265a82fb9695a551e510cc4ebc",
+   "tokenizer.json": "b60b6b43406a48bf3638526314f3d232d97058bc93472ff2de930d43686fa441"
+  },
+  "dimension": 384,
+  "longueur_max_jetons": 64,
+  "agregation": "moyenne masquée puis normalisation L2"
+ },
+ "apprentissage": {
+  "exemples": 392,
+  "decisions": 150,
+  "non_decisions": 242,
+  "C": 1.0,
+  "ponderation": "balanced",
+  "graine": 0,
+  "empreinte_exemples": "6d7592e47e2adbc65a85a35ca9b797989ea022cf23c43b5167d58970fba37bbc"
+ },
+ "validation_croisee": {
+  "plis": 5,
+  "seuil": 0.5,
+  "precision": 0.91,
+  "rappel": 0.88,
+  "exactitude": 0.921,
+  "vp": 132,
+  "fp": 13,
+  "fn": 18,
+  "vn": 229,
+  "erreurs": [
+   {
+    "texte": "Refuser la demande de remboursement",
+    "classe": "D",
+    "score": 0.443
+   },
+   {
+    "texte": "Statuer sur la recevabilité de la plainte",
+    "classe": "D",
+    "score": 0.498
+   },
+   {
+    "texte": "Choisir le fournisseur retenu",
+    "classe": "D",
+    "score": 0.375
+   },
+   {
+    "texte": "Choisir le mode de livraison",
+    "classe": "D",
+    "score": 0.298
+   },
+   {
+    "texte": "Autoriser le paiement de la facture",
+    "classe": "D",
+    "score": 0.491
+   },
+   {
+    "texte": "Donner un avis sur le projet",
+    "classe": "D",
+    "score": 0.244
+   },
+   {
+    "texte": "Instruction de la demande d'asile",
+    "classe": "D",
+    "score": 0.432
+   },
+   {
+    "texte": "Décider du lancement de la production",
+    "classe": "D",
+    "score": 0.415
+   },
+   {
+    "texte": "Select the best route",
+    "classe": "D",
+    "score": 0.455
+   },
+   {
+    "texte": "Classify the incoming document",
+    "classe": "D",
+    "score": 0.17
+   },
+   {
+    "texte": "Screen the applications",
+    "classe": "D",
+    "score": 0.302
+   },
+   {
+    "texte": "Verify that the shipment is complete",
+    "classe": "D",
+    "score": 0.437
+   },
+   {
+    "texte": "Authorize the wire transfer",
+    "classe": "D",
+    "score": 0.453
+   },
+   {
+    "texte": "Prioritize the backlog items",
+    "classe": "D",
+    "score": 0.259
+   },
+   {
+    "texte": "Triage of the emergency patient",
+    "classe": "D",
+    "score": 0.471
+   },
+   {
+    "texte": "Antrag ablehnen",
+    "classe": "D",
+    "score": 0.275
+   },
+   {
+    "texte": "Rechnung freigeben",
+    "classe": "D",
+    "score": 0.38
+   },
+   {
+    "texte": "Zollkontrolle anordnen",
+    "classe": "D",
+    "score": 0.427
+   },
+   {
+    "texte": "Saisir les coordonnées du demandeur",
+    "classe": "N",
+    "score": 0.513
+   },
+   {
+    "texte": "Informer le demandeur du résultat",
+    "classe": "N",
+    "score": 0.559
+   },
+   {
+    "texte": "Encaisser le règlement",
+    "classe": "N",
+    "score": 0.733
+   },
+   {
+    "texte": "Numériser les pièces justificatives",
+    "classe": "N",
+    "score": 0.746
+   },
+   {
+    "texte": "Générer l'attestation",
+    "classe": "N",
+    "score": 0.716
+   },
+   {
+    "texte": "Convoquer le candidat",
+    "classe": "N",
+    "score": 0.747
+   },
+   {
+    "texte": "Remplir le questionnaire",
+    "classe": "N",
+    "score": 0.578
+   },
+   {
+    "texte": "Afficher le résultat",
+    "classe": "N",
+    "score": 0.629
+   },
+   {
+    "texte": "Prendre la commande",
+    "classe": "N",
+    "score": 0.591
+   },
+   {
+    "texte": "Inform the applicant of the outcome",
+    "classe": "N",
+    "score": 0.753
+   },
+   {
+    "texte": "Complete the questionnaire",
+    "classe": "N",
+    "score": 0.603
+   },
+   {
+    "texte": "Take the order",
+    "classe": "N",
+    "score": 0.594
+   },
+   {
+    "texte": "Erfassung der Anfrage",
+    "classe": "N",
+    "score": 0.501
+   }
+  ]
+ },
+ "seuil": 0.5,
+ "biais": 0.20564168927424992,
+ "poids": [
+  0.0956832,
+  0.0370373,
+  0.4761902,
+  -0.3377295,
+  -0.320936,
+  0.1044654,
+  0.694037,
+  0.4272163,
+  -0.1139522,
+  -0.0293987,
+  -0.0309805,
+  -0.4295117,
+  -0.4822871,
+  1.0191588,
+  0.478361,
+  -0.0006463,
+  0.285342,
+  -0.1630555,
+  -0.366032,
+  0.7175745,
+  0.8082952,
+  -0.3276114,
+  0.4226266,
+  -0.6420263,
+  -0.7606283,
+  -0.0972473,
+  0.9477653,
+  -0.0416019,
+  0.673562,
+  0.2461541,
+  -0.0693348,
+  0.3491263,
+  -0.1846606,
+  -0.8911281,
+  -1.1850582,
+  -0.3547112,
+  0.3029414,
+  -0.1736101,
+  0.5591069,
+  0.349763,
+  -0.2505762,
+  -0.070296,
+  0.2978441,
+  -0.0287347,
+  -0.0583837,
+  0.1684932,
+  0.1607058,
+  -0.3340788,
+  -0.8743596,
+  -0.2220287,
+  0.6832026,
+  -0.7873654,
+  0.2306851,
+  -0.2293728,
+  0.2609548,
+  0.5290473,
+  0.5574945,
+  -0.515972,
+  0.0127665,
+  0.5856171,
+  -0.1232207,
+  0.0203388,
+  0.9986868,
+  -0.5949862,
+  0.3884851,
+  0.0542648,
+  0.0538739,
+  -0.110189,
+  0.3390512,
+  0.0911296,
+  0.375295,
+  -0.5923972,
+  0.452809,
+  -0.5580775,
+  -0.5457338,
+  -0.0942972,
+  0.4712617,
+  0.1526565,
+  0.5255122,
+  -0.2684035,
+  0.423087,
+  -0.4715111,
+  0.0147795,
+  -0.4167795,
+  0.1041966,
+  -0.3894047,
+  -0.5192359,
+  -0.321187,
+  0.2493739,
+  0.7017681,
+  0.021967,
+  0.4812939,
+  0.0209574,
+  0.0197722,
+  -0.0038507,
+  0.6977352,
+  -0.6616887,
+  -0.5946699,
+  -0.2038361,
+  -0.8189387,
+  -0.2757788,
+  -0.1762827,
+  -0.9193044,
+  0.1943656,
+  0.410134,
+  0.5941395,
+  -0.3089482,
+  0.0856545,
+  0.1370485,
+  0.6848136,
+  0.1858574,
+  0.5517926,
+  0.5817319,
+  0.205913,
+  -0.4216833,
+  0.112652,
+  0.1798924,
+  0.1150449,
+  0.3656965,
+  -0.5428179,
+  0.4197884,
+  -0.5723723,
+  0.2583209,
+  -0.0335956,
+  0.7069293,
+  0.5871339,
+  -0.5829607,
+  -0.8012393,
+  -0.5120834,
+  -0.4414453,
+  0.6986852,
+  -0.184875,
+  -0.7054028,
+  0.7772201,
+  0.1643487,
+  0.8663214,
+  0.2834577,
+  -0.0759968,
+  -0.0221752,
+  0.5941897,
+  -0.3787004,
+  -0.2094042,
+  1.2183625,
+  0.1710717,
+  -0.9926381,
+  -0.3820055,
+  -0.2197896,
+  0.1787411,
+  0.2773276,
+  -0.41306,
+  0.1289418,
+  -0.5384201,
+  0.6488062,
+  -0.6747665,
+  0.2230353,
+  -0.150042,
+  -0.1160042,
+  -0.1260722,
+  0.1457383,
+  0.0831125,
+  -0.6200266,
+  -0.1472397,
+  -0.0741208,
+  0.2737237,
+  -0.6121685,
+  0.1327337,
+  -0.6008247,
+  -0.3522712,
+  -0.3424333,
+  -0.3710103,
+  -0.0490913,
+  0.5016434,
+  0.1873667,
+  -0.3208593,
+  -1.0035475,
+  -0.4602119,
+  -0.7937189,
+  0.2942165,
+  -0.4791453,
+  0.0575155,
+  -0.0077482,
+  -0.1089843,
+  0.0124915,
+  0.3020418,
+  0.1848343,
+  0.3608301,
+  -0.5279245,
+  -0.2202451,
+  -0.0359564,
+  -0.5137163,
+  -0.3460275,
+  -0.1410385,
+  -0.485275,
+  0.412696,
+  0.5245132,
+  -0.3051505,
+  0.2569625,
+  -0.0479474,
+  -0.1161442,
+  0.6731034,
+  -0.383794,
+  -0.1741357,
+  0.0216852,
+  -0.2569108,
+  -0.4642061,
+  0.542608,
+  0.9267986,
+  -0.3001866,
+  -0.1143345,
+  0.2572645,
+  -0.3053373,
+  0.5968225,
+  -0.4795292,
+  -0.4485102,
+  0.1829056,
+  -0.0800527,
+  -0.0987659,
+  0.2084946,
+  0.0565389,
+  0.3191208,
+  0.0066399,
+  0.1993587,
+  0.1662158,
+  0.3637859,
+  -0.8541664,
+  0.262004,
+  0.4330095,
+  0.437832,
+  -0.1326557,
+  -0.0765866,
+  -0.3362606,
+  -1.2685187,
+  0.0498813,
+  -0.2486287,
+  0.1311945,
+  -0.0812366,
+  0.5960873,
+  0.181611,
+  0.2536384,
+  0.1329095,
+  -0.6735171,
+  -0.9440744,
+  0.654059,
+  -0.0362064,
+  0.0748585,
+  0.3618943,
+  -0.318019,
+  -0.2664185,
+  -0.2118567,
+  -0.1364962,
+  -0.2680021,
+  -0.738081,
+  0.6249386,
+  0.5270861,
+  -0.4838162,
+  -0.3524875,
+  -0.0124912,
+  0.8241076,
+  -0.1701548,
+  0.3939203,
+  -0.1722779,
+  -0.3558439,
+  -0.1903816,
+  0.7614131,
+  0.1534546,
+  0.02177,
+  -0.1823381,
+  -0.544983,
+  0.2035247,
+  0.2710146,
+  0.9893827,
+  0.3681713,
+  0.2984484,
+  -0.6922058,
+  0.0653943,
+  0.3776992,
+  -0.0862567,
+  0.2914134,
+  -0.2578492,
+  -0.9435214,
+  0.1598348,
+  0.1009394,
+  -0.4297987,
+  0.4661066,
+  0.8031649,
+  0.3021758,
+  0.0655012,
+  0.3612724,
+  -0.7796633,
+  -0.2724372,
+  -0.2497667,
+  -0.4085242,
+  0.5350217,
+  0.0562478,
+  -0.1307807,
+  -0.0177328,
+  -0.2389348,
+  -0.2844631,
+  -0.3863905,
+  0.0972152,
+  0.6836873,
+  0.5123965,
+  -0.7528836,
+  -0.1539143,
+  -0.2508011,
+  -0.0519773,
+  0.2144982,
+  0.1300995,
+  -0.9020017,
+  0.1936882,
+  -0.4898995,
+  -1.1131639,
+  -0.059346,
+  0.1309576,
+  -0.8844715,
+  0.125276,
+  -0.8756599,
+  -1.3516061,
+  0.171164,
+  0.7648099,
+  -0.1449819,
+  0.0431223,
+  0.5567646,
+  -0.3026459,
+  -0.1390466,
+  0.2916297,
+  -0.3313136,
+  -0.3648307,
+  -0.0941006,
+  0.2597441,
+  0.2390779,
+  1.2494902,
+  0.2101526,
+  0.1072395,
+  -0.0600894,
+  0.5572695,
+  -0.3721025,
+  0.2943212,
+  -0.1111399,
+  0.8073237,
+  0.6397317,
+  -0.1073143,
+  -0.2131326,
+  0.2102521,
+  -0.5883939,
+  0.0012827,
+  -0.091405,
+  -0.3272938,
+  -0.3554036,
+  -0.5199065,
+  0.0405619,
+  0.8667903,
+  -0.2998837,
+  0.1565471,
+  0.1989471,
+  -0.3891085,
+  0.1631904,
+  0.1542882,
+  0.5418255,
+  0.1446693,
+  -0.1384324,
+  -0.1753708,
+  -0.1719179,
+  0.497961,
+  0.1321912,
+  0.0258328,
+  0.4091466,
+  0.2163437,
+  -0.5251194,
+  -0.3674085,
+  -0.1105375,
+  0.5820312,
+  -0.1887616,
+  -0.1408562,
+  -0.2435703,
+  0.6503402,
+  0.0611807,
+  0.1945326,
+  -0.8413411,
+  0.1162602,
+  0.5419738,
+  0.1285608,
+  0.5630192,
+  -0.2074484
+ ],
+ "exemples": [
+  {
+   "classe": "D",
+   "texte": "Décider de la suite à donner à la réclamation"
+  },
+  {
+   "classe": "D",
+   "texte": "Approuver la demande de congé"
+  },
+  {
+   "classe": "D",
+   "texte": "Refuser la demande de remboursement"
+  },
+  {
+   "classe": "D",
+   "texte": "Évaluer la demande de financement"
+  },
+  {
+   "classe": "D",
+   "texte": "Évaluer le risque du client"
+  },
+  {
+   "classe": "D",
+   "texte": "Apprécier la gravité de l'incident"
+  },
+  {
+   "classe": "D",
+   "texte": "Statuer sur la recevabilité de la plainte"
+  },
+  {
+   "classe": "D",
+   "texte": "Statuer sur la demande d'agrément"
+  },
+  {
+   "classe": "D",
+   "texte": "Déterminer le niveau de priorité du ticket"
+  },
+  {
+   "classe": "D",
+   "texte": "Déterminer le tarif applicable"
+  },
+  {
+   "classe": "D",
+   "texte": "Choisir le fournisseur retenu"
+  },
+  {
+   "classe": "D",
+   "texte": "Choisir le mode de livraison"
+  },
+  {
+   "classe": "D",
+   "texte": "Sélectionner les candidats à convoquer"
+  },
+  {
+   "classe": "D",
+   "texte": "Classer la demande selon son urgence"
+  },
+  {
+   "classe": "D",
+   "texte": "Qualifier la nature de la panne"
+  },
+  {
+   "classe": "D",
+   "texte": "Arbitrer entre les deux offres"
+  },
+  {
+   "classe": "D",
+   "texte": "Trancher le litige entre les parties"
+  },
+  {
+   "classe": "D",
+   "texte": "Juger de l'opportunité d'un audit"
+  },
+  {
+   "classe": "D",
+   "texte": "Contrôler la conformité de la facture"
+  },
+  {
+   "classe": "D",
+   "texte": "Contrôler l'éligibilité du bénéficiaire"
+  },
+  {
+   "classe": "D",
+   "texte": "Vérifier si le client est solvable"
+  },
+  {
+   "classe": "D",
+   "texte": "Vérifier l'admissibilité du dossier"
+  },
+  {
+   "classe": "D",
+   "texte": "Examiner la demande de dérogation"
+  },
+  {
+   "classe": "D",
+   "texte": "Autoriser le paiement de la facture"
+  },
+  {
+   "classe": "D",
+   "texte": "Accorder la remise commerciale"
+  },
+  {
+   "classe": "D",
+   "texte": "Valider ou rejeter le devis"
+  },
+  {
+   "classe": "D",
+   "texte": "Estimer le montant de la prime"
+  },
+  {
+   "classe": "D",
+   "texte": "Diagnostiquer la cause de l'anomalie"
+  },
+  {
+   "classe": "D",
+   "texte": "Prioriser les interventions de maintenance"
+  },
+  {
+   "classe": "D",
+   "texte": "Décider du renouvellement du contrat"
+  },
+  {
+   "classe": "D",
+   "texte": "Fixer le montant de l'indemnité"
+  },
+  {
+   "classe": "D",
+   "texte": "Affecter la demande au bon service"
+  },
+  {
+   "classe": "D",
+   "texte": "Orienter le patient vers le service adapté"
+  },
+  {
+   "classe": "D",
+   "texte": "Accepter ou refuser la candidature"
+  },
+  {
+   "classe": "D",
+   "texte": "Se prononcer sur la demande de prêt"
+  },
+  {
+   "classe": "D",
+   "texte": "Donner un avis sur le projet"
+  },
+  {
+   "classe": "D",
+   "texte": "Noter la qualité de la prestation"
+  },
+  {
+   "classe": "D",
+   "texte": "Évaluation de la demande de subvention"
+  },
+  {
+   "classe": "D",
+   "texte": "Décision d'octroi de la licence"
+  },
+  {
+   "classe": "D",
+   "texte": "Analyse de la solvabilité de l'emprunteur"
+  },
+  {
+   "classe": "D",
+   "texte": "Expertise du dommage déclaré"
+  },
+  {
+   "classe": "D",
+   "texte": "Instruction de la demande d'asile"
+  },
+  {
+   "classe": "D",
+   "texte": "Décider si une inspection est nécessaire"
+  },
+  {
+   "classe": "D",
+   "texte": "Décider du lancement de la production"
+  },
+  {
+   "classe": "D",
+   "texte": "Approuver le plan de traitement"
+  },
+  {
+   "classe": "D",
+   "texte": "Confirmer ou infirmer le diagnostic"
+  },
+  {
+   "classe": "D",
+   "texte": "Décider de l'hospitalisation"
+  },
+  {
+   "classe": "D",
+   "texte": "Évaluer la dangerosité du produit"
+  },
+  {
+   "classe": "D",
+   "texte": "Apprécier le bien-fondé de la demande"
+  },
+  {
+   "classe": "D",
+   "texte": "Décider du niveau de contrôle douanier"
+  },
+  {
+   "classe": "D",
+   "texte": "Choisir le circuit de contrôle"
+  },
+  {
+   "classe": "D",
+   "texte": "Déterminer si la marchandise est taxable"
+  },
+  {
+   "classe": "D",
+   "texte": "Évaluer la conformité aux normes sanitaires"
+  },
+  {
+   "classe": "D",
+   "texte": "Décider d'accorder ou non la bourse"
+  },
+  {
+   "classe": "D",
+   "texte": "Hiérarchiser les demandes reçues"
+  },
+  {
+   "classe": "D",
+   "texte": "Décider des suites disciplinaires"
+  },
+  {
+   "classe": "D",
+   "texte": "Évaluer la pertinence de l'offre"
+  },
+  {
+   "classe": "D",
+   "texte": "Approve the purchase order"
+  },
+  {
+   "classe": "D",
+   "texte": "Approve the expense report"
+  },
+  {
+   "classe": "D",
+   "texte": "Reject the warranty claim"
+  },
+  {
+   "classe": "D",
+   "texte": "Evaluate the credit application"
+  },
+  {
+   "classe": "D",
+   "texte": "Evaluate the supplier proposal"
+  },
+  {
+   "classe": "D",
+   "texte": "Assess the damage to the vehicle"
+  },
+  {
+   "classe": "D",
+   "texte": "Assess the patient's condition"
+  },
+  {
+   "classe": "D",
+   "texte": "Assess the risk level of the transaction"
+  },
+  {
+   "classe": "D",
+   "texte": "Decide whether to escalate the incident"
+  },
+  {
+   "classe": "D",
+   "texte": "Decide on the refund request"
+  },
+  {
+   "classe": "D",
+   "texte": "Decide if the customer is eligible for the discount"
+  },
+  {
+   "classe": "D",
+   "texte": "Determine the insurance premium"
+  },
+  {
+   "classe": "D",
+   "texte": "Determine the shipping priority"
+  },
+  {
+   "classe": "D",
+   "texte": "Determine whether the order can be fulfilled"
+  },
+  {
+   "classe": "D",
+   "texte": "Select the winning bid"
+  },
+  {
+   "classe": "D",
+   "texte": "Select the best route"
+  },
+  {
+   "classe": "D",
+   "texte": "Choose the appropriate treatment"
+  },
+  {
+   "classe": "D",
+   "texte": "Classify the support request"
+  },
+  {
+   "classe": "D",
+   "texte": "Classify the incoming document"
+  },
+  {
+   "classe": "D",
+   "texte": "Grade the student's assignment"
+  },
+  {
+   "classe": "D",
+   "texte": "Rank the job applicants"
+  },
+  {
+   "classe": "D",
+   "texte": "Screen the applications"
+  },
+  {
+   "classe": "D",
+   "texte": "Review the loan application"
+  },
+  {
+   "classe": "D",
+   "texte": "Review the change request"
+  },
+  {
+   "classe": "D",
+   "texte": "Judge the quality of the sample"
+  },
+  {
+   "classe": "D",
+   "texte": "Check whether the invoice matches the order"
+  },
+  {
+   "classe": "D",
+   "texte": "Check the eligibility of the applicant"
+  },
+  {
+   "classe": "D",
+   "texte": "Check customer creditworthiness"
+  },
+  {
+   "classe": "D",
+   "texte": "Verify compliance with the regulation"
+  },
+  {
+   "classe": "D",
+   "texte": "Verify that the shipment is complete"
+  },
+  {
+   "classe": "D",
+   "texte": "Examine the appeal"
+  },
+  {
+   "classe": "D",
+   "texte": "Authorize the wire transfer"
+  },
+  {
+   "classe": "D",
+   "texte": "Grant the access rights"
+  },
+  {
+   "classe": "D",
+   "texte": "Accept or decline the offer"
+  },
+  {
+   "classe": "D",
+   "texte": "Estimate the repair cost"
+  },
+  {
+   "classe": "D",
+   "texte": "Diagnose the fault"
+  },
+  {
+   "classe": "D",
+   "texte": "Prioritize the backlog items"
+  },
+  {
+   "classe": "D",
+   "texte": "Allocate the budget to the projects"
+  },
+  {
+   "classe": "D",
+   "texte": "Assign the case to a handler"
+  },
+  {
+   "classe": "D",
+   "texte": "Decide on the next step"
+  },
+  {
+   "classe": "D",
+   "texte": "Approval of the travel request"
+  },
+  {
+   "classe": "D",
+   "texte": "Credit risk assessment"
+  },
+  {
+   "classe": "D",
+   "texte": "Eligibility check"
+  },
+  {
+   "classe": "D",
+   "texte": "Quality inspection of the goods"
+  },
+  {
+   "classe": "D",
+   "texte": "Decision on the complaint"
+  },
+  {
+   "classe": "D",
+   "texte": "Triage of the emergency patient"
+  },
+  {
+   "classe": "D",
+   "texte": "Evaluate whether the claim is covered"
+  },
+  {
+   "classe": "D",
+   "texte": "Decide on customs clearance"
+  },
+  {
+   "classe": "D",
+   "texte": "Determine the tax rate"
+  },
+  {
+   "classe": "D",
+   "texte": "Validate the request against the policy"
+  },
+  {
+   "classe": "D",
+   "texte": "Confirm the diagnosis"
+  },
+  {
+   "classe": "D",
+   "texte": "Decide if the goods must be inspected"
+  },
+  {
+   "classe": "D",
+   "texte": "Score the application"
+  },
+  {
+   "classe": "D",
+   "texte": "Rate the supplier performance"
+  },
+  {
+   "classe": "D",
+   "texte": "Make a decision on the admission"
+  },
+  {
+   "classe": "D",
+   "texte": "Decide whether to approve the loan"
+  },
+  {
+   "classe": "D",
+   "texte": "Antrag prüfen"
+  },
+  {
+   "classe": "D",
+   "texte": "Antrag genehmigen"
+  },
+  {
+   "classe": "D",
+   "texte": "Antrag ablehnen"
+  },
+  {
+   "classe": "D",
+   "texte": "Kreditwürdigkeit prüfen"
+  },
+  {
+   "classe": "D",
+   "texte": "Bonität des Kunden bewerten"
+  },
+  {
+   "classe": "D",
+   "texte": "Schaden begutachten"
+  },
+  {
+   "classe": "D",
+   "texte": "Risiko einschätzen"
+  },
+  {
+   "classe": "D",
+   "texte": "Über die Reklamation entscheiden"
+  },
+  {
+   "classe": "D",
+   "texte": "Lieferanten auswählen"
+  },
+  {
+   "classe": "D",
+   "texte": "Angebot bewerten"
+  },
+  {
+   "classe": "D",
+   "texte": "Anspruch prüfen"
+  },
+  {
+   "classe": "D",
+   "texte": "Rechnung freigeben"
+  },
+  {
+   "classe": "D",
+   "texte": "Urlaubsantrag genehmigen"
+  },
+  {
+   "classe": "D",
+   "texte": "Bewerber auswählen"
+  },
+  {
+   "classe": "D",
+   "texte": "Priorität festlegen"
+  },
+  {
+   "classe": "D",
+   "texte": "Zuständigkeit klären"
+  },
+  {
+   "classe": "D",
+   "texte": "Dringlichkeit beurteilen"
+  },
+  {
+   "classe": "D",
+   "texte": "Entscheiden ob eine Prüfung nötig ist"
+  },
+  {
+   "classe": "D",
+   "texte": "Diagnose stellen"
+  },
+  {
+   "classe": "D",
+   "texte": "Behandlung festlegen"
+  },
+  {
+   "classe": "D",
+   "texte": "Zollkontrolle anordnen"
+  },
+  {
+   "classe": "D",
+   "texte": "Prüfung der Förderfähigkeit"
+  },
+  {
+   "classe": "D",
+   "texte": "Entscheidung über den Antrag"
+  },
+  {
+   "classe": "D",
+   "texte": "Bewertung des Angebots"
+  },
+  {
+   "classe": "D",
+   "texte": "Genehmigung der Bestellung"
+  },
+  {
+   "classe": "D",
+   "texte": "Kundenanfrage einstufen"
+  },
+  {
+   "classe": "D",
+   "texte": "Über Weiterbehandlung entscheiden"
+  },
+  {
+   "classe": "D",
+   "texte": "Evaluar la solicitud de crédito"
+  },
+  {
+   "classe": "D",
+   "texte": "Aprobar la solicitud"
+  },
+  {
+   "classe": "D",
+   "texte": "Rechazar la reclamación"
+  },
+  {
+   "classe": "D",
+   "texte": "Decidir sobre el reembolso"
+  },
+  {
+   "classe": "D",
+   "texte": "Verificar la elegibilidad del solicitante"
+  },
+  {
+   "classe": "D",
+   "texte": "Seleccionar al proveedor"
+  },
+  {
+   "classe": "D",
+   "texte": "Determinar la prima del seguro"
+  },
+  {
+   "classe": "D",
+   "texte": "Clasificar la incidencia"
+  },
+  {
+   "classe": "D",
+   "texte": "Valorar el riesgo de la operación"
+  },
+  {
+   "classe": "D",
+   "texte": "Comprobar si el cliente es solvente"
+  },
+  {
+   "classe": "N",
+   "texte": "Enregistrer la réclamation du client"
+  },
+  {
+   "classe": "N",
+   "texte": "Enregistrer la commande dans le système"
+  },
+  {
+   "classe": "N",
+   "texte": "Saisir les coordonnées du demandeur"
+  },
+  {
+   "classe": "N",
+   "texte": "Saisir la facture dans la comptabilité"
+  },
+  {
+   "classe": "N",
+   "texte": "Envoyer l'accusé de réception"
+  },
+  {
+   "classe": "N",
+   "texte": "Envoyer la facture au client"
+  },
+  {
+   "classe": "N",
+   "texte": "Transmettre le dossier au service comptable"
+  },
+  {
+   "classe": "N",
+   "texte": "Notifier le client de la livraison"
+  },
+  {
+   "classe": "N",
+   "texte": "Informer le demandeur du résultat"
+  },
+  {
+   "classe": "N",
+   "texte": "Imprimer le bon de livraison"
+  },
+  {
+   "classe": "N",
+   "texte": "Imprimer l'étiquette du colis"
+  },
+  {
+   "classe": "N",
+   "texte": "Archiver le dossier clos"
+  },
+  {
+   "classe": "N",
+   "texte": "Classer les pièces dans le dossier"
+  },
+  {
+   "classe": "N",
+   "texte": "Préparer la commande"
+  },
+  {
+   "classe": "N",
+   "texte": "Préparer la salle de réunion"
+  },
+  {
+   "classe": "N",
+   "texte": "Emballer les articles"
+  },
+  {
+   "classe": "N",
+   "texte": "Expédier le colis"
+  },
+  {
+   "classe": "N",
+   "texte": "Livrer la marchandise"
+  },
+  {
+   "classe": "N",
+   "texte": "Réceptionner la livraison"
+  },
+  {
+   "classe": "N",
+   "texte": "Recevoir le paiement"
+  },
+  {
+   "classe": "N",
+   "texte": "Encaisser le règlement"
+  },
+  {
+   "classe": "N",
+   "texte": "Payer le fournisseur"
+  },
+  {
+   "classe": "N",
+   "texte": "Rédiger le compte rendu"
+  },
+  {
+   "classe": "N",
+   "texte": "Rédiger le contrat"
+  },
+  {
+   "classe": "N",
+   "texte": "Signer le contrat"
+  },
+  {
+   "classe": "N",
+   "texte": "Numériser les pièces justificatives"
+  },
+  {
+   "classe": "N",
+   "texte": "Scanner le document"
+  },
+  {
+   "classe": "N",
+   "texte": "Mettre à jour la fiche client"
+  },
+  {
+   "classe": "N",
+   "texte": "Mettre à jour le stock"
+  },
+  {
+   "classe": "N",
+   "texte": "Créer le compte utilisateur"
+  },
+  {
+   "classe": "N",
+   "texte": "Créer le ticket d'incident"
+  },
+  {
+   "classe": "N",
+   "texte": "Générer le rapport mensuel"
+  },
+  {
+   "classe": "N",
+   "texte": "Générer l'attestation"
+  },
+  {
+   "classe": "N",
+   "texte": "Publier l'annonce"
+  },
+  {
+   "classe": "N",
+   "texte": "Planifier la réunion"
+  },
+  {
+   "classe": "N",
+   "texte": "Programmer le rendez-vous"
+  },
+  {
+   "classe": "N",
+   "texte": "Convoquer le candidat"
+  },
+  {
+   "classe": "N",
+   "texte": "Appeler le client"
+  },
+  {
+   "classe": "N",
+   "texte": "Contacter le fournisseur"
+  },
+  {
+   "classe": "N",
+   "texte": "Consulter l'historique du compte"
+  },
+  {
+   "classe": "N",
+   "texte": "Consulter le dossier"
+  },
+  {
+   "classe": "N",
+   "texte": "Lire le courrier reçu"
+  },
+  {
+   "classe": "N",
+   "texte": "Ouvrir le dossier"
+  },
+  {
+   "classe": "N",
+   "texte": "Clôturer le dossier"
+  },
+  {
+   "classe": "N",
+   "texte": "Fermer le ticket"
+  },
+  {
+   "classe": "N",
+   "texte": "Relancer le client"
+  },
+  {
+   "classe": "N",
+   "texte": "Attendre la réponse du client"
+  },
+  {
+   "classe": "N",
+   "texte": "Installer le logiciel"
+  },
+  {
+   "classe": "N",
+   "texte": "Monter le meuble"
+  },
+  {
+   "classe": "N",
+   "texte": "Nettoyer la salle"
+  },
+  {
+   "classe": "N",
+   "texte": "Réparer la machine"
+  },
+  {
+   "classe": "N",
+   "texte": "Remplacer la pièce défectueuse"
+  },
+  {
+   "classe": "N",
+   "texte": "Charger le camion"
+  },
+  {
+   "classe": "N",
+   "texte": "Transporter les colis"
+  },
+  {
+   "classe": "N",
+   "texte": "Collecter les documents"
+  },
+  {
+   "classe": "N",
+   "texte": "Compléter le formulaire"
+  },
+  {
+   "classe": "N",
+   "texte": "Remplir le questionnaire"
+  },
+  {
+   "classe": "N",
+   "texte": "Télécharger le fichier"
+  },
+  {
+   "classe": "N",
+   "texte": "Sauvegarder les données"
+  },
+  {
+   "classe": "N",
+   "texte": "Importer les données"
+  },
+  {
+   "classe": "N",
+   "texte": "Exporter la liste"
+  },
+  {
+   "classe": "N",
+   "texte": "Afficher le résultat"
+  },
+  {
+   "classe": "N",
+   "texte": "Accueillir le visiteur"
+  },
+  {
+   "classe": "N",
+   "texte": "Servir le repas"
+  },
+  {
+   "classe": "N",
+   "texte": "Préparer le repas"
+  },
+  {
+   "classe": "N",
+   "texte": "Prendre la commande"
+  },
+  {
+   "classe": "N",
+   "texte": "Débarrasser la table"
+  },
+  {
+   "classe": "N",
+   "texte": "Commander les fournitures"
+  },
+  {
+   "classe": "N",
+   "texte": "Réserver le billet"
+  },
+  {
+   "classe": "N",
+   "texte": "Confirmer la réservation par courriel"
+  },
+  {
+   "classe": "N",
+   "texte": "Mesurer la température"
+  },
+  {
+   "classe": "N",
+   "texte": "Peser le colis"
+  },
+  {
+   "classe": "N",
+   "texte": "Compter les articles"
+  },
+  {
+   "classe": "N",
+   "texte": "Calculer le total de la facture"
+  },
+  {
+   "classe": "N",
+   "texte": "Convertir le fichier au format PDF"
+  },
+  {
+   "classe": "N",
+   "texte": "Traduire le document"
+  },
+  {
+   "classe": "N",
+   "texte": "Former les nouveaux employés"
+  },
+  {
+   "classe": "N",
+   "texte": "Organiser la cérémonie"
+  },
+  {
+   "classe": "N",
+   "texte": "Enregistrement de la demande"
+  },
+  {
+   "classe": "N",
+   "texte": "Envoi de la confirmation"
+  },
+  {
+   "classe": "N",
+   "texte": "Impression du reçu"
+  },
+  {
+   "classe": "N",
+   "texte": "Archivage du dossier"
+  },
+  {
+   "classe": "N",
+   "texte": "Saisie des données"
+  },
+  {
+   "classe": "N",
+   "texte": "Préparation de l'expédition"
+  },
+  {
+   "classe": "N",
+   "texte": "Notification du client"
+  },
+  {
+   "classe": "N",
+   "texte": "Paiement de la facture"
+  },
+  {
+   "classe": "N",
+   "texte": "Register the customer complaint"
+  },
+  {
+   "classe": "N",
+   "texte": "Record the order in the system"
+  },
+  {
+   "classe": "N",
+   "texte": "Enter the customer details"
+  },
+  {
+   "classe": "N",
+   "texte": "Send the acknowledgement"
+  },
+  {
+   "classe": "N",
+   "texte": "Send the invoice to the customer"
+  },
+  {
+   "classe": "N",
+   "texte": "Forward the file to the accounting department"
+  },
+  {
+   "classe": "N",
+   "texte": "Notify the customer of the delivery"
+  },
+  {
+   "classe": "N",
+   "texte": "Inform the applicant of the outcome"
+  },
+  {
+   "classe": "N",
+   "texte": "Print the delivery note"
+  },
+  {
+   "classe": "N",
+   "texte": "Print the shipping label"
+  },
+  {
+   "classe": "N",
+   "texte": "Archive the closed file"
+  },
+  {
+   "classe": "N",
+   "texte": "File the documents"
+  },
+  {
+   "classe": "N",
+   "texte": "Prepare the order"
+  },
+  {
+   "classe": "N",
+   "texte": "Pack the items"
+  },
+  {
+   "classe": "N",
+   "texte": "Ship the parcel"
+  },
+  {
+   "classe": "N",
+   "texte": "Deliver the goods"
+  },
+  {
+   "classe": "N",
+   "texte": "Receive the delivery"
+  },
+  {
+   "classe": "N",
+   "texte": "Receive the payment"
+  },
+  {
+   "classe": "N",
+   "texte": "Collect the payment"
+  },
+  {
+   "classe": "N",
+   "texte": "Pay the supplier"
+  },
+  {
+   "classe": "N",
+   "texte": "Write the report"
+  },
+  {
+   "classe": "N",
+   "texte": "Draft the contract"
+  },
+  {
+   "classe": "N",
+   "texte": "Sign the contract"
+  },
+  {
+   "classe": "N",
+   "texte": "Scan the supporting documents"
+  },
+  {
+   "classe": "N",
+   "texte": "Update the customer record"
+  },
+  {
+   "classe": "N",
+   "texte": "Update the inventory"
+  },
+  {
+   "classe": "N",
+   "texte": "Create the user account"
+  },
+  {
+   "classe": "N",
+   "texte": "Create the incident ticket"
+  },
+  {
+   "classe": "N",
+   "texte": "Generate the monthly report"
+  },
+  {
+   "classe": "N",
+   "texte": "Generate the certificate"
+  },
+  {
+   "classe": "N",
+   "texte": "Publish the announcement"
+  },
+  {
+   "classe": "N",
+   "texte": "Schedule the meeting"
+  },
+  {
+   "classe": "N",
+   "texte": "Book the appointment"
+  },
+  {
+   "classe": "N",
+   "texte": "Invite the candidate"
+  },
+  {
+   "classe": "N",
+   "texte": "Call the customer"
+  },
+  {
+   "classe": "N",
+   "texte": "Contact the supplier"
+  },
+  {
+   "classe": "N",
+   "texte": "Look up the account history"
+  },
+  {
+   "classe": "N",
+   "texte": "Read the incoming mail"
+  },
+  {
+   "classe": "N",
+   "texte": "Open the file"
+  },
+  {
+   "classe": "N",
+   "texte": "Close the file"
+  },
+  {
+   "classe": "N",
+   "texte": "Close the ticket"
+  },
+  {
+   "classe": "N",
+   "texte": "Remind the customer"
+  },
+  {
+   "classe": "N",
+   "texte": "Wait for the customer's reply"
+  },
+  {
+   "classe": "N",
+   "texte": "Install the software"
+  },
+  {
+   "classe": "N",
+   "texte": "Assemble the furniture"
+  },
+  {
+   "classe": "N",
+   "texte": "Clean the room"
+  },
+  {
+   "classe": "N",
+   "texte": "Repair the machine"
+  },
+  {
+   "classe": "N",
+   "texte": "Replace the defective part"
+  },
+  {
+   "classe": "N",
+   "texte": "Load the truck"
+  },
+  {
+   "classe": "N",
+   "texte": "Transport the parcels"
+  },
+  {
+   "classe": "N",
+   "texte": "Gather the documents"
+  },
+  {
+   "classe": "N",
+   "texte": "Fill in the form"
+  },
+  {
+   "classe": "N",
+   "texte": "Complete the questionnaire"
+  },
+  {
+   "classe": "N",
+   "texte": "Download the file"
+  },
+  {
+   "classe": "N",
+   "texte": "Back up the data"
+  },
+  {
+   "classe": "N",
+   "texte": "Import the data"
+  },
+  {
+   "classe": "N",
+   "texte": "Export the list"
+  },
+  {
+   "classe": "N",
+   "texte": "Display the result"
+  },
+  {
+   "classe": "N",
+   "texte": "Welcome the visitor"
+  },
+  {
+   "classe": "N",
+   "texte": "Serve the meal"
+  },
+  {
+   "classe": "N",
+   "texte": "Cook the meal"
+  },
+  {
+   "classe": "N",
+   "texte": "Take the order"
+  },
+  {
+   "classe": "N",
+   "texte": "Clear the table"
+  },
+  {
+   "classe": "N",
+   "texte": "Order the supplies"
+  },
+  {
+   "classe": "N",
+   "texte": "Book the ticket"
+  },
+  {
+   "classe": "N",
+   "texte": "Confirm the booking by email"
+  },
+  {
+   "classe": "N",
+   "texte": "Measure the temperature"
+  },
+  {
+   "classe": "N",
+   "texte": "Weigh the parcel"
+  },
+  {
+   "classe": "N",
+   "texte": "Count the items"
+  },
+  {
+   "classe": "N",
+   "texte": "Compute the invoice total"
+  },
+  {
+   "classe": "N",
+   "texte": "Convert the file to PDF"
+  },
+  {
+   "classe": "N",
+   "texte": "Translate the document"
+  },
+  {
+   "classe": "N",
+   "texte": "Train the new employees"
+  },
+  {
+   "classe": "N",
+   "texte": "Organize the ceremony"
+  },
+  {
+   "classe": "N",
+   "texte": "Hand over the keys"
+  },
+  {
+   "classe": "N",
+   "texte": "Return the equipment"
+  },
+  {
+   "classe": "N",
+   "texte": "Log the call"
+  },
+  {
+   "classe": "N",
+   "texte": "Store the goods in the warehouse"
+  },
+  {
+   "classe": "N",
+   "texte": "Registration of the request"
+  },
+  {
+   "classe": "N",
+   "texte": "Sending of the confirmation"
+  },
+  {
+   "classe": "N",
+   "texte": "Printing of the receipt"
+  },
+  {
+   "classe": "N",
+   "texte": "Archiving of the file"
+  },
+  {
+   "classe": "N",
+   "texte": "Data entry"
+  },
+  {
+   "classe": "N",
+   "texte": "Preparation of the shipment"
+  },
+  {
+   "classe": "N",
+   "texte": "Customer notification"
+  },
+  {
+   "classe": "N",
+   "texte": "Invoice payment"
+  },
+  {
+   "classe": "N",
+   "texte": "Reklamation erfassen"
+  },
+  {
+   "classe": "N",
+   "texte": "Bestellung im System anlegen"
+  },
+  {
+   "classe": "N",
+   "texte": "Kundendaten eingeben"
+  },
+  {
+   "classe": "N",
+   "texte": "Eingangsbestätigung senden"
+  },
+  {
+   "classe": "N",
+   "texte": "Rechnung an den Kunden schicken"
+  },
+  {
+   "classe": "N",
+   "texte": "Akte an die Buchhaltung weiterleiten"
+  },
+  {
+   "classe": "N",
+   "texte": "Kunden über die Lieferung informieren"
+  },
+  {
+   "classe": "N",
+   "texte": "Lieferschein drucken"
+  },
+  {
+   "classe": "N",
+   "texte": "Versandetikett drucken"
+  },
+  {
+   "classe": "N",
+   "texte": "Akte archivieren"
+  },
+  {
+   "classe": "N",
+   "texte": "Bestellung vorbereiten"
+  },
+  {
+   "classe": "N",
+   "texte": "Artikel verpacken"
+  },
+  {
+   "classe": "N",
+   "texte": "Paket versenden"
+  },
+  {
+   "classe": "N",
+   "texte": "Ware liefern"
+  },
+  {
+   "classe": "N",
+   "texte": "Lieferung annehmen"
+  },
+  {
+   "classe": "N",
+   "texte": "Zahlung entgegennehmen"
+  },
+  {
+   "classe": "N",
+   "texte": "Lieferanten bezahlen"
+  },
+  {
+   "classe": "N",
+   "texte": "Bericht schreiben"
+  },
+  {
+   "classe": "N",
+   "texte": "Vertrag unterschreiben"
+  },
+  {
+   "classe": "N",
+   "texte": "Unterlagen einscannen"
+  },
+  {
+   "classe": "N",
+   "texte": "Kundendaten aktualisieren"
+  },
+  {
+   "classe": "N",
+   "texte": "Lagerbestand aktualisieren"
+  },
+  {
+   "classe": "N",
+   "texte": "Benutzerkonto anlegen"
+  },
+  {
+   "classe": "N",
+   "texte": "Monatsbericht erstellen"
+  },
+  {
+   "classe": "N",
+   "texte": "Termin vereinbaren"
+  },
+  {
+   "classe": "N",
+   "texte": "Kunden anrufen"
+  },
+  {
+   "classe": "N",
+   "texte": "Kontohistorie einsehen"
+  },
+  {
+   "classe": "N",
+   "texte": "Akte schließen"
+  },
+  {
+   "classe": "N",
+   "texte": "Ticket schließen"
+  },
+  {
+   "classe": "N",
+   "texte": "Kunden erinnern"
+  },
+  {
+   "classe": "N",
+   "texte": "Auf Antwort warten"
+  },
+  {
+   "classe": "N",
+   "texte": "Software installieren"
+  },
+  {
+   "classe": "N",
+   "texte": "Maschine reparieren"
+  },
+  {
+   "classe": "N",
+   "texte": "Lkw beladen"
+  },
+  {
+   "classe": "N",
+   "texte": "Formular ausfüllen"
+  },
+  {
+   "classe": "N",
+   "texte": "Datei herunterladen"
+  },
+  {
+   "classe": "N",
+   "texte": "Daten sichern"
+  },
+  {
+   "classe": "N",
+   "texte": "Besucher empfangen"
+  },
+  {
+   "classe": "N",
+   "texte": "Essen servieren"
+  },
+  {
+   "classe": "N",
+   "texte": "Essen kochen"
+  },
+  {
+   "classe": "N",
+   "texte": "Bestellung aufnehmen"
+  },
+  {
+   "classe": "N",
+   "texte": "Tisch abräumen"
+  },
+  {
+   "classe": "N",
+   "texte": "Material bestellen"
+  },
+  {
+   "classe": "N",
+   "texte": "Ticket buchen"
+  },
+  {
+   "classe": "N",
+   "texte": "Temperatur messen"
+  },
+  {
+   "classe": "N",
+   "texte": "Paket wiegen"
+  },
+  {
+   "classe": "N",
+   "texte": "Rechnungsbetrag berechnen"
+  },
+  {
+   "classe": "N",
+   "texte": "Dokument übersetzen"
+  },
+  {
+   "classe": "N",
+   "texte": "Mitarbeiter schulen"
+  },
+  {
+   "classe": "N",
+   "texte": "Schlüssel übergeben"
+  },
+  {
+   "classe": "N",
+   "texte": "Erfassung der Anfrage"
+  },
+  {
+   "classe": "N",
+   "texte": "Versand der Bestätigung"
+  },
+  {
+   "classe": "N",
+   "texte": "Druck der Quittung"
+  },
+  {
+   "classe": "N",
+   "texte": "Archivierung der Akte"
+  },
+  {
+   "classe": "N",
+   "texte": "Registrar la reclamación"
+  },
+  {
+   "classe": "N",
+   "texte": "Enviar la factura al cliente"
+  },
+  {
+   "classe": "N",
+   "texte": "Imprimir la etiqueta de envío"
+  },
+  {
+   "classe": "N",
+   "texte": "Archivar el expediente"
+  },
+  {
+   "classe": "N",
+   "texte": "Preparar el pedido"
+  },
+  {
+   "classe": "N",
+   "texte": "Empaquetar los artículos"
+  },
+  {
+   "classe": "N",
+   "texte": "Enviar el paquete"
+  },
+  {
+   "classe": "N",
+   "texte": "Recibir el pago"
+  },
+  {
+   "classe": "N",
+   "texte": "Redactar el informe"
+  },
+  {
+   "classe": "N",
+   "texte": "Actualizar los datos del cliente"
+  },
+  {
+   "classe": "N",
+   "texte": "Programar la reunión"
+  },
+  {
+   "classe": "N",
+   "texte": "Llamar al cliente"
+  },
+  {
+   "classe": "N",
+   "texte": "Cerrar el expediente"
+  },
+  {
+   "classe": "N",
+   "texte": "Instalar el programa"
+  },
+  {
+   "classe": "N",
+   "texte": "Rellenar el formulario"
+  },
+  {
+   "classe": "N",
+   "texte": "Servir la comida"
+  }
+ ]
+}

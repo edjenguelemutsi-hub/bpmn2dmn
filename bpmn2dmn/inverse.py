@@ -72,13 +72,24 @@ def parser_dmn(chemin_ou_texte: str, est_texte: bool = False,
                       "knowledgeSource": KNOWLEDGE_SOURCE,
                       "businessKnowledgeModel": BKM}
 
-    # les nœuds
+    # les nœuds, avec leur trace (élément BPMN d'origine, patron) quand le
+    # fichier vient de l'outil, et leur table de décision s'il y en a une
     for elem in racine:
         t = _local(elem.tag)
         if t in correspondance:
             nid = elem.get("id") or ("n%d" % (len(mf.noeuds) + 1))
-            mf.noeuds[nid] = NoeudMf(id=nid, type=correspondance[t],
-                                     nom=elem.get("name") or nid)
+            n = NoeudMf(id=nid, type=correspondance[t], nom=elem.get("name") or nid)
+            trace = _lire_trace(elem)
+            if trace is not None:
+                n.origine = trace.get("source", "")
+                n.pattern = trace.get("pattern", "")
+                if trace.get("motif"):
+                    mf.motifs_corroboration[nid] = trace["motif"]
+            mf.noeuds[nid] = n
+            if t == "decision":
+                table = _lire_table(elem)
+                if table is not None:
+                    mf.logique[nid] = table
 
     if exiger_decision and not mf.decisions:
         raise ErreurDMN("Aucune décision dans le fichier DMN.")
@@ -105,7 +116,91 @@ def parser_dmn(chemin_ou_texte: str, est_texte: bool = False,
                     arc = (u, vid)
                     if arc not in mf.arcs:
                         mf.arcs.append(arc)
+                        trace = _lire_trace(req)
+                        if trace is not None and trace.get("pattern"):
+                            mf.arcs_origine[arc] = trace["pattern"]
     return mf
+
+
+def _lire_trace(elem: ET.Element) -> Optional[Dict[str, str]]:
+    """L'élément bpmn2dmn:trace d'un extensionElements, s'il existe."""
+    for enfant in elem:
+        if _local(enfant.tag) == "extensionElements":
+            for x in enfant:
+                if _local(x.tag) == "trace":
+                    return dict(x.attrib)
+    return None
+
+
+def _texte(elem: Optional[ET.Element]) -> str:
+    if elem is None:
+        return ""
+    for enfant in elem:
+        if _local(enfant.tag) == "text":
+            return (enfant.text or "").strip()
+    return (elem.text or "").strip()
+
+
+def _lire_table(decision: ET.Element) -> Optional[Dict]:
+    """La table de décision d'un élément <decision>, dans la forme que
+    l'extension « logique » produit (entrées, règles, politique), pour la
+    co-évolution : les règles modifiées dans le DMN sont reportées sur les
+    conditions des flux du processus."""
+    table = None
+    for enfant in decision:
+        if _local(enfant.tag) == "decisionTable":
+            table = enfant
+            break
+    if table is None:
+        return None
+    entrees: List[Dict] = []
+    for inp in table:
+        if _local(inp.tag) != "input":
+            continue
+        expr = None
+        for x in inp:
+            if _local(x.tag) == "inputExpression":
+                expr = x
+        variable = _texte(expr) or (inp.get("label") or "")
+        entrees.append({"variable": variable, "libelle": inp.get("label") or variable,
+                        "type": (expr.get("typeRef") if expr is not None else None) or "string",
+                        "source": "dmn", "noeud": None})
+    sortie_label = ""
+    for out in table:
+        if _local(out.tag) == "output":
+            sortie_label = out.get("label") or out.get("name") or ""
+            break
+    regles: List[Dict] = []
+    for regle in table:
+        if _local(regle.tag) != "rule":
+            continue
+        cellules: Dict[str, str] = {}
+        k = 0
+        sortie = ""
+        description = ""
+        for x in regle:
+            lt = _local(x.tag)
+            if lt == "inputEntry":
+                if k < len(entrees):
+                    cellules[entrees[k]["variable"]] = _texte(x) or "-"
+                k += 1
+            elif lt == "outputEntry":
+                sortie = _texte(x).strip()
+                if len(sortie) >= 2 and sortie[0] == sortie[-1] == '"':
+                    sortie = sortie[1:-1]
+            elif lt == "description":
+                description = (x.text or "").strip()
+        lue = any(v.strip() not in ("", "-") for v in cellules.values())
+        regles.append({"branche": sortie, "cible": "", "flux": "", "cellules": cellules,
+                       "condition": description, "lue": lue,
+                       "defaut": description == "flux par défaut"})
+    return {"passerelle": sortie_label, "passerelle_id": "",
+            "politique": table.get("hitPolicy") or "UNIQUE",
+            "entrees": entrees, "regles": regles,
+            "regles_lues": sum(1 for r in regles if r["lue"]),
+            "executable": bool(regles) and all(r["lue"] or r["defaut"] for r in regles),
+            "branches": [{"sortie": r["branche"], "condition": r["condition"]}
+                         for r in regles]}
 
 
 def _tri_topologique(mf: Mf) -> List[str]:

@@ -13,4 +13,4 @@ Chaîne de construction : BPMN.xml -> parseur -> Mi -> transformation -> Mf
 -> serialiseur -> DRD.xml -> visualiseur.
 """
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"

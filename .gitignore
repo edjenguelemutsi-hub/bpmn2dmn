@@ -7,3 +7,5 @@ essais/
 *.xlsx
 .DS_Store
 Thumbs.db
+banc-ouvert/sources/
+bpmn2dmn/modeles/minilm-multilingue/

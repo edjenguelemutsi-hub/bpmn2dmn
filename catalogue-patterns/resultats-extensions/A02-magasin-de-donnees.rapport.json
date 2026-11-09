@@ -13,15 +13,15 @@
   },
   "decisions": [
     {
-      "id": "D1",
+      "id": "Decision_Tache_4",
       "nom": "Vérifier l'inscription de l'opérateur",
       "origine": "Tache_4",
-      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé ; mais indice sémantique : score 0.50 (seuil 0.50), proche de « Verificar la elegibilidad del solicitante » (décision, similarité 0.57)"
     }
   ],
   "inputs": [
     {
-      "id": "I1",
+      "id": "InputData_Donnee_6",
       "nom": "Fichier des importateurs",
       "pattern": "P2"
     }
@@ -30,8 +30,8 @@
   "bkms": [],
   "IR": [
     [
-      "I1",
-      "D1"
+      "InputData_Donnee_6",
+      "Decision_Tache_4"
     ]
   ],
   "KR": [],
@@ -45,14 +45,51 @@
     "definition-etendue",
     "donnees-processus",
     "evenements-conditionnels",
+    "indice-semantique",
     "logique",
     "noms-suggeres",
     "roles-gouvernants"
   ],
-  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+logique+noms-suggeres+roles-gouvernants",
+  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+indice-semantique+logique+noms-suggeres+roles-gouvernants",
   "logique": {
-    "D1": {
+    "Decision_Tache_4": {
       "passerelle": "Demande recevable ?",
+      "politique": "UNIQUE",
+      "executable": true,
+      "entrees": [
+        {
+          "variable": "fichierDesImportateurs",
+          "libelle": "Fichier des importateurs",
+          "type": "string",
+          "source": "exigence"
+        },
+        {
+          "variable": "demandeRecevable",
+          "libelle": "Demande recevable ?",
+          "type": "boolean",
+          "source": "question"
+        }
+      ],
+      "regles": [
+        {
+          "branche": "oui",
+          "cellules": {
+            "demandeRecevable": "true"
+          },
+          "lue": true,
+          "defaut": false,
+          "condition": ""
+        },
+        {
+          "branche": "non",
+          "cellules": {
+            "demandeRecevable": "false"
+          },
+          "lue": true,
+          "defaut": false,
+          "condition": ""
+        }
+      ],
       "branches": [
         "oui",
         "non"

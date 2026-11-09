@@ -1,0 +1,59 @@
+  250 / 3761 modèles (9 s)
+  500 / 3761 modèles (15 s)
+  750 / 3761 modèles (22 s)
+  1000 / 3761 modèles (29 s)
+  1250 / 3761 modèles (37 s)
+  1500 / 3761 modèles (46 s)
+  1750 / 3761 modèles (55 s)
+  2000 / 3761 modèles (61 s)
+  2250 / 3761 modèles (67 s)
+  2500 / 3761 modèles (74 s)
+  2750 / 3761 modèles (81 s)
+  3000 / 3761 modèles (88 s)
+  3250 / 3761 modèles (98 s)
+  3500 / 3761 modèles (109 s)
+  3750 / 3761 modèles (119 s)
+  3761 / 3761 modèles (119 s)
+résultats : C:\Users\edjenguele\Documents\Soutenance francis\Soutenance V4\application\bpmn2dmn\banc-ouvert\resultats.csv
+synthèse : C:\Users\edjenguele\Documents\Soutenance francis\Soutenance V4\application\bpmn2dmn\banc-ouvert\synthese.md
+# Banc d'essai ouvert : synthèse
+
+Modèles : 3761 (3754 lus, 7 en échec de lecture) ; durée totale 120 s.
+Variantes : référence et « definition-etendue » sur tous les modèles lus ; « definition-etendue + indice-semantique » : oui.
+
+## Robustesse de la chaîne (variante de référence)
+
+| contrôle | modèles concernés | conformes | taux |
+|---|---|---|---|
+| invariants 8/8 respectés | 3754 | 3754 | 100.0 % |
+| DMN produit relu conforme | 3754 | 3754 | 100.0 % |
+| DRD sans circuit | 3754 | 3754 | 100.0 % |
+| aller-retour T(T⁻¹(M)) = M | 35 | 35 | 100.0 % |
+| deux exécutions identiques | 3754 | 3754 | 100.0 % |
+
+Durée moyenne d'une extraction complète : 3.52 ms (maximum 50.26 ms).
+
+## Variante de référence
+
+### Par collection
+
+| collection | modèles | lus | activités | candidats DA | retenus DA* | position seule | lexique seul | deux | non corroborés | hors définition corroborées | décisions | exigences | points expert | questions par décision | modèles sans décision |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| bfr | 3732 | 3732 | 32456 | 114 | 34 | 34 | 0 | 0 | 80 | 8603 | 34 | 10 | 8697 | 255.79 | 3710 |
+| miwg | 22 | 22 | 213 | 79 | 34 | 16 | 6 | 12 | 45 | 21 | 34 | 16 | 77 | 2.26 | 9 |
+
+### bpmn-for-research, par langue du cours
+
+| langue | modèles | lus | activités | candidats DA | retenus DA* | position seule | lexique seul | deux | non corroborés | hors définition corroborées | décisions | exigences | points expert | questions par décision | modèles sans décision |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| DE | 3530 | 3530 | 30616 | 113 | 34 | 34 | 0 | 0 | 79 | 8074 | 34 | 10 | 8167 | 240.21 | 3508 |
+| EN | 202 | 202 | 1840 | 1 | 0 | 0 | 0 | 0 | 1 | 529 | 0 | 0 | 530 | - | 202 |
+
+## Variante « definition-etendue »
+
+Les activités de tout type sont candidates dès qu'un indice les corrobore ; retenues avec les deux indices, soumises à l'expert avec un seul. Les colonnes « position seule », « lexique seul » et « deux » comptent les décisions retenues selon les indices de la définition de référence ; « non corroborés » compte les candidats soumis à l'expert.
+
+### Par collection
+
+| collection | modèles | lus | activités | candidats DA | retenus DA* | position seule | lexique seul | deux | non corroborés | hors définition corroborées | décisions | exigences | points expert | questions par décision | modèles sans décision |
+fin banc: 0

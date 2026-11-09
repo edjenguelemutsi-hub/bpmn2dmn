@@ -25,8 +25,8 @@
       "cle": "Tache_2",
       "categorie": "candidat",
       "objet": "Valider le dossier de l'opérateur",
-      "motif": "tâche utilisateur : rien n'indique qu'une décision y est prise (pas de verbe de décision dans son nom, pas de passerelle de choix à sa suite) — est-ce une décision ?",
-      "proposition": ""
+      "motif": "tâche utilisateur : ni verbe de décision dans son nom, ni passerelle de choix à sa suite, mais son libellé est jugé décisionnel (indice sémantique : score 0.89 (seuil 0.50), proche de « Verificar la elegibilidad del solicitante » (décision, similarité 0.60)) — est-ce une décision ?",
+      "proposition": "décision (indice sémantique)"
     }
   ],
   "ecartes": [],
@@ -35,9 +35,10 @@
     "definition-etendue",
     "donnees-processus",
     "evenements-conditionnels",
+    "indice-semantique",
     "logique",
     "noms-suggeres",
     "roles-gouvernants"
   ],
-  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+logique+noms-suggeres+roles-gouvernants"
+  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+indice-semantique+logique+noms-suggeres+roles-gouvernants"
 }

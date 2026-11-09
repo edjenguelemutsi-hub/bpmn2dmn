@@ -3,10 +3,11 @@
              xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
              xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
              xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             xmlns:bpmn2dmn="https://github.com/edjenguelemutsi-hub/bpmn2dmn/trace"
              id="Definitions_Candidat_non_corrobor_"
              name="Candidat non corroboré"
              namespace="http://bpmn2dmn/genere"
-             exporter="bpmn2dmn" exporterVersion="1.0">
+             exporter="bpmn2dmn" exporterVersion="1.2.0">
   <dmndi:DMNDI>
     <dmndi:DMNDiagram id="DRD_Candidat_non_corrobor_">
     </dmndi:DMNDiagram>

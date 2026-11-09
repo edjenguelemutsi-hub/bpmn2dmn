@@ -37,6 +37,18 @@ USAGE (depuis le dossier transformateur/) :
       Liste les extensions de l'algorithme (désactivées par défaut) ;
       « transformer » et « valider » les activent avec
       --extensions nom1,nom2 (ou --extensions toutes).
+
+  python cli.py synchroniser <modele.bpmn> <drd-modifie.dmn> [-a arbitrages.json]
+                             [-o modele-mis-a-jour.bpmn] [--json rapport.json]
+      Co-évolution DMN -> BPMN : reporte sur le processus les modifications
+      faites au DRD (renommages, données, exigences, sources, règles des
+      tables), écrit le BPMN et les arbitrages mis à jour, et vérifie que la
+      transformation du BPMN obtenu redonne le DRD modifié.
+
+  python cli.py impact <ancien.dmn> <nouveau.bpmn> [-a arbitrages.json] [--json rapport.json]
+      Analyse d'impact BPMN -> DMN : ce qu'une modification du processus
+      change au DRD précédemment produit (sommets disparus ou renommés,
+      exigences invalidées, nouvelles questions à l'expert).
 """
 from __future__ import annotations
 
@@ -60,6 +72,8 @@ from bpmn2dmn.extensions import (EXTENSIONS, normaliser_extensions, texte_liste,
                                  variante)
 from bpmn2dmn.qualification import Arbitrages, VIDE
 from bpmn2dmn.registre import Registre, desactive, texte_synthese
+from bpmn2dmn import coevolution, semantique
+from bpmn2dmn.registre import empreinte
 from bpmn2dmn.validation import (comparer_a_oracle, equivalents,
                                  mesurer_decisions, verifier_dmn_serialise,
                                  verifier_invariants)
@@ -119,8 +133,18 @@ def rapport_texte(mf, mi=None) -> str:
         for aid, nom in mf.suggestions_noms.items():
             L.append("        %-12s %s" % (aid, nom))
     if mf.logique:
-        L.append("  Tables de décision squelettes (extension logique) : %d"
-                 % len(mf.logique))
+        L.append("  Tables de décision (extension logique) : %d, dont %d exécutable(s) ; "
+                 "%d règle(s), %d écrite(s) en FEEL"
+                 % (len(mf.logique),
+                    sum(1 for t in mf.logique.values() if t.get("executable")),
+                    sum(len(t.get("regles", [])) for t in mf.logique.values()),
+                    sum(t.get("regles_lues", 0) for t in mf.logique.values())))
+        for did, t in mf.logique.items():
+            L.append("        %-22s %s ; %d colonne(s) : %s"
+                     % (mf.noeuds[did].nom[:22], t.get("politique", ""),
+                        len(t.get("entrees", [])),
+                        ", ".join("%s (%s)" % (c["variable"], c["type"])
+                                  for c in t.get("entrees", []))))
     return "\n".join(L)
 
 
@@ -133,6 +157,15 @@ def rapport_json(mf) -> dict:
         r["suggestions_noms"] = dict(mf.suggestions_noms)
     if mf.logique:
         r["logique"] = {did: {"passerelle": l["passerelle"],
+                              "politique": l.get("politique", "UNIQUE"),
+                              "executable": bool(l.get("executable")),
+                              "entrees": [{"variable": c["variable"], "libelle": c["libelle"],
+                                           "type": c["type"], "source": c["source"]}
+                                          for c in l.get("entrees", [])],
+                              "regles": [{"branche": x["branche"], "cellules": x["cellules"],
+                                          "lue": x["lue"], "defaut": x["defaut"],
+                                          "condition": x["condition"]}
+                                         for x in l.get("regles", [])],
                               "branches": [b["sortie"] for b in l["branches"]]}
                         for did, l in mf.logique.items()}
     return r
@@ -201,8 +234,12 @@ def _enregistrer(registre, mi, mf, contexte, chemin, arb, dmn, durees):
 
 # les commandes
 def _extensions_demandees(args):
-    """Les extensions de l'option --extensions, ou une erreur lisible."""
-    return normaliser_extensions(getattr(args, "extensions", None))
+    """Les extensions de l'option --extensions, ou une erreur lisible ;
+    l'indice sémantique exige le modèle de langue installé."""
+    ext = normaliser_extensions(getattr(args, "extensions", None))
+    if "indice-semantique" in ext and not semantique.disponible():
+        raise ValueError(semantique.motif_indisponible())
+    return ext
 
 
 def cmd_transformer(args) -> int:
@@ -221,8 +258,15 @@ def cmd_transformer(args) -> int:
     t2 = time.perf_counter()
     sortie = args.sortie or os.path.splitext(args.modele)[0] + ".drd.dmn"
     _ecrire(sortie, dmn)
+    with open(args.modele, encoding="utf-8", errors="replace") as f:
+        texte_bpmn = f.read()
+    chemin_trace = os.path.splitext(sortie)[0] + ".trace.json"
+    _ecrire(chemin_trace, json.dumps(coevolution.fichier_trace(
+        mi, mf, args.modele, sortie, empreinte(texte_bpmn), arb),
+        ensure_ascii=False, indent=2))
     print(rapport_texte(mf, mi))
     print("\n  DRD écrit : %s" % sortie)
+    print("  Trace (sommets et exigences -> éléments BPMN) : %s" % chemin_trace)
     problemes = verifier_dmn_serialise(dmn, mf)
     print("  Relecture du DMN produit ..... %s"
           % ("conforme" if not problemes else "problèmes : "
@@ -417,7 +461,97 @@ def cmd_campagne(args) -> int:
 
 def cmd_extensions(args) -> int:
     print(texte_liste())
+    if not semantique.disponible():
+        print("\n  " + semantique.motif_indisponible())
     return 0
+
+
+def _lire_texte(chemin: str) -> str:
+    with open(chemin, encoding="utf-8", errors="replace") as f:
+        return f.read()
+
+
+def rapport_synchronisation_texte(rapport) -> str:
+    L = ["-" * 74, " CO-ÉVOLUTION DMN -> BPMN", "-" * 74]
+    for c in rapport.changements:
+        L.append("  [%s] %-22s %s" % ("ok" if c.applique else "--", c.genre, c.detail))
+        if c.motif:
+            L.append("        motif : %s" % c.motif)
+    L.append("  Modifications : %d appliquée(s), %d non appliquée(s)"
+             % (rapport.resume.get("appliques", 0),
+                len(rapport.changements) - rapport.resume.get("appliques", 0)))
+    L.append("  Cohérence T(BPMN mis à jour) = DRD modifié : %s"
+             % ("vérifiée" if rapport.coherent else "écart — " + " ; ".join(rapport.ecarts)))
+    if rapport.tables_coherentes is not None:
+        L.append("  Tables de décision : %s"
+                 % ("règles retrouvées depuis les conditions écrites"
+                    if rapport.tables_coherentes else "écart — " + " ; ".join(rapport.ecarts_tables)))
+    return "\n".join(L)
+
+
+def cmd_synchroniser(args) -> int:
+    try:
+        ext = _extensions_demandees(args)
+        arb = Arbitrages.depuis_json(args.arbitrages) if args.arbitrages else VIDE
+        bpmn = _lire_texte(args.modele)
+        dmn = _lire_texte(args.drd)
+        bpmn2, arb2, rapport = coevolution.synchroniser(bpmn, dmn, arb, ext)
+    except (ErreurParseur, ErreurDMN, OSError, ValueError, TypeError) as e:
+        print("ERREUR : %s" % e)
+        return 1
+    sortie = args.sortie or os.path.splitext(args.modele)[0] + ".synchronise.bpmn"
+    _ecrire(sortie, bpmn2)
+    chemin_arb = os.path.splitext(sortie)[0] + ".arbitrages.json"
+    _ecrire(chemin_arb, json.dumps(arb2, ensure_ascii=False, indent=2))
+    print(rapport_synchronisation_texte(rapport))
+    print("\n  BPMN mis à jour : %s" % sortie)
+    print("  Arbitrages mis à jour : %s" % chemin_arb)
+    if args.json:
+        _ecrire(args.json, json.dumps(rapport.as_dict(), ensure_ascii=False, indent=2))
+        print("  Rapport JSON : %s" % args.json)
+    return 0 if rapport.coherent else 2
+
+
+def rapport_impact_texte(r: dict) -> str:
+    L = ["-" * 74, " ANALYSE D'IMPACT BPMN -> DMN", "-" * 74]
+    L.append("  DRD identique au précédent : %s" % ("oui" if r["identique"] else "non"))
+    for cle, titre in (("sommets_disparus", "Sommets disparus"),
+                       ("sommets_renommes", "Sommets renommés"),
+                       ("sommets_nouveaux", "Sommets nouveaux")):
+        if r[cle]:
+            L.append("  %s (%d)" % (titre, len(r[cle])))
+            for x in r[cle]:
+                L.append("        %-16s %s%s" % (x["type"], x["nom"],
+                                                 " (était « %s »)" % x["ancien_nom"]
+                                                 if x.get("ancien_nom") else ""))
+    if r["exigences_invalidees"]:
+        L.append("  Exigences invalidées (%d)" % len(r["exigences_invalidees"]))
+        for x in r["exigences_invalidees"]:
+            L.append("        %s -> %s  [%s] %s" % (x["de"], x["vers"], x["pattern"], x["motif"]))
+    if r["exigences_nouvelles"]:
+        L.append("  Exigences nouvelles (%d)" % len(r["exigences_nouvelles"]))
+        for x in r["exigences_nouvelles"]:
+            L.append("        %s -> %s  [%s]" % (x["de"], x["vers"], x["pattern"]))
+    for t in r["tables"]:
+        L.append("  Table « %s » : %s" % (t["decision"], t["etat"]))
+    L.append("  Points soumis à l'expert sur le nouveau processus : %d"
+             % len(r["points_expert_nouveaux"]))
+    return "\n".join(L)
+
+
+def cmd_impact(args) -> int:
+    try:
+        ext = _extensions_demandees(args)
+        arb = Arbitrages.depuis_json(args.arbitrages) if args.arbitrages else VIDE
+        r = coevolution.impact(_lire_texte(args.drd), _lire_texte(args.modele), arb, ext)
+    except (ErreurParseur, ErreurDMN, OSError, ValueError, TypeError) as e:
+        print("ERREUR : %s" % e)
+        return 1
+    print(rapport_impact_texte(r))
+    if args.json:
+        _ecrire(args.json, json.dumps(r, ensure_ascii=False, indent=2))
+        print("  Rapport JSON : %s" % args.json)
+    return 0 if r["identique"] else 2
 
 
 def cmd_registre(args) -> int:
@@ -492,6 +626,24 @@ def principal(argv=None) -> int:
     e = sous.add_parser("extensions",
                         help="lister les extensions de l'algorithme")
     e.set_defaults(fonc=cmd_extensions)
+
+    sy = sous.add_parser("synchroniser", help="co-évolution : DRD modifié -> BPMN mis à jour")
+    sy.add_argument("modele", help="le fichier BPMN d'origine")
+    sy.add_argument("drd", help="le fichier DMN modifié")
+    sy.add_argument("-a", "--arbitrages")
+    sy.add_argument("-o", "--sortie")
+    sy.add_argument("--json", help="écrire le rapport JSON")
+    sy.add_argument("--extensions", metavar="NOMS",
+                    help="extensions actives lors de l'extraction d'origine")
+    sy.set_defaults(fonc=cmd_synchroniser)
+
+    im = sous.add_parser("impact", help="analyse d'impact : BPMN modifié -> DRD précédent")
+    im.add_argument("drd", help="le fichier DMN précédemment produit")
+    im.add_argument("modele", help="le fichier BPMN modifié")
+    im.add_argument("-a", "--arbitrages")
+    im.add_argument("--json", help="écrire le rapport JSON")
+    im.add_argument("--extensions", metavar="NOMS")
+    im.set_defaults(fonc=cmd_impact)
 
     g = sous.add_parser("generer", help="générer la banque de tests")
     g.add_argument("n", type=int)

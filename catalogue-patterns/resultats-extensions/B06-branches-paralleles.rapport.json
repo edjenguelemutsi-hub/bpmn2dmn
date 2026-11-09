@@ -13,26 +13,26 @@
   },
   "decisions": [
     {
-      "id": "D1",
+      "id": "Decision_Tache_3",
       "nom": "Évaluer la garantie financière",
       "origine": "Tache_3",
-      "motif": "verbe décisionnel dans le libellé"
+      "motif": "verbe décisionnel dans le libellé ; indice sémantique : score 0.92 (seuil 0.50), proche de « Assess the risk level of the transaction » (décision, similarité 0.68)"
     },
     {
-      "id": "D2",
+      "id": "Decision_Tache_9",
       "nom": "Statuer sur la demande",
       "origine": "Tache_9",
-      "motif": "verbe décisionnel dans le libellé"
+      "motif": "verbe décisionnel dans le libellé ; indice sémantique : score 0.61 (seuil 0.50), proche de « Apprécier le bien-fondé de la demande » (décision, similarité 0.88)"
     }
   ],
   "inputs": [
     {
-      "id": "I1",
+      "id": "InputData_Donnee_5",
       "nom": "Garantie proposée",
       "pattern": "P2"
     },
     {
-      "id": "I2",
+      "id": "InputData_Donnee_7",
       "nom": "Avis financier",
       "pattern": "P2"
     }
@@ -41,12 +41,12 @@
   "bkms": [],
   "IR": [
     [
-      "I1",
-      "D1"
+      "InputData_Donnee_5",
+      "Decision_Tache_3"
     ],
     [
-      "I2",
-      "D2"
+      "InputData_Donnee_7",
+      "Decision_Tache_9"
     ]
   ],
   "KR": [],
@@ -75,9 +75,10 @@
     "definition-etendue",
     "donnees-processus",
     "evenements-conditionnels",
+    "indice-semantique",
     "logique",
     "noms-suggeres",
     "roles-gouvernants"
   ],
-  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+logique+noms-suggeres+roles-gouvernants"
+  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+indice-semantique+logique+noms-suggeres+roles-gouvernants"
 }

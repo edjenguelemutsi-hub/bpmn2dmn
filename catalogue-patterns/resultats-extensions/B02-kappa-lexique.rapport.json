@@ -13,20 +13,20 @@
   },
   "decisions": [
     {
-      "id": "D1",
+      "id": "Decision_Tache_2",
       "nom": "Évaluer le niveau de risque de l'opérateur",
       "origine": "Tache_2",
-      "motif": "verbe décisionnel dans le libellé"
+      "motif": "verbe décisionnel dans le libellé ; indice sémantique : score 0.94 (seuil 0.50), proche de « Assess the risk level of the transaction » (décision, similarité 0.72)"
     }
   ],
   "inputs": [
     {
-      "id": "I1",
+      "id": "InputData_Donnee_4",
       "nom": "Dossier de l'opérateur",
       "pattern": "P2"
     },
     {
-      "id": "I2",
+      "id": "InputData_Donnee_6",
       "nom": "Historique des contrôles",
       "pattern": "P2"
     }
@@ -35,12 +35,12 @@
   "bkms": [],
   "IR": [
     [
-      "I1",
-      "D1"
+      "InputData_Donnee_4",
+      "Decision_Tache_2"
     ],
     [
-      "I2",
-      "D1"
+      "InputData_Donnee_6",
+      "Decision_Tache_2"
     ]
   ],
   "KR": [],
@@ -54,9 +54,10 @@
     "definition-etendue",
     "donnees-processus",
     "evenements-conditionnels",
+    "indice-semantique",
     "logique",
     "noms-suggeres",
     "roles-gouvernants"
   ],
-  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+logique+noms-suggeres+roles-gouvernants"
+  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+indice-semantique+logique+noms-suggeres+roles-gouvernants"
 }

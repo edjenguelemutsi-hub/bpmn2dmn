@@ -24,19 +24,26 @@ from bpmn2dmn.inverse import inverser, parser_dmn
 from bpmn2dmn.qualification import Arbitrages, indice_gouvernance
 from bpmn2dmn.extensions import (EXTENSIONS, TOUTES, normaliser_extensions,
                                  variante)
+from bpmn2dmn import semantique
+
+# sans le modèle de langue (non versionné), l'indice sémantique est écarté
+DISPONIBLES = TOUTES if semantique.disponible() else TOUTES - {"indice-semantique"}
 from bpmn2dmn.validation import (equivalents, verifier_dmn_serialise,
                                  verifier_invariants)
 
-# empreintes des sorties de référence, relevées le 8 septembre 2026 avant
-# l'introduction des extensions : l'algorithme sans extension doit les
-# redonner à l'identique
+# empreintes des sorties de référence : relevées le 8 septembre 2026 avant
+# l'introduction des extensions, puis re-relevées le 9 novembre 2026 au
+# passage aux identifiants stables et à la trace de la version 1.2 (le texte
+# DMN change, pas le DRD : tests/test_v4.py vérifie l'équivalence des sommets,
+# des arcs et des points experts avec les sorties publiées de la version 1.0).
+# L'algorithme sans extension doit les redonner à l'identique.
 EMPREINTES_REFERENCE = {
     "corpus/fimex.bpmn":
-        "82c38d67359745c64ef273291d6da691cafae448a48a0962fd49d162c3374997",
+        "36e3c188455bcba5dc5fc39129e40120aa6f8bbcf8b4302a090c79fe388b51fb",
     "corpus/copd.bpmn":
-        "67d1ec5ee047c020fb5ba7968e59ffdce2366f732509e18841d5fc2bde1b81b4",
+        "486774ee4fdc6ba27f10fc6eb2eb86ca2140c3a81ed0164964f212346d39bb15",
     "jeux-test-camunda/01-credit-bancaire.bpmn":
-        "b77972258ca89b7642b07c8bf6b8022522494a81d6898c11cb36a720eb42b5fb",
+        "e1b80e3f31e11005ec888c2bee519763ad5dd3ad4571c0e9807d07e9ddf90629",
 }
 
 
@@ -57,7 +64,11 @@ def _flux(s, t, nom="", condition=""):
 
 
 def _empreinte(mf) -> str:
-    r = {"dmn": serialiser_dmn(mf), "arcs": mf.arcs,
+    # le numéro de version écrit dans le DMN (exporterVersion) ne fait pas
+    # partie de la sortie de référence
+    import re as _re
+    dmn = _re.sub(r' exporterVersion="[^"]*"', "", serialiser_dmn(mf))
+    r = {"dmn": dmn, "arcs": mf.arcs,
          "noeuds": [(n.id, n.type, n.nom, n.pattern) for n in mf.noeuds.values()],
          "pe": [p.as_tuple() for p in mf.a_confirmer],
          "ec": [p.as_tuple() for p in mf.ecartes]}
@@ -66,8 +77,8 @@ def _empreinte(mf) -> str:
 
 
 class TestRegistreDesExtensions(unittest.TestCase):
-    def test_sept_extensions_nommees(self):
-        self.assertEqual(len(EXTENSIONS), 7)
+    def test_huit_extensions_nommees(self):
+        self.assertEqual(len(EXTENSIONS), 8)
         for nom in EXTENSIONS:
             self.assertRegex(nom, r"^[a-z-]+$")
         self.assertEqual(normaliser_extensions("logique, noms-suggeres"),
@@ -122,7 +133,7 @@ class TestDefinitionEtendue(unittest.TestCase):
                          extensions={"definition-etendue"})
         self.assertEqual([d.nom for d in mf.decisions],
                          ["Contrôler la cohérence du dossier"])
-        self.assertIn("definition-etendue", mf.motifs_corroboration["D1"])
+        self.assertIn("definition-etendue", mf.motifs_corroboration["Decision_t1"])
         candidats = [p for p in mf.a_confirmer if p.categorie == "candidat"]
         self.assertEqual([p.objet for p in candidats], ["Instruire la demande"])
         self.assertIn("hors de la définition", candidats[0].motif)
@@ -298,10 +309,10 @@ class TestNomsSuggeresEtLogique(unittest.TestCase):
     def test_table_de_decision_squelette(self):
         mi = parser_bpmn(self.MODELE, est_texte=True)
         mf = transformer(mi, extensions={"logique"})
-        self.assertEqual(mf.logique["D1"]["branches"][0]["sortie"], "complet")
-        self.assertEqual(mf.logique["D1"]["branches"][1]["sortie"], "incomplet")
+        self.assertEqual(mf.logique["Decision_t"]["branches"][0]["sortie"], "complet")
+        self.assertEqual(mf.logique["Decision_t"]["branches"][1]["sortie"], "incomplet")
         dmn = serialiser_dmn(mf)
-        self.assertIn('<decisionTable id="D1_table" hitPolicy="UNIQUE">', dmn)
+        self.assertIn('<decisionTable id="Decision_t_table" hitPolicy="UNIQUE">', dmn)
         self.assertIn("dossierConstitue", dmn)
         self.assertIn('<text>"complet","incomplet"</text>', dmn)
         racine = ET.fromstring(dmn)
@@ -309,7 +320,10 @@ class TestNomsSuggeresEtLogique(unittest.TestCase):
         table = racine.find(".//%sdecisionTable" % ns)
         self.assertIsNotNone(table)
         self.assertEqual(len(table.findall("%srule" % ns)), 2)
-        self.assertEqual(len(table.findall("%sinput" % ns)), 1)
+        # deux colonnes : l'exigence d'information et la variable « complet »
+        # lue dans la condition du flux (version 1.2 : cellules FEEL)
+        self.assertEqual(len(table.findall("%sinput" % ns)), 2)
+        self.assertIn("<text>true</text>", dmn)
         # le DRD est inchangé : mêmes sommets et arcs que la référence,
         # relecture du DMN et aller-retour conformes
         ref = transformer(mi)
@@ -329,7 +343,7 @@ class TestNomsSuggeresEtLogique(unittest.TestCase):
         xsd = etree.XMLSchema(etree.parse(os.path.join(RACINE, "build-xsd", "dmn",
                                                        "DMN13.xsd")))
         mi = parser_bpmn(self.MODELE, est_texte=True)
-        for ext in ({"logique"}, TOUTES):
+        for ext in ({"logique"}, DISPONIBLES):
             dmn = serialiser_dmn(transformer(mi, extensions=ext))
             self.assertTrue(xsd.validate(etree.fromstring(dmn.encode("utf-8"))),
                             str(xsd.error_log[:2]))
@@ -346,7 +360,8 @@ class TestIntegration(unittest.TestCase):
         chemin = os.path.join(RACINE, "corpus", "credit-bancaire.bpmn")
         with redirect_stdout(io.StringIO()) as tampon:
             code = cli.principal(["transformer", chemin, "-o", sortie,
-                                  "--extensions", "toutes", "--registre", dossier])
+                                  "--extensions", ",".join(sorted(DISPONIBLES)),
+                                  "--registre", dossier])
         self.assertEqual(code, 0)
         self.assertIn("Extensions actives", tampon.getvalue())
         with open(sortie, encoding="utf-8") as f:
@@ -398,7 +413,7 @@ class TestIntegration(unittest.TestCase):
                               "extensions": ["inconnue"]})
             self.assertEqual(statut, 422)
             with ouvreur.open("http://127.0.0.1:%d/api/extensions" % port, timeout=30) as r:
-                self.assertEqual(len(js.loads(r.read().decode("utf-8"))["extensions"]), 7)
+                self.assertEqual(len(js.loads(r.read().decode("utf-8"))["extensions"]), 8)
         finally:
             serveur.shutdown()
             serveur.server_close()

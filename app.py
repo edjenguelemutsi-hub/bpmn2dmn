@@ -16,7 +16,13 @@ API :
                                                -> {ok, dmn, rapport}
                           (rapport.experimentation : ligne ajoutée au registre ;
                            extensions : liste de noms, voir GET /api/extensions)
-  GET  /api/extensions                         -> {ok, extensions: [{nom, phrase}]}
+  GET  /api/extensions                         -> {ok, extensions: [{nom, phrase,
+                                                   disponible, motif}]}
+  POST /api/synchroniser  {bpmn, dmn, arbitrages?, extensions?}
+                                               -> {ok, bpmn, arbitrages, rapport}
+                          (co-évolution : le DRD modifié reporté sur le BPMN)
+  POST /api/impact        {dmn, bpmn, arbitrages?, extensions?} -> {ok, rapport}
+                          (ce qu'un BPMN modifié change au DRD précédent)
   POST /api/inverser      {dmn}                -> {ok, bpmn, arbitrages,
                                                    aller_retour, ecarts}
   POST /api/exemple       {}                   -> {ok, bpmn}   (FIMEX)
@@ -46,6 +52,7 @@ from bpmn2dmn.qualification import Arbitrages, VIDE
 from bpmn2dmn.miseenpage import ajouter_di, possede_di
 from bpmn2dmn.registre import Registre, desactive
 from bpmn2dmn.validation import equivalents, verifier_invariants
+from bpmn2dmn import coevolution, semantique
 
 # en exécutable autonome (PyInstaller), les ressources sont dépliées
 # dans le dossier temporaire sys._MEIPASS
@@ -129,8 +136,13 @@ class Requetes(BaseHTTPRequestHandler):
         elif chemin == "/api/registre":
             self._api_registre()
         elif chemin == "/api/extensions":
+            dispo = semantique.disponible()
             self._json(200, {"ok": True, "extensions": [
-                {"nom": n, "phrase": p} for n, p in EXTENSIONS.items()]})
+                {"nom": n, "phrase": p,
+                 "disponible": dispo if n == "indice-semantique" else True,
+                 "motif": "" if n != "indice-semantique" or dispo
+                 else semantique.motif_indisponible()}
+                for n, p in EXTENSIONS.items()]})
         elif chemin.startswith("/registre/"):
             nom = os.path.basename(chemin)
             if REGISTRE is None or nom not in FICHIERS_REGISTRE:
@@ -188,6 +200,10 @@ class Requetes(BaseHTTPRequestHandler):
                 self._api_exemple()
             elif self.path == "/api/miseenpage":
                 self._api_miseenpage(donnees)
+            elif self.path == "/api/synchroniser":
+                self._api_synchroniser(donnees)
+            elif self.path == "/api/impact":
+                self._api_impact(donnees)
             else:
                 self.send_error(404)
         except Exception as e:            # jamais de connexion coupée :
@@ -234,7 +250,7 @@ class Requetes(BaseHTTPRequestHandler):
             return
         t1 = time.perf_counter()
         try:
-            ext = normaliser_extensions(donnees.get("extensions") or [])
+            ext = self._extensions(donnees)
         except (ValueError, TypeError) as e:
             self._json(422, {"ok": False, "erreur": "extensions : %s" % e})
             return
@@ -260,6 +276,54 @@ class Requetes(BaseHTTPRequestHandler):
             {"analyse": (t1 - t0) * 1000, "transformation": (t2 - t1) * 1000,
              "serialisation": (t3 - t2) * 1000, "totale": (t3 - t0) * 1000})
         self._json(200, {"ok": True, "dmn": dmn, "rapport": rapport})
+
+    @staticmethod
+    def _extensions(donnees):
+        ext = normaliser_extensions(donnees.get("extensions") or [])
+        if "indice-semantique" in ext and not semantique.disponible():
+            raise ValueError(semantique.motif_indisponible())
+        return ext
+
+    @staticmethod
+    def _arbitrages(donnees):
+        if not donnees.get("arbitrages"):
+            return VIDE
+        if not isinstance(donnees["arbitrages"], dict):
+            raise TypeError("arbitrages : un objet JSON est attendu")
+        return Arbitrages.depuis_json(donnees["arbitrages"])
+
+    def _api_synchroniser(self, donnees):
+        bpmn = self._champ_texte(donnees, "bpmn")
+        dmn = self._champ_texte(donnees, "dmn")
+        if bpmn is None or dmn is None:
+            self._json(400, {"ok": False, "erreur": "le BPMN d'origine (champ « bpmn ») et "
+                                                    "le DMN modifié (champ « dmn ») sont attendus"})
+            return
+        try:
+            ext = self._extensions(donnees)
+            arb = self._arbitrages(donnees)
+            bpmn2, arb2, rapport = coevolution.synchroniser(bpmn, dmn, arb, ext)
+        except (ErreurParseur, ErreurDMN, ValueError, TypeError) as e:
+            self._json(422, {"ok": False, "erreur": str(e)})
+            return
+        self._json(200, {"ok": True, "bpmn": bpmn2, "arbitrages": arb2,
+                         "rapport": rapport.as_dict()})
+
+    def _api_impact(self, donnees):
+        bpmn = self._champ_texte(donnees, "bpmn")
+        dmn = self._champ_texte(donnees, "dmn")
+        if bpmn is None or dmn is None:
+            self._json(400, {"ok": False, "erreur": "le DMN précédent (champ « dmn ») et le "
+                                                    "BPMN modifié (champ « bpmn ») sont attendus"})
+            return
+        try:
+            ext = self._extensions(donnees)
+            arb = self._arbitrages(donnees)
+            rapport = coevolution.impact(dmn, bpmn, arb, ext)
+        except (ErreurParseur, ErreurDMN, ValueError, TypeError) as e:
+            self._json(422, {"ok": False, "erreur": str(e)})
+            return
+        self._json(200, {"ok": True, "rapport": rapport})
 
     @staticmethod
     def _consigner(mi, mf, texte, arb, dmn, rapport, nom, durees):

@@ -13,28 +13,28 @@
   },
   "decisions": [
     {
-      "id": "D1",
+      "id": "Decision_Tache_2",
       "nom": "Vérifier la recevabilité de la demande",
       "origine": "Tache_2",
-      "motif": "verbe décisionnel dans le libellé"
+      "motif": "verbe décisionnel dans le libellé ; indice sémantique : score 0.87 (seuil 0.50), proche de « Apprécier le bien-fondé de la demande » (décision, similarité 0.80)"
     },
     {
-      "id": "D2",
+      "id": "Decision_Tache_6",
       "nom": "Statuer sur l'agrément",
       "origine": "Tache_6",
-      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé ; mais indice sémantique : score 0.36 (seuil 0.50), proche de « Imprimer l'étiquette du colis » (non décision, similarité 0.48)"
     }
   ],
   "inputs": [
     {
-      "id": "I1",
+      "id": "InputData_Donnee_4",
       "nom": "Demande d'agrément",
       "pattern": "P2"
     }
   ],
   "sources": [
     {
-      "id": "K1",
+      "id": "KnowledgeSource_Annotation_17",
       "nom": "Réglementation FIMEX en vigueur",
       "pattern": "P6"
     }
@@ -42,23 +42,23 @@
   "bkms": [],
   "IR": [
     [
-      "I1",
-      "D1"
+      "InputData_Donnee_4",
+      "Decision_Tache_2"
     ],
     [
-      "I1",
-      "D2"
+      "InputData_Donnee_4",
+      "Decision_Tache_6"
     ]
   ],
   "KR": [],
   "AR": [
     [
-      "K1",
-      "D1"
+      "KnowledgeSource_Annotation_17",
+      "Decision_Tache_2"
     ],
     [
-      "K1",
-      "D2"
+      "KnowledgeSource_Annotation_17",
+      "Decision_Tache_6"
     ]
   ],
   "acyclique": true,
@@ -78,14 +78,51 @@
     "definition-etendue",
     "donnees-processus",
     "evenements-conditionnels",
+    "indice-semantique",
     "logique",
     "noms-suggeres",
     "roles-gouvernants"
   ],
-  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+logique+noms-suggeres+roles-gouvernants",
+  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+indice-semantique+logique+noms-suggeres+roles-gouvernants",
   "logique": {
-    "D2": {
+    "Decision_Tache_6": {
       "passerelle": "Agrément accordé ?",
+      "politique": "UNIQUE",
+      "executable": true,
+      "entrees": [
+        {
+          "variable": "demandeDAgrement",
+          "libelle": "Demande d'agrément",
+          "type": "string",
+          "source": "exigence"
+        },
+        {
+          "variable": "agrementAccorde",
+          "libelle": "Agrément accordé ?",
+          "type": "boolean",
+          "source": "question"
+        }
+      ],
+      "regles": [
+        {
+          "branche": "oui",
+          "cellules": {
+            "agrementAccorde": "true"
+          },
+          "lue": true,
+          "defaut": false,
+          "condition": ""
+        },
+        {
+          "branche": "non",
+          "cellules": {
+            "agrementAccorde": "false"
+          },
+          "lue": true,
+          "defaut": false,
+          "condition": ""
+        }
+      ],
       "branches": [
         "oui",
         "non"

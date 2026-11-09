@@ -4,7 +4,7 @@ cff-version: 1.2.0
 message: "If you use this software, please cite it and the associated article."
 title: "bpmn2dmn: extraction of DMN decision requirements diagrams from BPMN process models"
 type: software
-abstract: "Extracts a DMN decision requirements diagram from a BPMN 2.0 process model by a formal graph transformation (six patterns) with hybrid filtering of decision candidates, checks eight invariants on the result and records every question left to the human expert."
+abstract: "Extracts a DMN decision requirements diagram from a BPMN 2.0 process model by a formal graph transformation (six patterns) with hybrid filtering of decision candidates, checks eight invariants on the result and records every question left to the human expert. Version 1.2 adds decision tables written in FEEL from the flow conditions, stable identifiers and traceability between the two models with DMN-to-BPMN synchronisation and impact analysis, an optional semantic clue computed by a light multilingual language model, and an open benchmark on more than three thousand third-party models."
 authors:
   - family-names: Edjenguele
     given-names: Francis
@@ -12,8 +12,8 @@ authors:
   - family-names: Djeumen
     given-names: Rodrigue
     affiliation: "University of Douala"
-version: 1.0.0
-date-released: "2026-10-28"
+version: 1.2.0
+date-released: "2026-11-09"
 doi: 10.5281/zenodo.23736474
 repository-code: "https://github.com/edjenguelemutsi-hub/bpmn2dmn"
 license: MIT

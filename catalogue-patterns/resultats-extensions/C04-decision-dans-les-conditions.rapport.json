@@ -1,43 +1,123 @@
 {
   "nom": "Décision encodée dans les conditions des flux",
   "resume": {
-    "decisions": 0,
-    "inputs": 0,
+    "decisions": 1,
+    "inputs": 2,
     "sources": 0,
     "bkm": 0,
-    "IR": 0,
+    "IR": 2,
     "KR": 0,
     "AR": 0,
-    "a_confirmer": 1,
+    "a_confirmer": 0,
     "ecartes": 0
   },
-  "decisions": [],
-  "inputs": [],
+  "decisions": [
+    {
+      "id": "Decision_Tache_2",
+      "nom": "Calculer le montant des droits",
+      "origine": "Tache_2",
+      "motif": "précède une passerelle exclusive ; indice sémantique : score 0.82 (seuil 0.50), proche de « Fixer le montant de l'indemnité » (décision, similarité 0.67) ; tâche de service hors de la définition de référence, retenue par l'extension « definition-etendue »"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "InputData_condition_montant",
+      "nom": "montant",
+      "pattern": "P7"
+    },
+    {
+      "id": "InputData_condition_paysARisque",
+      "nom": "paysARisque",
+      "pattern": "P7"
+    }
+  ],
   "sources": [],
   "bkms": [],
-  "IR": [],
+  "IR": [
+    [
+      "InputData_condition_montant",
+      "Decision_Tache_2"
+    ],
+    [
+      "InputData_condition_paysARisque",
+      "Decision_Tache_2"
+    ]
+  ],
   "KR": [],
   "AR": [],
   "acyclique": true,
   "invariants_violes": [],
-  "a_confirmer": [
-    {
-      "cle": "Tache_2",
-      "categorie": "candidat",
-      "objet": "Calculer le montant des droits",
-      "motif": "Tâche de service hors de la définition de référence, mais elle précède une passerelle de choix : une décision y est-elle prise ?",
-      "proposition": "décision si l'expert confirme"
-    }
-  ],
+  "a_confirmer": [],
   "ecartes": [],
   "extensions": [
     "conditions-passerelle",
     "definition-etendue",
     "donnees-processus",
     "evenements-conditionnels",
+    "indice-semantique",
     "logique",
     "noms-suggeres",
     "roles-gouvernants"
   ],
-  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+logique+noms-suggeres+roles-gouvernants"
+  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+indice-semantique+logique+noms-suggeres+roles-gouvernants",
+  "suggestions_noms": {
+    "Tache_2": "Décider si montant élevé"
+  },
+  "logique": {
+    "Decision_Tache_2": {
+      "passerelle": "Montant élevé ?",
+      "politique": "UNIQUE",
+      "executable": true,
+      "entrees": [
+        {
+          "variable": "montant",
+          "libelle": "montant",
+          "type": "number",
+          "source": "exigence"
+        },
+        {
+          "variable": "paysARisque",
+          "libelle": "paysARisque",
+          "type": "boolean",
+          "source": "exigence"
+        }
+      ],
+      "regles": [
+        {
+          "branche": "montant ≤ 5 M",
+          "cellules": {
+            "montant": "<= 5000000"
+          },
+          "lue": true,
+          "defaut": false,
+          "condition": "montant <= 5000000"
+        },
+        {
+          "branche": "non",
+          "cellules": {
+            "montant": "> 5000000",
+            "paysARisque": "false"
+          },
+          "lue": true,
+          "defaut": false,
+          "condition": "montant > 5000000 et not(paysARisque)"
+        },
+        {
+          "branche": "oui",
+          "cellules": {
+            "montant": "> 5000000",
+            "paysARisque": "true"
+          },
+          "lue": true,
+          "defaut": false,
+          "condition": "montant > 5000000 et paysARisque"
+        }
+      ],
+      "branches": [
+        "montant ≤ 5 M",
+        "non",
+        "oui"
+      ]
+    }
+  }
 }

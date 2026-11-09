@@ -13,26 +13,26 @@
   },
   "decisions": [
     {
-      "id": "D1",
+      "id": "Decision_Tache_2",
       "nom": "Vérifier la recevabilité de la demande",
       "origine": "Tache_2",
-      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé ; indice sémantique : score 0.87 (seuil 0.50), proche de « Apprécier le bien-fondé de la demande » (décision, similarité 0.80)"
     },
     {
-      "id": "D2",
+      "id": "Decision_Tache_8",
       "nom": "Évaluer le risque de l'opérateur",
       "origine": "Tache_8",
-      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé"
+      "motif": "précède une passerelle exclusive + verbe décisionnel dans le libellé ; indice sémantique : score 0.94 (seuil 0.50), proche de « Valorar el riesgo de la operación » (décision, similarité 0.73)"
     }
   ],
   "inputs": [
     {
-      "id": "I1",
+      "id": "InputData_Donnee_4",
       "nom": "Demande d'agrément",
       "pattern": "P2"
     },
     {
-      "id": "I2",
+      "id": "InputData_Donnee_10",
       "nom": "Historique des contrôles",
       "pattern": "P2"
     }
@@ -41,12 +41,12 @@
   "bkms": [],
   "IR": [
     [
-      "I1",
-      "D1"
+      "InputData_Donnee_4",
+      "Decision_Tache_2"
     ],
     [
-      "I2",
-      "D2"
+      "InputData_Donnee_10",
+      "Decision_Tache_8"
     ]
   ],
   "KR": [],
@@ -60,21 +60,94 @@
     "definition-etendue",
     "donnees-processus",
     "evenements-conditionnels",
+    "indice-semantique",
     "logique",
     "noms-suggeres",
     "roles-gouvernants"
   ],
-  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+logique+noms-suggeres+roles-gouvernants",
+  "variante": "extensions:conditions-passerelle+definition-etendue+donnees-processus+evenements-conditionnels+indice-semantique+logique+noms-suggeres+roles-gouvernants",
   "logique": {
-    "D1": {
+    "Decision_Tache_2": {
       "passerelle": "Demande recevable ?",
+      "politique": "UNIQUE",
+      "executable": true,
+      "entrees": [
+        {
+          "variable": "demandeDAgrement",
+          "libelle": "Demande d'agrément",
+          "type": "string",
+          "source": "exigence"
+        },
+        {
+          "variable": "demandeRecevable",
+          "libelle": "Demande recevable ?",
+          "type": "boolean",
+          "source": "question"
+        }
+      ],
+      "regles": [
+        {
+          "branche": "oui",
+          "cellules": {
+            "demandeRecevable": "true"
+          },
+          "lue": true,
+          "defaut": false,
+          "condition": ""
+        },
+        {
+          "branche": "non",
+          "cellules": {
+            "demandeRecevable": "false"
+          },
+          "lue": true,
+          "defaut": false,
+          "condition": ""
+        }
+      ],
       "branches": [
         "oui",
         "non"
       ]
     },
-    "D2": {
+    "Decision_Tache_8": {
       "passerelle": "Risque acceptable ?",
+      "politique": "UNIQUE",
+      "executable": true,
+      "entrees": [
+        {
+          "variable": "historiqueDesControles",
+          "libelle": "Historique des contrôles",
+          "type": "string",
+          "source": "exigence"
+        },
+        {
+          "variable": "risqueAcceptable",
+          "libelle": "Risque acceptable ?",
+          "type": "boolean",
+          "source": "question"
+        }
+      ],
+      "regles": [
+        {
+          "branche": "oui",
+          "cellules": {
+            "risqueAcceptable": "true"
+          },
+          "lue": true,
+          "defaut": false,
+          "condition": ""
+        },
+        {
+          "branche": "non",
+          "cellules": {
+            "risqueAcceptable": "false"
+          },
+          "lue": true,
+          "defaut": false,
+          "condition": ""
+        }
+      ],
       "branches": [
         "oui",
         "non"

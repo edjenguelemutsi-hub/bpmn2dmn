@@ -269,9 +269,16 @@ class Registre:
                 entete = next(csv.reader(f, delimiter=SEPARATEUR), [])
             if entete == NOMS_COLONNES:
                 nouveau = False
+            elif set(entete) <= set(NOMS_COLONNES) and entete:
+                # colonnes d'une version antérieure, toutes connues : la table
+                # est réécrite avec l'en-tête courant, les lignes existantes
+                # gardent leur numéro et leurs valeurs, les colonnes nouvelles
+                # restent vides pour elles (migration sans perte)
+                self._migrer_csv(entete)
+                nouveau = False
             else:
-                # colonnes d'une version antérieure : l'ancien fichier est
-                # conservé sous un autre nom, rien n'est perdu
+                # colonnes inconnues : l'ancien fichier est conservé sous un
+                # autre nom, rien n'est perdu
                 horodatage = datetime.now().strftime("%Y%m%d-%H%M%S")
                 os.replace(self.chemin_csv, os.path.join(
                     self.dossier, "registre-ancien-%s.csv" % horodatage))
@@ -280,6 +287,19 @@ class Registre:
             if nouveau:
                 w.writerow(NOMS_COLONNES)
             w.writerow([_valeur_csv(ligne[c]) for c in NOMS_COLONNES])
+
+    def _migrer_csv(self, entete_ancien: List[str]) -> None:
+        with open(self.chemin_csv, encoding="utf-8-sig", newline="") as f:
+            lecteur = csv.reader(f, delimiter=SEPARATEUR)
+            next(lecteur, None)
+            anciennes = [dict(zip(entete_ancien, row)) for row in lecteur if row]
+        temporaire = self.chemin_csv + ".migration"
+        with open(temporaire, "w", encoding="utf-8-sig", newline="") as f:
+            w = csv.writer(f, delimiter=SEPARATEUR, lineterminator="\n")
+            w.writerow(NOMS_COLONNES)
+            for row in anciennes:
+                w.writerow([row.get(c, "") for c in NOMS_COLONNES])
+        os.replace(temporaire, self.chemin_csv)
 
     def _conserver(self, experience: str, code: str, texte_bpmn, dmn, rapport) -> None:
         os.makedirs(self.dossier_sorties, exist_ok=True)

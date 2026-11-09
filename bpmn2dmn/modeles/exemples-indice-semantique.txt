@@ -1,0 +1,401 @@
+# Exemples d'apprentissage de l'indice sémantique de kappa.
+# Une ligne par libellé d'activité : « D<tab>libellé » pour une activité qui
+# prend une décision, « N<tab>libellé » pour une activité qui n'en prend pas.
+# Les libellés sont écrits à la main, en français, en anglais, en allemand et
+# en espagnol, dans des domaines variés ; aucun n'est repris du corpus de
+# validation ni des modèles du banc d'essai ouvert.
+#
+# ---------------------------------------------------------------- décisions
+D	Décider de la suite à donner à la réclamation
+D	Approuver la demande de congé
+D	Refuser la demande de remboursement
+D	Évaluer la demande de financement
+D	Évaluer le risque du client
+D	Apprécier la gravité de l'incident
+D	Statuer sur la recevabilité de la plainte
+D	Statuer sur la demande d'agrément
+D	Déterminer le niveau de priorité du ticket
+D	Déterminer le tarif applicable
+D	Choisir le fournisseur retenu
+D	Choisir le mode de livraison
+D	Sélectionner les candidats à convoquer
+D	Classer la demande selon son urgence
+D	Qualifier la nature de la panne
+D	Arbitrer entre les deux offres
+D	Trancher le litige entre les parties
+D	Juger de l'opportunité d'un audit
+D	Contrôler la conformité de la facture
+D	Contrôler l'éligibilité du bénéficiaire
+D	Vérifier si le client est solvable
+D	Vérifier l'admissibilité du dossier
+D	Examiner la demande de dérogation
+D	Autoriser le paiement de la facture
+D	Accorder la remise commerciale
+D	Valider ou rejeter le devis
+D	Estimer le montant de la prime
+D	Diagnostiquer la cause de l'anomalie
+D	Prioriser les interventions de maintenance
+D	Décider du renouvellement du contrat
+D	Fixer le montant de l'indemnité
+D	Affecter la demande au bon service
+D	Orienter le patient vers le service adapté
+D	Accepter ou refuser la candidature
+D	Se prononcer sur la demande de prêt
+D	Donner un avis sur le projet
+D	Noter la qualité de la prestation
+D	Évaluation de la demande de subvention
+D	Décision d'octroi de la licence
+D	Analyse de la solvabilité de l'emprunteur
+D	Expertise du dommage déclaré
+D	Instruction de la demande d'asile
+D	Décider si une inspection est nécessaire
+D	Décider du lancement de la production
+D	Approuver le plan de traitement
+D	Confirmer ou infirmer le diagnostic
+D	Décider de l'hospitalisation
+D	Évaluer la dangerosité du produit
+D	Apprécier le bien-fondé de la demande
+D	Décider du niveau de contrôle douanier
+D	Choisir le circuit de contrôle
+D	Déterminer si la marchandise est taxable
+D	Évaluer la conformité aux normes sanitaires
+D	Décider d'accorder ou non la bourse
+D	Hiérarchiser les demandes reçues
+D	Décider des suites disciplinaires
+D	Évaluer la pertinence de l'offre
+D	Approve the purchase order
+D	Approve the expense report
+D	Reject the warranty claim
+D	Evaluate the credit application
+D	Evaluate the supplier proposal
+D	Assess the damage to the vehicle
+D	Assess the patient's condition
+D	Assess the risk level of the transaction
+D	Decide whether to escalate the incident
+D	Decide on the refund request
+D	Decide if the customer is eligible for the discount
+D	Determine the insurance premium
+D	Determine the shipping priority
+D	Determine whether the order can be fulfilled
+D	Select the winning bid
+D	Select the best route
+D	Choose the appropriate treatment
+D	Classify the support request
+D	Classify the incoming document
+D	Grade the student's assignment
+D	Rank the job applicants
+D	Screen the applications
+D	Review the loan application
+D	Review the change request
+D	Judge the quality of the sample
+D	Check whether the invoice matches the order
+D	Check the eligibility of the applicant
+D	Check customer creditworthiness
+D	Verify compliance with the regulation
+D	Verify that the shipment is complete
+D	Examine the appeal
+D	Authorize the wire transfer
+D	Grant the access rights
+D	Accept or decline the offer
+D	Estimate the repair cost
+D	Diagnose the fault
+D	Prioritize the backlog items
+D	Allocate the budget to the projects
+D	Assign the case to a handler
+D	Decide on the next step
+D	Approval of the travel request
+D	Credit risk assessment
+D	Eligibility check
+D	Quality inspection of the goods
+D	Decision on the complaint
+D	Triage of the emergency patient
+D	Evaluate whether the claim is covered
+D	Decide on customs clearance
+D	Determine the tax rate
+D	Validate the request against the policy
+D	Confirm the diagnosis
+D	Decide if the goods must be inspected
+D	Score the application
+D	Rate the supplier performance
+D	Make a decision on the admission
+D	Decide whether to approve the loan
+D	Antrag prüfen
+D	Antrag genehmigen
+D	Antrag ablehnen
+D	Kreditwürdigkeit prüfen
+D	Bonität des Kunden bewerten
+D	Schaden begutachten
+D	Risiko einschätzen
+D	Über die Reklamation entscheiden
+D	Lieferanten auswählen
+D	Angebot bewerten
+D	Anspruch prüfen
+D	Rechnung freigeben
+D	Urlaubsantrag genehmigen
+D	Bewerber auswählen
+D	Priorität festlegen
+D	Zuständigkeit klären
+D	Dringlichkeit beurteilen
+D	Entscheiden ob eine Prüfung nötig ist
+D	Diagnose stellen
+D	Behandlung festlegen
+D	Zollkontrolle anordnen
+D	Prüfung der Förderfähigkeit
+D	Entscheidung über den Antrag
+D	Bewertung des Angebots
+D	Genehmigung der Bestellung
+D	Kundenanfrage einstufen
+D	Über Weiterbehandlung entscheiden
+D	Evaluar la solicitud de crédito
+D	Aprobar la solicitud
+D	Rechazar la reclamación
+D	Decidir sobre el reembolso
+D	Verificar la elegibilidad del solicitante
+D	Seleccionar al proveedor
+D	Determinar la prima del seguro
+D	Clasificar la incidencia
+D	Valorar el riesgo de la operación
+D	Comprobar si el cliente es solvente
+# ------------------------------------------------------------ non-décisions
+N	Enregistrer la réclamation du client
+N	Enregistrer la commande dans le système
+N	Saisir les coordonnées du demandeur
+N	Saisir la facture dans la comptabilité
+N	Envoyer l'accusé de réception
+N	Envoyer la facture au client
+N	Transmettre le dossier au service comptable
+N	Notifier le client de la livraison
+N	Informer le demandeur du résultat
+N	Imprimer le bon de livraison
+N	Imprimer l'étiquette du colis
+N	Archiver le dossier clos
+N	Classer les pièces dans le dossier
+N	Préparer la commande
+N	Préparer la salle de réunion
+N	Emballer les articles
+N	Expédier le colis
+N	Livrer la marchandise
+N	Réceptionner la livraison
+N	Recevoir le paiement
+N	Encaisser le règlement
+N	Payer le fournisseur
+N	Rédiger le compte rendu
+N	Rédiger le contrat
+N	Signer le contrat
+N	Numériser les pièces justificatives
+N	Scanner le document
+N	Mettre à jour la fiche client
+N	Mettre à jour le stock
+N	Créer le compte utilisateur
+N	Créer le ticket d'incident
+N	Générer le rapport mensuel
+N	Générer l'attestation
+N	Publier l'annonce
+N	Planifier la réunion
+N	Programmer le rendez-vous
+N	Convoquer le candidat
+N	Appeler le client
+N	Contacter le fournisseur
+N	Consulter l'historique du compte
+N	Consulter le dossier
+N	Lire le courrier reçu
+N	Ouvrir le dossier
+N	Clôturer le dossier
+N	Fermer le ticket
+N	Relancer le client
+N	Attendre la réponse du client
+N	Installer le logiciel
+N	Monter le meuble
+N	Nettoyer la salle
+N	Réparer la machine
+N	Remplacer la pièce défectueuse
+N	Charger le camion
+N	Transporter les colis
+N	Collecter les documents
+N	Compléter le formulaire
+N	Remplir le questionnaire
+N	Télécharger le fichier
+N	Sauvegarder les données
+N	Importer les données
+N	Exporter la liste
+N	Afficher le résultat
+N	Accueillir le visiteur
+N	Servir le repas
+N	Préparer le repas
+N	Prendre la commande
+N	Débarrasser la table
+N	Commander les fournitures
+N	Réserver le billet
+N	Confirmer la réservation par courriel
+N	Mesurer la température
+N	Peser le colis
+N	Compter les articles
+N	Calculer le total de la facture
+N	Convertir le fichier au format PDF
+N	Traduire le document
+N	Former les nouveaux employés
+N	Organiser la cérémonie
+N	Enregistrement de la demande
+N	Envoi de la confirmation
+N	Impression du reçu
+N	Archivage du dossier
+N	Saisie des données
+N	Préparation de l'expédition
+N	Notification du client
+N	Paiement de la facture
+N	Register the customer complaint
+N	Record the order in the system
+N	Enter the customer details
+N	Send the acknowledgement
+N	Send the invoice to the customer
+N	Forward the file to the accounting department
+N	Notify the customer of the delivery
+N	Inform the applicant of the outcome
+N	Print the delivery note
+N	Print the shipping label
+N	Archive the closed file
+N	File the documents
+N	Prepare the order
+N	Pack the items
+N	Ship the parcel
+N	Deliver the goods
+N	Receive the delivery
+N	Receive the payment
+N	Collect the payment
+N	Pay the supplier
+N	Write the report
+N	Draft the contract
+N	Sign the contract
+N	Scan the supporting documents
+N	Update the customer record
+N	Update the inventory
+N	Create the user account
+N	Create the incident ticket
+N	Generate the monthly report
+N	Generate the certificate
+N	Publish the announcement
+N	Schedule the meeting
+N	Book the appointment
+N	Invite the candidate
+N	Call the customer
+N	Contact the supplier
+N	Look up the account history
+N	Read the incoming mail
+N	Open the file
+N	Close the file
+N	Close the ticket
+N	Remind the customer
+N	Wait for the customer's reply
+N	Install the software
+N	Assemble the furniture
+N	Clean the room
+N	Repair the machine
+N	Replace the defective part
+N	Load the truck
+N	Transport the parcels
+N	Gather the documents
+N	Fill in the form
+N	Complete the questionnaire
+N	Download the file
+N	Back up the data
+N	Import the data
+N	Export the list
+N	Display the result
+N	Welcome the visitor
+N	Serve the meal
+N	Cook the meal
+N	Take the order
+N	Clear the table
+N	Order the supplies
+N	Book the ticket
+N	Confirm the booking by email
+N	Measure the temperature
+N	Weigh the parcel
+N	Count the items
+N	Compute the invoice total
+N	Convert the file to PDF
+N	Translate the document
+N	Train the new employees
+N	Organize the ceremony
+N	Hand over the keys
+N	Return the equipment
+N	Log the call
+N	Store the goods in the warehouse
+N	Registration of the request
+N	Sending of the confirmation
+N	Printing of the receipt
+N	Archiving of the file
+N	Data entry
+N	Preparation of the shipment
+N	Customer notification
+N	Invoice payment
+N	Reklamation erfassen
+N	Bestellung im System anlegen
+N	Kundendaten eingeben
+N	Eingangsbestätigung senden
+N	Rechnung an den Kunden schicken
+N	Akte an die Buchhaltung weiterleiten
+N	Kunden über die Lieferung informieren
+N	Lieferschein drucken
+N	Versandetikett drucken
+N	Akte archivieren
+N	Bestellung vorbereiten
+N	Artikel verpacken
+N	Paket versenden
+N	Ware liefern
+N	Lieferung annehmen
+N	Zahlung entgegennehmen
+N	Lieferanten bezahlen
+N	Bericht schreiben
+N	Vertrag unterschreiben
+N	Unterlagen einscannen
+N	Kundendaten aktualisieren
+N	Lagerbestand aktualisieren
+N	Benutzerkonto anlegen
+N	Monatsbericht erstellen
+N	Termin vereinbaren
+N	Kunden anrufen
+N	Kontohistorie einsehen
+N	Akte schließen
+N	Ticket schließen
+N	Kunden erinnern
+N	Auf Antwort warten
+N	Software installieren
+N	Maschine reparieren
+N	Lkw beladen
+N	Formular ausfüllen
+N	Datei herunterladen
+N	Daten sichern
+N	Besucher empfangen
+N	Essen servieren
+N	Essen kochen
+N	Bestellung aufnehmen
+N	Tisch abräumen
+N	Material bestellen
+N	Ticket buchen
+N	Temperatur messen
+N	Paket wiegen
+N	Rechnungsbetrag berechnen
+N	Dokument übersetzen
+N	Mitarbeiter schulen
+N	Schlüssel übergeben
+N	Erfassung der Anfrage
+N	Versand der Bestätigung
+N	Druck der Quittung
+N	Archivierung der Akte
+N	Registrar la reclamación
+N	Enviar la factura al cliente
+N	Imprimir la etiqueta de envío
+N	Archivar el expediente
+N	Preparar el pedido
+N	Empaquetar los artículos
+N	Enviar el paquete
+N	Recibir el pago
+N	Redactar el informe
+N	Actualizar los datos del cliente
+N	Programar la reunión
+N	Llamar al cliente
+N	Cerrar el expediente
+N	Instalar el programa
+N	Rellenar el formulario
+N	Servir la comida

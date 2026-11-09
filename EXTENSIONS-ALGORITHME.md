@@ -3,12 +3,17 @@
 Le catalogue de patterns (`catalogue-patterns/`) établit les limites de
 l'algorithme de référence tel qu'il est défini : ce qu'il ne voit pas (famille C) et
 ce qu'il remet à l'expert (points d'arbitrage des familles A et B). Ce
-document décrit les sept améliorations qui en découlent. Chacune est une
+document décrit les huit améliorations qui en découlent (sept à la version
+1.0, une huitième, l'indice sémantique, à la version 1.2, qui réécrit aussi
+la septième). Chacune est une
 **extension activable** : sans extension, l'algorithme de référence
 s'exécute et ses sorties sont strictement celles d'avant (empreintes
 identiques sur le corpus, les jeux Camunda, FIMEX avec et sans arbitrage,
 le cas BPCO, le catalogue et 300 modèles générés ; test
-`tests/test_extensions.py`, classe `TestSansExtensionReference`). La
+`tests/test_extensions.py`, classe `TestSansExtensionReference` ; depuis la
+version 1.2 les identifiants des sommets sont dérivés du modèle source et le
+DMN porte une trace, ce qui change le texte du fichier mais pas le DRD :
+`tests/test_v4.py` vérifie l'équivalence avec les sorties publiées). La
 variante retenue, « reference » ou la liste des extensions actives, est
 consignée dans la colonne `variante` du registre des expérimentations, ce
 qui permet de comparer les variantes sur une même table.
@@ -174,37 +179,129 @@ l'application).
 recevable »…) ; les passerelles de FIMEX n'ont pas de libellé, aucune
 suggestion.
 
-## 7. `logique` — vers le déploiement : la table de décision squelette
+## 7. `logique` — la table de décision écrite depuis les conditions des flux
 
 **Limite d'origine** : le niveau produit est le DRD ; la logique interne
-des décisions reste à écrire dans Camunda Modeler. Le schéma de
-construction prévoit l'enchaînement P1 → P2 → P3 → passerelle → Camunda
-(« déployer »).
+des décisions (les règles « si... alors... ») restait à écrire dans Camunda
+Modeler. La version 1.0 produisait une table squelette (entrées, valeurs de
+sortie, cellules à compléter) ; les encadreurs ont demandé que l'algorithme
+lise les conditions écrites sur les flux de séquence sortants des passerelles
+pour ébaucher les règles. C'est ce que fait la version 1.2.
 
-**Règle** : pour a ∈ DA* suivie d'une passerelle exclusive ou inclusive
-g, la décision δ(a) reçoit dans le DMN une `decisionTable` (politique
-UNIQUE) dont les entrées sont les données d'entrée et décisions reliées à
-δ(a) par une exigence d'information (`typeRef` string, expression = un
-nom de variable dérivé du libellé), dont la sortie porte le nom de la
-passerelle et les valeurs admises = libellés des flux sortants de g (à
-défaut le nom du nœud cible), et une règle par branche : entrées « - » à
-compléter, sortie = le libellé de la branche, la condition du flux
-recopiée en description de la règle quand elle existe. Le DRD (V_f, E_f)
-est strictement inchangé ; la table est un squelette, les conditions
-restent à écrire par le modélisateur (c'est pourquoi les règles se
-recouvrent tant qu'elles ne sont pas remplies).
+**Règle** : pour a ∈ DA* suivie d'une passerelle exclusive ou inclusive g
+(en cascade : un flux dont la cible est une autre passerelle de choix sans
+activité intermédiaire est déplié, la branche terminale portant la
+conjonction des conditions rencontrées), la décision δ(a) reçoit dans le DMN
+une `decisionTable` :
 
-**Mise en œuvre** : `_Construction.preparer_logique` (branches) et
-`serialiseur._table_de_decision`. Le DMN produit reste conforme au XSD DMN
-1.3 (`outils/valider_xsd.py` valide désormais aussi les corpus avec toutes
-les extensions : 174 documents) et dmn-js ouvre chaque table
-(`tests/fabriquer_page_rendu_extensions.py`, rendu headless
-« RENDU-OK … vues=drd,decisionTable,… »). L'inverse T⁻¹ ignore la table.
+- **entrées** : les données d'entrée et décisions reliées à δ(a) par une
+  exigence d'information (une colonne chacune, variable FEEL dérivée du
+  libellé), puis une colonne par variable lue dans les conditions des flux
+  et qui ne correspond à aucune exigence (une variable arbitrée par P7 est
+  rattachée au nœud qu'elle a créé) ; le type de la colonne (`number`,
+  `boolean`, `string`) vient des littéraux comparés ;
+- **sortie** : le verdict, nommé d'après la passerelle, dont les valeurs
+  admises sont les libellés des branches terminales (à défaut le nom du
+  nœud cible) ;
+- **règles** : une par branche, ou une par terme quand la condition est une
+  disjonction ; chaque cellule porte le test unaire FEEL tiré de la condition
+  (`> 5000000`, `"CM"`, `true`, `[18..65)`, `not("A", "B")`) ; une condition
+  non lue laisse ses cellules à compléter (`-`) et reste en description de
+  la règle ; le flux par défaut (`default` de la passerelle) devient une
+  dernière règle sans condition, la politique passant de `UNIQUE` à `FIRST` ;
+- **sans aucune condition**, une passerelle qui pose une question fermée
+  (branches oui/non, yes/no, ja/nein) donne une colonne booléenne nommée
+  d'après la question, avec `true` et `false` en cellules ;
+- la table est dite **exécutable** quand chaque règle est écrite ou couverte
+  par le flux par défaut : un moteur DMN peut alors l'évaluer.
 
-**Effet** : 27 des 34 patterns du catalogue reçoivent une table
-squelette (ceux dont la décision est suivie d'une passerelle) ; FIMEX en
-reçoit deux (conformité : incomplet / non conforme / conforme ; signature :
-accordée / réexamen).
+Le module `bpmn2dmn/feel.py` lit le sous-ensemble commun à FEEL, au JUEL de
+Camunda (`${...}`), à JavaScript et à Groovy : comparaisons d'une variable
+à un littéral (nombre, chaîne, booléen), variables booléennes nues,
+négation, conjonction, disjonction, parenthèses. Tout ce qui sort de ce
+sous-ensemble (appel de fonction, arithmétique, comparaison de deux
+variables) rend la condition « non lue » : rien n'est deviné. Le DRD
+(V_f, E_f) est strictement inchangé.
+
+**Mise en œuvre** : `transformation._TableDecision` (branches en cascade,
+colonnes, règles), `feel.analyser` et `feel.test_unaire`,
+`serialiseur._table_de_decision` ; le parseur relève les identifiants des
+flux (`mi.ids_flux`) et les flux par défaut (`mi.flux_defaut`). La table est
+relue par `inverse.parser_dmn` (co-évolution : ses règles, modifiées dans le
+DRD, sont reportées en conditions FEEL sur les flux ; voir
+`TRACABILITE-COEVOLUTION.md`). Le DMN produit reste conforme au XSD DMN 1.3
+(`outils/valider_xsd.py`) et dmn-js ouvre chaque table. L'inverse T⁻¹
+ignore la table pour reconstruire le squelette.
+
+**Effet** : sur le catalogue, 30 tables, 61 règles dont 59 écrites en FEEL,
+29 tables exécutables (les passerelles du catalogue posent des questions
+fermées) ; C04, le cas des conditions écrites, donne une table à trois
+règles et deux colonnes typées (`montant` : number, `paysARisque` :
+boolean), exécutable. Sur le corpus de validation, dont les passerelles
+n'ont ni condition ni libellé oui/non, 36 tables et 74 règles, dont 4 en
+FEEL : les tables y restent à compléter, ce que le rapport dit.
+
+## 8. `indice-semantique` — un troisième indice pour κ, lu par un modèle de langue
+
+**Limite d'origine** : le lexique Λ est une liste fermée de verbes
+français et anglais, réglée à la lumière de FIMEX et de la BPCO ; un
+libellé dans une autre langue ou avec un verbe absent de la liste n'a que
+l'indice de position. Les encadreurs y voyaient un risque de
+sur-apprentissage et demandaient des plongements lexicaux ou un modèle de
+langue léger.
+
+**Règle** : un modèle de phrases multilingue (MiniLM-L12, douze couches,
+384 dimensions, exécuté par ONNX Runtime sur le processeur, quantifié en
+entiers de 8 bits, 118 Mo) plonge le libellé ; une régression logistique
+apprise sur 392 libellés écrits à la main (150 décisions, 242
+non-décisions, en français, anglais, allemand et espagnol, dans des
+domaines variés, aucun repris du corpus de validation) donne un score
+entre 0 et 1 ; l'indice κ_s(a) vaut vrai au-dessus du seuil 0,5, fixé en
+validation croisée sur les exemples. Dans le prédicat :
+
+- un candidat de DA corroboré par la position ou le lexique est retenu
+  comme avant ;
+- un candidat de DA que seul l'indice sémantique corrobore **n'est pas
+  retenu : il est soumis à l'expert** avec la proposition « décision
+  (indice sémantique) », le score, le seuil et l'exemple d'apprentissage
+  le plus proche dans le motif (même règle que pour une candidate étendue
+  à un seul indice) ;
+- un candidat sans aucun indice est soumis à l'expert, le motif disant que
+  l'indice sémantique ne le juge pas décisionnel non plus ;
+- avec `definition-etendue`, une activité hors définition est retenue avec
+  la position et le lexique **ou** la position et l'indice sémantique ;
+- le motif de rétention de chaque décision porte le score.
+
+**Ce que l'indice garde des exigences du cadre** : il est déterministe
+(mêmes fichiers, identifiés par leur empreinte SHA-256, mêmes poids, même
+seuil), tracé (score et exemple proche dans le motif et dans le DMN), et
+optionnel : sans l'extension, rien ne change ; avec elle, le DRD de
+référence du corpus ne change pas non plus, seuls les motifs et les
+propositions aux experts changent (`tests/test_v4.py`).
+
+**Mesure** (`experimentations/evaluation-indices-kappa-2026-11-09.md`,
+`python outils/evaluer-indices.py`) : sur les 109 candidats du corpus,
+l'indice sémantique seul retient 68 candidats, précision 72 %, rappel
+83 % ; « position ou sémantique » (le lexique remplacé) : précision 75 %,
+rappel 98 % ; la référence « position ou lexique » : 100 / 100. Le
+remplacement pur du lexique coûte donc en précision, ce qui justifie la
+règle « proposer sans retenir » ; les erreurs sont nommées dans le rapport
+(« Saisir l'observation de réexamen » jugé décisionnel, « Statuer sur
+l'octroi du crédit » non). Sur le banc d'essai ouvert
+(`BANC-OUVERT.md`), où les libellés sont allemands et le lexique aveugle,
+l'indice fait passer les décisions retenues de 51 à 4 150 sur 3 530
+modèles, avec une précision estimée à 83 % sur un échantillon de 60 jugé
+par l'auteur.
+
+**Mise en œuvre** : `bpmn2dmn/semantique.py` (`Plongeur`,
+`IndiceSemantique`, `entrainer`), exemples dans
+`bpmn2dmn/modeles/exemples-indice-semantique.txt`, classifieur dans
+`bpmn2dmn/modeles/classifieur-semantique.json`, apprentissage par
+`outils/entrainer-indice-semantique.py`, modèle téléchargé par
+`outils/telecharger-modele.py` (dépendances : `requirements-semantique.txt`).
+Sans le modèle, l'extension est annoncée indisponible (ligne de commande,
+`GET /api/extensions`, case grisée dans l'application) et tout le reste
+fonctionne.
 
 ## Effet mesuré sur le catalogue
 
@@ -213,12 +310,14 @@ pattern, le DRD de référence et le DRD avec toutes les extensions
 (D / I / KS / BKM / exigences / points experts), les sorties `.drd.dmn` et
 `.rapport.json` étant dans le même dossier. En résumé : 3 patterns de la
 famille C gagnent une décision (C01, C02, C03), 1 gagne sa donnée d'entrée
-(C10), 4 gagnent une source de connaissance (A08, A09, A11, C06), 3
-reçoivent un nom suggéré (B01, B04, B09), 27 une table squelette ; C04
-devient traitable après arbitrage (candidate étendue + deux variables P7) ;
-C05 (passerelle d'événements), C07 (décision sans lecture), C08
-(annotation ambiguë) et C09 (verbe hors lexique) restent des limites :
-elles tiennent au modèle source ou aux lexiques, qui sont des paramètres.
+(C10), 4 gagnent une source de connaissance (A08, A09, A11, C06), 4
+reçoivent un nom suggéré (B01, B04, B09, C04), 30 une table de décision
+dont 29 exécutables ; C04 est traité (tâche de service retenue par la
+position et l'indice sémantique, deux variables P7, table à trois règles
+FEEL) ; C09 (verbe hors lexique) reçoit une proposition de l'indice
+sémantique ; C05 (passerelle d'événements), C07 (décision sans lecture) et
+C08 (annotation ambiguë) restent des limites : elles tiennent au modèle
+source.
 
 ## Risques et garanties
 
@@ -236,4 +335,9 @@ elles tiennent au modèle source ou aux lexiques, qui sont des paramètres.
 - `conditions-passerelle` dépend de la qualité des expressions écrites
   dans le modèle ; l'analyse des identifiants est volontairement simple
   et tout est soumis à l'expert.
-- `logique` produit des tables à compléter, pas des tables exécutables.
+- `logique` écrit les règles que les conditions des flux permettent de
+  lire ; une table est annoncée exécutable seulement si chaque règle est
+  écrite, et une condition non lue reste visible en description.
+- `indice-semantique` ne retient jamais seul : il propose, avec son score ;
+  sa précision mesurée sur le corpus (72 %) et estimée sur le banc ouvert
+  (83 %) interdit d'en faire un critère de rétention automatique.

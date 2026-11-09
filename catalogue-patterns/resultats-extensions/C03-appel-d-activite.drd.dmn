@@ -3,20 +3,23 @@
              xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
              xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
              xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             xmlns:bpmn2dmn="https://github.com/edjenguelemutsi-hub/bpmn2dmn/trace"
              id="Definitions_Appel_d_activit__corrobor_"
              name="Appel d'activité corroboré"
              namespace="http://bpmn2dmn/genere"
-             exporter="bpmn2dmn" exporterVersion="1.0">
-  <decision id="D1" name="Évaluer le dossier de l'opérateur">
-    <decisionTable id="D1_table" hitPolicy="UNIQUE">
-      <output id="D1_sortie" label="Demande recevable ?" name="evaluerLeDossierDeLOperateur" typeRef="string"><outputValues id="D1_sortie_valeurs"><text>"oui","non"</text></outputValues></output>
-      <rule id="D1_regle1"><outputEntry id="D1_regle1_s"><text>"oui"</text></outputEntry></rule>
-      <rule id="D1_regle2"><outputEntry id="D1_regle2_s"><text>"non"</text></outputEntry></rule>
+             exporter="bpmn2dmn" exporterVersion="1.2.0">
+  <decision id="Decision_Tache_4" name="Évaluer le dossier de l'opérateur">
+    <extensionElements><bpmn2dmn:trace source="Tache_4" pattern="P1" motif="précède une passerelle exclusive + verbe décisionnel dans le libellé ; indice sémantique : score 0.83 (seuil 0.50), proche de « Verificar la elegibilidad del solicitante » (décision, similarité 0.56) ; appel d'activité hors de la définition de référence, retenue par l'extension « definition-etendue »"/></extensionElements>
+    <decisionTable id="Decision_Tache_4_table" hitPolicy="UNIQUE">
+      <input id="Decision_Tache_4_entree1" label="Demande recevable ?"><inputExpression id="Decision_Tache_4_entree1_expr" typeRef="boolean"><text>demandeRecevable</text></inputExpression></input>
+      <output id="Decision_Tache_4_sortie" label="Demande recevable ?" name="evaluerLeDossierDeLOperateur" typeRef="string"><outputValues id="Decision_Tache_4_sortie_valeurs"><text>"oui","non"</text></outputValues></output>
+      <rule id="Decision_Tache_4_regle1"><inputEntry id="Decision_Tache_4_regle1_e1"><text>true</text></inputEntry><outputEntry id="Decision_Tache_4_regle1_s"><text>"oui"</text></outputEntry></rule>
+      <rule id="Decision_Tache_4_regle2"><inputEntry id="Decision_Tache_4_regle2_e1"><text>false</text></inputEntry><outputEntry id="Decision_Tache_4_regle2_s"><text>"non"</text></outputEntry></rule>
     </decisionTable>
   </decision>
   <dmndi:DMNDI>
     <dmndi:DMNDiagram id="DRD_Appel_d_activit__corrobor_">
-      <dmndi:DMNShape id="s_D1" dmnElementRef="D1">
+      <dmndi:DMNShape id="s_Decision_Tache_4" dmnElementRef="Decision_Tache_4">
         <dc:Bounds x="80" y="40" width="202" height="80"/>
       </dmndi:DMNShape>
     </dmndi:DMNDiagram>

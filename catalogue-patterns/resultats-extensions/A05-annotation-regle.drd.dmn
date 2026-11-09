@@ -3,26 +3,30 @@
              xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
              xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
              xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             xmlns:bpmn2dmn="https://github.com/edjenguelemutsi-hub/bpmn2dmn/trace"
              id="Definitions_Annotation__non_ant_une_r_gle"
              name="Annotation énonçant une règle"
              namespace="http://bpmn2dmn/genere"
-             exporter="bpmn2dmn" exporterVersion="1.0">
-  <decision id="D1" name="Coter le dossier de l'opérateur">
-    <knowledgeRequirement id="kr1"><requiredKnowledge href="#B1"/></knowledgeRequirement>
-    <decisionTable id="D1_table" hitPolicy="UNIQUE">
-      <output id="D1_sortie" label="Demande recevable ?" name="coterLeDossierDeLOperateur" typeRef="string"><outputValues id="D1_sortie_valeurs"><text>"oui","non"</text></outputValues></output>
-      <rule id="D1_regle1"><outputEntry id="D1_regle1_s"><text>"oui"</text></outputEntry></rule>
-      <rule id="D1_regle2"><outputEntry id="D1_regle2_s"><text>"non"</text></outputEntry></rule>
+             exporter="bpmn2dmn" exporterVersion="1.2.0">
+  <decision id="Decision_Tache_4" name="Coter le dossier de l'opérateur">
+    <extensionElements><bpmn2dmn:trace source="Tache_4" pattern="P1" motif="précède une passerelle exclusive + verbe décisionnel dans le libellé ; mais indice sémantique : score 0.45 (seuil 0.50), proche de « Enregistrer la commande dans le système » (non décision, similarité 0.59)"/></extensionElements>
+    <knowledgeRequirement id="kr1"><extensionElements><bpmn2dmn:trace pattern="P6"/></extensionElements><requiredKnowledge href="#BKM_Annotation_6"/></knowledgeRequirement>
+    <decisionTable id="Decision_Tache_4_table" hitPolicy="UNIQUE">
+      <input id="Decision_Tache_4_entree1" label="Demande recevable ?"><inputExpression id="Decision_Tache_4_entree1_expr" typeRef="boolean"><text>demandeRecevable</text></inputExpression></input>
+      <output id="Decision_Tache_4_sortie" label="Demande recevable ?" name="coterLeDossierDeLOperateur" typeRef="string"><outputValues id="Decision_Tache_4_sortie_valeurs"><text>"oui","non"</text></outputValues></output>
+      <rule id="Decision_Tache_4_regle1"><inputEntry id="Decision_Tache_4_regle1_e1"><text>true</text></inputEntry><outputEntry id="Decision_Tache_4_regle1_s"><text>"oui"</text></outputEntry></rule>
+      <rule id="Decision_Tache_4_regle2"><inputEntry id="Decision_Tache_4_regle2_e1"><text>false</text></inputEntry><outputEntry id="Decision_Tache_4_regle2_s"><text>"non"</text></outputEntry></rule>
     </decisionTable>
   </decision>
-  <businessKnowledgeModel id="B1" name="Règle : Barème de cotation par catégorie d'opérateur">
+  <businessKnowledgeModel id="BKM_Annotation_6" name="Règle : Barème de cotation par catégorie d'opérateur">
+    <extensionElements><bpmn2dmn:trace source="Annotation_6" pattern="P6"/></extensionElements>
   </businessKnowledgeModel>
   <dmndi:DMNDI>
     <dmndi:DMNDiagram id="DRD_Annotation__non_ant_une_r_gle">
-      <dmndi:DMNShape id="s_D1" dmnElementRef="D1">
+      <dmndi:DMNShape id="s_Decision_Tache_4" dmnElementRef="Decision_Tache_4">
         <dc:Bounds x="80" y="40" width="197" height="80"/>
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="s_B1" dmnElementRef="B1">
+      <dmndi:DMNShape id="s_BKM_Annotation_6" dmnElementRef="BKM_Annotation_6">
         <dc:Bounds x="-197" y="50" width="217" height="60"/>
       </dmndi:DMNShape>
       <dmndi:DMNEdge id="e_kr1" dmnElementRef="kr1">

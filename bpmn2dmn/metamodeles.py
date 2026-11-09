@@ -91,6 +91,11 @@ class Mi:
     #   événement -> noms locaux de ses définitions (message, timer...)
     flux_donnees_ecartes: List[Tuple[str, str]] = field(default_factory=list)
     #   associations de données vers un identifiant inconnu, écartées
+    ids_flux: Dict[Tuple[str, str], str] = field(default_factory=dict)
+    #   (source, cible) d'un flux de séquence -> identifiant XML du flux
+    #   (traçabilité et co-évolution)
+    flux_defaut: Dict[str, str] = field(default_factory=dict)
+    #   passerelle -> identifiant de son flux par défaut (attribut default)
 
     @property
     def activites(self) -> Dict[str, NoeudFlux]:

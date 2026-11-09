@@ -230,6 +230,7 @@ tout est réinitialisé, prêt pour un nouveau diagramme">Accueil</button>
 <nav>
   <button id="ongletAvant" class="actif">BPMN DMN (extraction du DRD)</button>
   <button id="ongletRetour">DMN BPMN (chemin inverse)</button>
+  <button id="ongletCoevolution">Co-évolution (DMN modifié BPMN)</button>
 </nav>
 
 <main>
@@ -294,7 +295,11 @@ l'algorithme (« Réappliquer » ou cli.py -a) pour rejouer vos arbitrages">Arbi
       <b>KS</b> : source de connaissance (autorité : règlement, norme,
       expert — rectangle à bord ondulé) &nbsp;·&nbsp;
       <b>P₁…P₆</b> : patterns de la transformation &nbsp;·&nbsp;
-      <b>κ</b> : indices retenant une décision (position / lexique).
+      <b>κ</b> : indices retenant une décision (position / lexique ; indice
+      sémantique en extension, qui propose sans retenir) &nbsp;·&nbsp;
+      <b>trace</b> : chaque sommet du DRD porte l'identifiant de l'élément BPMN
+      dont il vient et le patron qui l'a posé (identifiants stables, élément
+      bpmn2dmn:trace, fichier .trace.json en ligne de commande).
     </div>
     <div id="rapport" class="rapport">
       <p class="note">Transformez un modèle pour voir le rapport : décisions
@@ -379,6 +384,74 @@ l'algorithme (« Réappliquer » ou cli.py -a) pour rejouer vos arbitrages">Arbi
     </div>
   </div>
 </section>
+
+<!-- co-évolution : le DRD modifié reporté sur le processus, et l'impact d'un processus modifié -->
+<section id="panneauCoevolution" class="panneau">
+  <div class="grille">
+    <div class="carte">
+      <h2>1 · Processus BPMN d'origine
+        <span id="nomFichierBpmnCo" class="note"></span></h2>
+      <div id="depotBpmnCo" class="zone-depot">
+        Déposez ici le fichier <b>.bpmn</b> d'origine (celui dont le DRD a été
+        extrait) — ou cliquez pour choisir un fichier.<br>
+        <span class="note">Le lien entre les deux modèles tient aux identifiants
+        stables et à la trace écrits dans le DMN produit par l'outil.</span>
+      </div>
+      <div id="vueBpmnCo" class="diagramme" style="display:none"></div>
+      <div class="actions">
+        <input type="file" id="fichierBpmnCo"
+               accept=".bpmn,.xml,text/xml,application/xml" hidden>
+        <input type="file" id="fichierArbCo" accept=".json,application/json" hidden>
+        <button class="secondaire" id="btReprendreBpmn">Reprendre le BPMN de l'onglet extraction</button>
+        <button class="secondaire" id="btArbCo"
+          title="Fichier d'arbitrages appliqué lors de l'extraction d'origine (facultatif)">Arbitrages (facultatif)</button>
+        <span id="nomArbCo" class="note"></span>
+      </div>
+    </div>
+    <div class="carte">
+      <h2>2 · Modèle de décision DMN (le DRD, modifié ou non)
+        <span id="nomFichierDmnCo" class="note"></span></h2>
+      <div id="depotDmnCo" class="zone-depot">
+        Déposez ici le fichier <b>.dmn</b> : le DRD retouché dans Camunda Modeler
+        (synchronisation), ou le DRD précédemment produit (analyse d'impact).
+      </div>
+      <div id="vueDmnCo" class="diagramme" style="display:none"></div>
+      <div class="actions">
+        <input type="file" id="fichierDmnCo"
+               accept=".dmn,.xml,text/xml,application/xml" hidden>
+        <button class="principal" id="btSynchroniser" disabled
+          title="Le DRD a été modifié : reporter les modifications sur le processus">Synchroniser (DMN BPMN)</button>
+        <button class="secondaire" id="btImpact" disabled
+          title="Le processus a été modifié : qu'est-ce qui change dans le DRD ?">Analyser l'impact (BPMN DRD)</button>
+        <button class="secondaire" id="btEffacerCo">Effacer</button>
+      </div>
+    </div>
+  </div>
+  <div class="carte" style="margin-top:16px">
+    <h2>3 · Processus mis à jour et rapport de co-évolution
+      <span id="etatCo"></span></h2>
+    <div id="vueBpmnCoSortie" class="diagramme" style="display:none"></div>
+    <div class="actions">
+      <button class="secondaire" id="btTelechargerBpmnCo" disabled>Télécharger le .bpmn mis à jour</button>
+      <button class="secondaire" id="btTelechargerArbCo" disabled>Arbitrages mis à jour</button>
+      <button class="secondaire" id="btRapportCoPdf" disabled>Rapport (PDF)</button>
+    </div>
+    <div id="rapportCo" class="rapport">
+      <p class="note"><b>Synchroniser</b> : chaque modification lue dans le DRD
+      (décision renommée, ajoutée ou retirée, donnée d'entrée, exigence, source,
+      règles d'une table de décision) est reportée sur le fichier BPMN d'origine,
+      élément par élément, sans toucher au reste du processus ; la transformation
+      est ensuite rejouée sur le BPMN obtenu et le rapport dit si elle redonne le
+      DRD modifié. Ce qu'un processus ne peut pas exprimer est consigné dans le
+      fichier d'arbitrages, jamais inventé. <b>Analyser l'impact</b> : le DRD que
+      la transformation tire du BPMN déposé est comparé au DRD déposé ; le rapport
+      nomme les sommets disparus ou renommés et les exigences invalidées.</p>
+    </div>
+    <div class="actions" id="actionsCo" style="display:none">
+      <button class="secondaire" id="btAccueilBasCo">Retour à l'accueil</button>
+    </div>
+  </div>
+</section>
 </main>
 
 <footer>bpmn2dmn — F. Edjenguele et R. Djeumen, Université de Douala. Si cet outil vous est utile, merci de citer l’article associé (voir le fichier CITATION.cff du dépôt).<br>If this tool helps your work, please cite the associated article (see CITATION.cff).</footer>
@@ -427,14 +500,17 @@ function echapper(s){
 
 // onglets
 function activer(onglet){
-  const avant = onglet === "avant";
-  $("ongletAvant").classList.toggle("actif", avant);
-  $("ongletRetour").classList.toggle("actif", !avant);
-  $("panneauAvant").classList.toggle("actif", avant);
-  $("panneauRetour").classList.toggle("actif", !avant);
+  const choix = {avant: ["ongletAvant", "panneauAvant"],
+                 retour: ["ongletRetour", "panneauRetour"],
+                 coevolution: ["ongletCoevolution", "panneauCoevolution"]};
+  Object.keys(choix).forEach(k => {
+    $(choix[k][0]).classList.toggle("actif", k === onglet);
+    $(choix[k][1]).classList.toggle("actif", k === onglet);
+  });
 }
 $("ongletAvant").onclick = () => activer("avant");
 $("ongletRetour").onclick = () => activer("retour");
+$("ongletCoevolution").onclick = () => activer("coevolution");
 
 // visionneuses bpmn-js / dmn-js. Si une bibliothèque n'a pas pu être
 // chargée (navigateur trop ancien), la visionneuse vaut null : le reste
@@ -449,6 +525,9 @@ let vueBpmn = creerVue("BpmnJS", "vueBpmn");
 let vueBpmnSortie = creerVue("BpmnJS", "vueBpmnSortie");
 let vueDmn = creerVue("DmnJS", "vueDmn");
 let vueDmnEntree = creerVue("DmnJS", "vueDmnEntree");
+let vueBpmnCo = creerVue("BpmnJS", "vueBpmnCo");
+let vueDmnCo = creerVue("DmnJS", "vueDmnCo");
+let vueBpmnCoSortie = creerVue("BpmnJS", "vueBpmnCoSortie");
 const SANS_VUE = '<div class="vide">Aperçu indisponible dans ce navigateur ' +
   '(bibliothèque de rendu non chargée). Le traitement a bien eu lieu : ' +
   'téléchargez le fichier produit, ou ouvrez cette adresse dans Chrome ' +
@@ -520,6 +599,7 @@ $("btEffacerInv").onclick = () => effacerRetour(false);
 function retourAccueil(){
   effacerAvant(true);
   effacerRetour(true);
+  effacerCo(true);
   activer("avant");
   try { window.scrollTo({top: 0, behavior: "smooth"}); }
   catch (e) { window.scrollTo(0, 0); }
@@ -678,8 +758,12 @@ async function chargerExtensions(){
     const d = await apiLecture("/api/extensions");
     let h = "";
     d.extensions.forEach(x => {
-      h += '<label><input type="checkbox" value="' + echapper(x.nom) + '"><b>' +
-           echapper(x.nom) + '</b> <span>' + echapper(x.phrase) + '</span></label>';
+      const dispo = x.disponible !== false;
+      h += '<label' + (dispo ? '' : ' style="opacity:.6"') + '><input type="checkbox" value="'
+           + echapper(x.nom) + '"' + (dispo ? '' : ' disabled') + '><b>'
+           + echapper(x.nom) + '</b> <span>' + echapper(x.phrase)
+           + (dispo ? '' : ' <i>Indisponible ici : ' + echapper(x.motif) + '</i>')
+           + '</span></label>';
     });
     h += '<p class="note" style="margin:6px 0 0">Sans case cochée, c’est ' +
          'l’algorithme de référence qui s’applique ; la variante retenue est ' +
@@ -782,7 +866,7 @@ function afficherRapport(r){
     h += '<p class="note">Variante : <b>' + echapper(r.variante) + '</b> (extensions '
        + 'actives : ' + echapper(r.extensions.join(", ")) + ')'
        + (r.logique ? ' · ' + Object.keys(r.logique).length
-          + ' table(s) de décision squelette(s) dans le DMN produit' : '') + '</p>';
+          + ' table(s) de décision dans le DMN produit' : '') + '</p>';
 
   h += '<h3>Décisions retenues (DA)</h3><table>'
      + '<tr><th>Décision</th><th>Motif de rétention</th>'
@@ -804,6 +888,34 @@ function afficherRapport(r){
        + '</td></tr>';
   });
   h += '</table>';
+
+  if (r.logique && Object.keys(r.logique).length){
+    h += '<h3>Tables de décision (extension logique)</h3>';
+    const nomDecision = {};
+    (r.decisions || []).forEach(d => nomDecision[d.id] = d.nom);
+    Object.keys(r.logique).forEach(did => {
+      const t = r.logique[did];
+      const entrees = t.entrees || [];
+      h += '<p><b>' + echapper(nomDecision[did] || did) + '</b> — politique '
+         + echapper(t.politique || "UNIQUE") + ' · '
+         + (t.executable ? '<span class="etat ok">exécutable</span>'
+                         : '<span class="etat non">à compléter</span>')
+         + ' · sortie « ' + echapper(t.passerelle) + ' »</p>';
+      h += '<table><tr>' + entrees.map(c => '<th>' + echapper(c.libelle || c.variable)
+         + '<br><span class="note">' + echapper(c.variable) + ' : ' + echapper(c.type)
+         + (c.source === "condition" ? ', condition de flux' : c.source === "question" ? ', question de la passerelle' : '')
+         + '</span></th>').join("") + '<th>Sortie</th></tr>';
+      (t.regles || []).forEach(rg => {
+        h += '<tr>' + entrees.map(c => '<td>' + echapper((rg.cellules || {})[c.variable] || "-")
+           + '</td>').join("") + '<td><b>' + echapper(rg.branche) + '</b>'
+           + (rg.defaut ? ' <span class="note">(flux par défaut)</span>' : '')
+           + (!rg.lue && !rg.defaut && rg.condition
+              ? ' <span class="note">condition non lue : ' + echapper(rg.condition) + '</span>' : '')
+           + '</td></tr>';
+      });
+      h += '</table>';
+    });
+  }
 
   const lignes = [];
   r.inputs.forEach(n => lignes.push(["Donnée d’entrée", n.nom, n.pattern]));
@@ -1175,6 +1287,224 @@ $("btRapportInvPdf").onclick = () =>
 $("btTelechargerArbInv").onclick = () =>
   arbitragesInverse && telecharger("arbitrages.aller-retour.json",
     JSON.stringify(arbitragesInverse, null, 2), "application/json");
+
+// ---------------------------------------------------------------- co-évolution
+let bpmnCo = null, dmnCo = null, arbitragesCo = null, bpmnCoSortie = null;
+let arbitragesCoSortie = null, rapportCoCourant = null, modeCo = "";
+const RAPPORT_CO_INITIAL = $("rapportCo").innerHTML;
+
+function effacerCo(silencieux){
+  vueBpmnCo = recreer(vueBpmnCo, "BpmnJS", "vueBpmnCo", "");
+  vueDmnCo = recreer(vueDmnCo, "DmnJS", "vueDmnCo", "");
+  vueBpmnCoSortie = recreer(vueBpmnCoSortie, "BpmnJS", "vueBpmnCoSortie", "");
+  bpmnCo = dmnCo = arbitragesCo = bpmnCoSortie = arbitragesCoSortie = null;
+  rapportCoCourant = null; modeCo = "";
+  ["vueBpmnCo", "vueDmnCo", "vueBpmnCoSortie"].forEach(v => $(v).style.display = "none");
+  ["nomFichierBpmnCo", "nomFichierDmnCo", "nomArbCo", "etatCo"].forEach(x => $(x).textContent = "");
+  ["btSynchroniser", "btImpact", "btTelechargerBpmnCo", "btTelechargerArbCo",
+   "btRapportCoPdf"].forEach(b => $(b).disabled = true);
+  $("actionsCo").style.display = "none";
+  $("rapportCo").innerHTML = RAPPORT_CO_INITIAL;
+  if (silencieux !== true) message("Espace de co-évolution effacé.");
+}
+function pretCo(){
+  const ok = !!(bpmnCo && dmnCo);
+  $("btSynchroniser").disabled = !ok;
+  $("btImpact").disabled = !ok;
+}
+brancherDepot("depotBpmnCo", "fichierBpmnCo", async (nom, texte) => {
+  try {
+    await montrerBpmn(vueBpmnCo, "vueBpmnCo", texte);
+    bpmnCo = texte; $("nomFichierBpmnCo").textContent = nom; pretCo();
+  } catch (e) { message("BPMN illisible : " + e.message, true); }
+});
+brancherDepot("depotDmnCo", "fichierDmnCo", async (nom, texte) => {
+  try {
+    await montrerDmn(vueDmnCo, "vueDmnCo", texte);
+    dmnCo = texte; $("nomFichierDmnCo").textContent = nom; pretCo();
+  } catch (e) { message("DMN illisible : " + e.message, true); }
+});
+$("btArbCo").onclick = () => $("fichierArbCo").click();
+$("fichierArbCo").onchange = e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const lecteur = new FileReader();
+  lecteur.onload = () => {
+    try { arbitragesCo = JSON.parse(lecteur.result); $("nomArbCo").textContent = f.name; }
+    catch (x) { message("Fichier d'arbitrages illisible : " + x.message, true); }
+  };
+  lecteur.readAsText(f, "utf-8");
+  e.target.value = "";
+};
+$("btReprendreBpmn").onclick = async () => {
+  if (!bpmnCourant){ message("Aucun BPMN chargé dans l'onglet extraction.", true); return; }
+  bpmnCo = bpmnCourant;
+  await montrerBpmn(vueBpmnCo, "vueBpmnCo", bpmnCo);
+  $("nomFichierBpmnCo").textContent = $("nomFichierBpmn").textContent || "(onglet extraction)";
+  recolterArbitrages();
+  arbitragesCo = JSON.parse(JSON.stringify(arbitrages));
+  $("nomArbCo").textContent = "arbitrages de l'onglet extraction";
+  if (dmnProduit && !dmnCo){
+    dmnCo = dmnProduit;
+    await montrerDmn(vueDmnCo, "vueDmnCo", dmnCo);
+    $("nomFichierDmnCo").textContent = "DRD extrait (à modifier dans Camunda Modeler, puis redéposer)";
+  }
+  pretCo();
+};
+$("btEffacerCo").onclick = () => effacerCo(false);
+$("btAccueilBasCo").onclick = retourAccueil;
+
+$("btSynchroniser").onclick = async () => {
+  if (!bpmnCo || !dmnCo) return;
+  $("btSynchroniser").disabled = true;
+  try {
+    const d = await api("/api/synchroniser", {bpmn: bpmnCo, dmn: dmnCo,
+      arbitrages: arbitragesCo || {}, extensions: ["logique"]});
+    modeCo = "synchronisation";
+    bpmnCoSortie = d.bpmn; arbitragesCoSortie = d.arbitrages; rapportCoCourant = d.rapport;
+    await montrerBpmn(vueBpmnCoSortie, "vueBpmnCoSortie", d.bpmn);
+    $("etatCo").innerHTML = d.rapport.coherent
+      ? '<span class="etat ok">cohérence vérifiée : T(BPMN mis à jour) = DRD</span>'
+      : '<span class="etat non">écart de cohérence</span>';
+    afficherRapportCo(d.rapport);
+    ["btTelechargerBpmnCo", "btTelechargerArbCo", "btRapportCoPdf"].forEach(b => $(b).disabled = false);
+    $("actionsCo").style.display = "flex";
+    message("Synchronisation : " + d.rapport.appliques + " modification(s) appliquée(s).");
+  } catch (e) { message(e.message, true); }
+  $("btSynchroniser").disabled = false;
+};
+$("btImpact").onclick = async () => {
+  if (!bpmnCo || !dmnCo) return;
+  $("btImpact").disabled = true;
+  try {
+    const d = await api("/api/impact", {bpmn: bpmnCo, dmn: dmnCo,
+      arbitrages: arbitragesCo || {}, extensions: ["logique"]});
+    modeCo = "impact";
+    rapportCoCourant = d.rapport; bpmnCoSortie = null; arbitragesCoSortie = null;
+    $("vueBpmnCoSortie").style.display = "none";
+    $("etatCo").innerHTML = d.rapport.identique
+      ? '<span class="etat ok">le processus redonne le même DRD</span>'
+      : '<span class="etat non">le DRD change</span>';
+    afficherRapportImpact(d.rapport);
+    $("btRapportCoPdf").disabled = false;
+    $("btTelechargerBpmnCo").disabled = true; $("btTelechargerArbCo").disabled = true;
+    $("actionsCo").style.display = "flex";
+    message("Analyse d'impact terminée.");
+  } catch (e) { message(e.message, true); }
+  $("btImpact").disabled = false;
+};
+function afficherRapportCo(r){
+  let h = '<div class="compteurs">'
+    + '<div class="compteur"><b>' + r.appliques + '</b><span>modifications appliquées</span></div>'
+    + '<div class="compteur"><b>' + r.non_appliques + '</b><span>non appliquées</span></div>'
+    + '<div class="compteur"><b>' + (r.resume.decisions == null ? "–" : r.resume.decisions)
+    + '</b><span>décisions du DRD</span></div>'
+    + '<div class="compteur"><b>' + (r.resume.exigences == null ? "–" : r.resume.exigences)
+    + '</b><span>exigences</span></div></div>';
+  h += r.coherent
+    ? '<p class="etat ok">Cohérence rétablie : la transformation du BPMN mis à jour, avec '
+      + 'les arbitrages mis à jour, redonne le DRD modifié (mêmes sommets, mêmes types, '
+      + 'mêmes exigences).</p>'
+    : '<div class="avertissement">Écart entre le DRD modifié et la transformation du BPMN '
+      + 'mis à jour : ' + echapper((r.ecarts || []).join(" ; ")) + '</div>';
+  if (r.tables_coherentes === false)
+    h += '<div class="avertissement">Tables de décision : ' + echapper((r.ecarts_tables || []).join(" ; ")) + '</div>';
+  else if (r.tables_coherentes === true)
+    h += '<p class="note">Tables de décision : les règles écrites dans le DRD se retrouvent dans les conditions des flux.</p>';
+  if (r.changements && r.changements.length){
+    h += '<h3>Modifications lues dans le DRD et leur sort dans le processus</h3>'
+       + '<table><tr><th></th><th>Nature</th><th>Élément du DRD</th><th>Élément du processus</th><th>Ce qui a été fait</th></tr>';
+    r.changements.forEach(c => h += '<tr><td>' + (c.applique ? '<span class="etat ok">appliqué</span>'
+       : '<span class="etat non">non</span>') + '</td><td>' + echapper(c.genre) + '</td><td>'
+       + echapper(c.dmn) + '</td><td>' + echapper(c.bpmn) + '</td><td>' + echapper(c.detail)
+       + (c.motif ? '<br><span class="note">' + echapper(c.motif) + '</span>' : '') + '</td></tr>');
+    h += '</table>';
+  } else {
+    h += '<p class="note">Aucune modification lue dans le DRD : le processus est inchangé.</p>';
+  }
+  $("rapportCo").innerHTML = h;
+}
+function afficherRapportImpact(r){
+  const res = r.resume || {};
+  let h = '<div class="compteurs">';
+  [["sommets conservés", res.sommets_conserves], ["renommés", res.sommets_renommes],
+   ["nouveaux", res.sommets_nouveaux], ["disparus", res.sommets_disparus],
+   ["exigences conservées", res.exigences_conservees], ["nouvelles", res.exigences_nouvelles],
+   ["invalidées", res.exigences_invalidees]].forEach(([n, v]) =>
+     h += '<div class="compteur"><b>' + (v == null ? "–" : v) + '</b><span>' + n + '</span></div>');
+  h += '</div>';
+  h += r.identique ? '<p class="etat ok">Le processus déposé redonne exactement le DRD déposé.</p>'
+    : '<div class="avertissement">Le DRD change : ' + echapper((r.ecarts || []).join(" ; ")) + '</div>';
+  const bloc = (titre, liste, colonnes, ligne) => {
+    if (!liste || !liste.length) return;
+    h += '<h3>' + titre + ' (' + liste.length + ')</h3><table><tr>'
+       + colonnes.map(c => '<th>' + c + '</th>').join("") + '</tr>';
+    liste.forEach(x => h += '<tr>' + ligne(x).map(v => '<td>' + echapper(v) + '</td>').join("") + '</tr>');
+    h += '</table>';
+  };
+  bloc("Sommets disparus", r.sommets_disparus, ["Type", "Nom", "Élément BPMN", "Patron"],
+       x => [x.type, x.nom, x.origine, x.pattern]);
+  bloc("Sommets renommés", r.sommets_renommes, ["Type", "Nouveau nom", "Ancien nom", "Élément BPMN"],
+       x => [x.type, x.nom, x.ancien_nom, x.origine]);
+  bloc("Sommets nouveaux", r.sommets_nouveaux, ["Type", "Nom", "Élément BPMN", "Patron"],
+       x => [x.type, x.nom, x.origine, x.pattern]);
+  bloc("Exigences invalidées", r.exigences_invalidees, ["De", "Vers", "Patron", "Motif"],
+       x => [x.de, x.vers, x.pattern, x.motif]);
+  bloc("Exigences nouvelles", r.exigences_nouvelles, ["De", "Vers", "Patron"],
+       x => [x.de, x.vers, x.pattern]);
+  bloc("Tables de décision", r.tables, ["Décision", "État"], x => [x.decision, x.etat]);
+  h += '<p class="note">Points soumis à l’expert sur le nouveau processus : '
+     + (r.points_expert_nouveaux || []).length + '.</p>';
+  $("rapportCo").innerHTML = h;
+}
+function rapportCoEnTexte(r){
+  const L = [];
+  if (modeCo === "impact"){
+    L.push("RAPPORT D'IMPACT  BPMN modifié -> DRD");
+    L.push("Date : " + new Date().toLocaleString("fr-FR"));
+    L.push(LIGNE);
+    L.push("DRD identique : " + (r.identique ? "oui" : "non"));
+    ["sommets_disparus", "sommets_renommes", "sommets_nouveaux"].forEach(k => {
+      (r[k] || []).forEach(x => L.push("  [" + k.replace("sommets_", "") + "] " + x.type + " « " + x.nom + " »"
+        + (x.ancien_nom ? " (était « " + x.ancien_nom + " »)" : "") + " — élément BPMN " + x.origine));
+    });
+    (r.exigences_invalidees || []).forEach(x => L.push("  [exigence invalidée] " + x.de + " -> " + x.vers + " (" + x.pattern + ") " + x.motif));
+    (r.exigences_nouvelles || []).forEach(x => L.push("  [exigence nouvelle] " + x.de + " -> " + x.vers + " (" + x.pattern + ")"));
+    (r.tables || []).forEach(t => L.push("  [table] " + t.decision + " : " + t.etat));
+    return L.join("\n") + "\n";
+  }
+  L.push("RAPPORT DE CO-ÉVOLUTION  DRD modifié -> BPMN");
+  L.push("Date : " + new Date().toLocaleString("fr-FR"));
+  L.push(LIGNE);
+  (r.changements || []).forEach(c => L.push("  [" + (c.applique ? "ok" : "--") + "] " + c.genre
+    + " : " + c.detail + (c.motif ? "\n        motif : " + c.motif : "")));
+  L.push("");
+  L.push("Modifications : " + r.appliques + " appliquée(s), " + r.non_appliques + " non appliquée(s)");
+  L.push("Cohérence T(BPMN mis à jour) = DRD modifié : " + (r.coherent ? "vérifiée" : "écart — " + (r.ecarts || []).join(" ; ")));
+  return L.join("\n") + "\n";
+}
+$("btTelechargerBpmnCo").onclick = () => bpmnCoSortie && telecharger("modele.synchronise.bpmn", bpmnCoSortie);
+$("btTelechargerArbCo").onclick = () => arbitragesCoSortie &&
+  telecharger("arbitrages.synchronise.json", JSON.stringify(arbitragesCoSortie, null, 2), "application/json");
+$("btRapportCoPdf").onclick = () => rapportCoCourant &&
+  imprimerEnPdf(modeCo === "impact" ? "Rapport d'impact BPMN DRD" : "Rapport de co-évolution DMN BPMN",
+                rapportCoEnTexte(rapportCoCourant));
+
+/* ?auto=5 : test de bout en bout de la co-évolution : exemple -> extraction ->
+   le DRD produit, une décision renommée, est synchronisé -> cohérence */
+if (modeAuto === "5"){
+  (async () => {
+    await $("btExemple").onclick();
+    await lancerTransformation();
+    activer("coevolution");
+    await $("btReprendreBpmn").onclick();
+    dmnCo = dmnProduit.replace('name="Affecter le dossier à un agent"', 'name="Attribuer le dossier à un agent"');
+    pretCo();
+    await $("btSynchroniser").onclick();
+    const ok = rapportCoCourant && rapportCoCourant.coherent && rapportCoCourant.appliques >= 1;
+    document.title = ok ? "COEVOLUTION-OK" : "COEVOLUTION-ECHEC";
+  })().catch(e => document.title = "COEVOLUTION-ECHEC " + e.message);
+}
 
 // tout est branché : le garde-fou de l'en-tête n'affichera pas d'alerte
 window.__applicationPrete = true;

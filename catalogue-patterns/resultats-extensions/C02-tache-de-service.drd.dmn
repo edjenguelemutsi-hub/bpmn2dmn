@@ -3,26 +3,31 @@
              xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
              xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
              xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/"
+             xmlns:bpmn2dmn="https://github.com/edjenguelemutsi-hub/bpmn2dmn/trace"
              id="Definitions_T_che_de_service_au_verbe_d_cisionnel"
              name="Tâche de service au verbe décisionnel"
              namespace="http://bpmn2dmn/genere"
-             exporter="bpmn2dmn" exporterVersion="1.0">
-  <decision id="D1" name="Contrôler la cohérence de la déclaration">
-    <informationRequirement id="ir1"><requiredInput href="#I1"/></informationRequirement>
-    <decisionTable id="D1_table" hitPolicy="UNIQUE">
-      <input id="D1_entree1" label="Référentiel tarifaire"><inputExpression id="D1_entree1_expr" typeRef="string"><text>referentielTarifaire</text></inputExpression></input>
-      <output id="D1_sortie" label="Demande recevable ?" name="controlerLaCoherenceDeLaDeclaration" typeRef="string"><outputValues id="D1_sortie_valeurs"><text>"oui","non"</text></outputValues></output>
-      <rule id="D1_regle1"><inputEntry id="D1_regle1_e1"><text>-</text></inputEntry><outputEntry id="D1_regle1_s"><text>"oui"</text></outputEntry></rule>
-      <rule id="D1_regle2"><inputEntry id="D1_regle2_e1"><text>-</text></inputEntry><outputEntry id="D1_regle2_s"><text>"non"</text></outputEntry></rule>
+             exporter="bpmn2dmn" exporterVersion="1.2.0">
+  <decision id="Decision_Tache_4" name="Contrôler la cohérence de la déclaration">
+    <extensionElements><bpmn2dmn:trace source="Tache_4" pattern="P1" motif="précède une passerelle exclusive + verbe décisionnel dans le libellé ; indice sémantique : score 0.81 (seuil 0.50), proche de « Contrôler la conformité de la facture » (décision, similarité 0.70) ; tâche de service hors de la définition de référence, retenue par l'extension « definition-etendue »"/></extensionElements>
+    <informationRequirement id="ir1"><extensionElements><bpmn2dmn:trace pattern="P2"/></extensionElements><requiredInput href="#InputData_Donnee_6"/></informationRequirement>
+    <decisionTable id="Decision_Tache_4_table" hitPolicy="UNIQUE">
+      <input id="Decision_Tache_4_entree1" label="Référentiel tarifaire"><inputExpression id="Decision_Tache_4_entree1_expr" typeRef="string"><text>referentielTarifaire</text></inputExpression></input>
+      <input id="Decision_Tache_4_entree2" label="Demande recevable ?"><inputExpression id="Decision_Tache_4_entree2_expr" typeRef="boolean"><text>demandeRecevable</text></inputExpression></input>
+      <output id="Decision_Tache_4_sortie" label="Demande recevable ?" name="controlerLaCoherenceDeLaDeclaration" typeRef="string"><outputValues id="Decision_Tache_4_sortie_valeurs"><text>"oui","non"</text></outputValues></output>
+      <rule id="Decision_Tache_4_regle1"><inputEntry id="Decision_Tache_4_regle1_e1"><text>-</text></inputEntry><inputEntry id="Decision_Tache_4_regle1_e2"><text>true</text></inputEntry><outputEntry id="Decision_Tache_4_regle1_s"><text>"oui"</text></outputEntry></rule>
+      <rule id="Decision_Tache_4_regle2"><inputEntry id="Decision_Tache_4_regle2_e1"><text>-</text></inputEntry><inputEntry id="Decision_Tache_4_regle2_e2"><text>false</text></inputEntry><outputEntry id="Decision_Tache_4_regle2_s"><text>"non"</text></outputEntry></rule>
     </decisionTable>
   </decision>
-  <inputData id="I1" name="Référentiel tarifaire"/>
+  <inputData id="InputData_Donnee_6" name="Référentiel tarifaire">
+    <extensionElements><bpmn2dmn:trace source="Donnee_6" pattern="P2"/></extensionElements>
+  </inputData>
   <dmndi:DMNDI>
     <dmndi:DMNDiagram id="DRD_T_che_de_service_au_verbe_d_cisionne">
-      <dmndi:DMNShape id="s_D1" dmnElementRef="D1">
+      <dmndi:DMNShape id="s_Decision_Tache_4" dmnElementRef="Decision_Tache_4">
         <dc:Bounds x="80" y="40" width="218" height="80"/>
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="s_I1" dmnElementRef="I1">
+      <dmndi:DMNShape id="s_InputData_Donnee_6" dmnElementRef="InputData_Donnee_6">
         <dc:Bounds x="122" y="240" width="135" height="60"/>
       </dmndi:DMNShape>
       <dmndi:DMNEdge id="e_ir1" dmnElementRef="ir1">

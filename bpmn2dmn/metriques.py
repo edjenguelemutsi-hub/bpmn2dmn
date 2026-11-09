@@ -187,6 +187,22 @@ COLONNES: List[Tuple[str, str, str, str]] = [
     ("duree_transformation_ms", "Durées", "Durée de transformation (ms)", "Exécution de T."),
     ("duree_serialisation_ms", "Durées", "Durée de sérialisation (ms)", "Écriture du DMN."),
     ("duree_totale_ms", "Durées", "Durée totale (ms)", ""),
+    # colonnes ajoutées par la version 1.2 (indice sémantique, tables de décision) ;
+    # elles sont en fin de table pour que les registres antérieurs restent lisibles
+    ("da_semantique", "Détection (DA, κ)", "Candidats à indice sémantique",
+     "Avec l'extension « indice-semantique » : candidats dont le libellé est jugé "
+     "décisionnel par le modèle de langue léger ; vide sans l'extension."),
+    ("da_semantique_seul", "Détection (DA, κ)", "Candidats proposés par le seul indice sémantique",
+     "Candidats sans indice de position ni de lexique, mais à indice sémantique : "
+     "soumis à l'expert avec la proposition « décision » ; vide sans l'extension."),
+    ("tables_decision", "Logique de décision", "Tables de décision",
+     "Avec l'extension « logique » : décisions dotées d'une table de décision ; vide sinon."),
+    ("regles", "Logique de décision", "Règles",
+     "Nombre total de règles des tables produites."),
+    ("regles_feel", "Logique de décision", "Règles écrites en FEEL",
+     "Règles dont les conditions de flux ont été lues et écrites en tests unaires FEEL."),
+    ("tables_executables", "Logique de décision", "Tables exécutables",
+     "Tables dont chaque règle est écrite (ou couverte par un flux par défaut)."),
 ]
 
 NOMS_COLONNES = [c[0] for c in COLONNES]
@@ -292,6 +308,16 @@ def _mesurer_detection(mi: Mi, mf: Mf, arbitrages, ligne) -> None:
     ligne["taux_corroboration"] = _ratio(len(mf.delta), len(candidats))
     ligne["hors_definition"] = sum(1 for p in mf.a_confirmer
                                    if p.categorie == "hors-definition")
+    if "indice-semantique" in mf.extensions:
+        semantique = seul = 0
+        for aid in candidats:
+            indices = kappa(mi, aid, semantique=True)
+            if indices.get("semantique"):
+                semantique += 1
+                if not indices["position"] and not indices["lexical"]:
+                    seul += 1
+        ligne["da_semantique"] = semantique
+        ligne["da_semantique_seul"] = seul
 
 
 def _mesurer_drd(mf: Mf, ligne) -> None:
@@ -329,6 +355,12 @@ def _mesurer_drd(mf: Mf, ligne) -> None:
             elif n.type == BKM:
                 ligne["p6_bkm"] += 1
     ligne["p4_dependances"] = sum(1 for a in mf.arcs if mf.arcs_origine.get(a) == "P4")
+    if "logique" in mf.extensions:
+        tables = list(mf.logique.values())
+        ligne["tables_decision"] = len(tables)
+        ligne["regles"] = sum(len(t.get("regles", [])) for t in tables)
+        ligne["regles_feel"] = sum(t.get("regles_lues", 0) for t in tables)
+        ligne["tables_executables"] = sum(1 for t in tables if t.get("executable"))
 
 
 def ventiler_p2(mi: Mi, mf: Mf, ligne) -> None:
